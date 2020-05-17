@@ -3,14 +3,19 @@
     position: relative;
     border-radius: 5px;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .inputContainer .iconContainer{
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px 5px 10px 15px;
+    padding: 10px 0px 10px 20px;
+    margin: 0px !important;
+}
 
+.iconContainer .icon path{
+    color: var(--text-light);
 }
 
 .inputContainer input{
@@ -19,11 +24,11 @@
     flex-grow: 1;
     border: none;
     font-size: 14px;
-    padding: 10px 0;
+    padding: 15px;
 }
 
 .inputContainer,
 .inputContainer input{
-    background-color: #d1d1d1;
+    background-color: #EEEEEE;
     
 }
