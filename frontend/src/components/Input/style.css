@@ -1,0 +1,29 @@
+.inputContainer{
+    display: flex;
+    position: relative;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.inputContainer .iconContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 5px 10px 15px;
+
+}
+
+.inputContainer input{
+    position: relative;
+    display: inline-block;
+    flex-grow: 1;
+    border: none;
+    font-size: 14px;
+    padding: 10px 0;
+}
+
+.inputContainer,
+.inputContainer input{
+    background-color: #d1d1d1;
+    
+}

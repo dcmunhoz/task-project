@@ -15,6 +15,9 @@
     --btn-yellow: #e9d520;
     --btn-yellow-h: #cfbd18;
 
+    --link: #00ADB5;
+    --link-h: #008b92;
+
     --radius: 5px;
 }
 
@@ -24,6 +27,21 @@
     box-sizing: border-box;
     /* FONT */
     font-family: 'Open Sans', sans-serif;
-
+    color: var(--text-dark);
     outline: none;
 }
+
+a{
+    text-decoration: none;
+    color: var(--link);
+    transition: 200ms;
+}
+
+a:hover{
+    color: var(--link-h);
+}
+
+.icon path{
+    color: #FFF;
+}
+
