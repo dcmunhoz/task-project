@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap');
+
+
+:root{
+    
+    --text-dark: #263238;
+    --text-light: #D7D7D7;
+
+    --btn-green:   #00ADB5;
+    --btn-green-h: #008b92;
+    --btn-blue: #005792;
+    --btn-blue-h: #014674;
+    --btn-red: #FF1E56;
+    --btn-red-h: #d11947;
+    --btn-yellow: #e9d520;
+    --btn-yellow-h: #cfbd18;
+
+    --radius: 5px;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    /* FONT */
+    font-family: 'Open Sans', sans-serif;
+
+    outline: none;
+}
