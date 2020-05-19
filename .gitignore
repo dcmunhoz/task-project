@@ -27,3 +27,5 @@
 /frontend/yarn-error.log*
 
 /.vscode
+
+/backend/.env
