@@ -6,6 +6,11 @@
             "email": "dc.munhoz@hotmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Source\\":"source/"
+        }
+    },
     "require": {
         "slim/slim": "4.*",
         "slim/psr7": "^1.1"
