@@ -2,6 +2,7 @@
 /frontend/node_modules/
 /frontend/.pnp
 /frontend/.pnp.js
+/backend/vendor/
 
 # testing
 /frontend/coverage
@@ -24,3 +25,5 @@
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
+
+/.vscode

@@ -1,0 +1,13 @@
+{
+    "name": "daniel/backend",
+    "authors": [
+        {
+            "name": "dcmunhoz",
+            "email": "dc.munhoz@hotmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "4.*",
+        "slim/psr7": "^1.1"
+    }
+}
