@@ -1,5 +1,5 @@
 <?php
-declare(stritc_types=1);
+declare(strict_types=1);
 
 namespace Source\Core;
 
@@ -18,6 +18,12 @@ abstract class Model{
 
     /** @var string */
     private $key;
+
+    /** @var string */
+    private $filters;
+
+    /** @var array */
+    private $params;
 
     /**
      * Model constructor
@@ -55,18 +61,28 @@ abstract class Model{
     /**
      * 
      */
-    public function find(string $columns = "*"): Model {
+    public function find(?string $terms = null, ?string $params = null, string $columns = "*"): Model {
 
-        $this->query = "SELECT {$columns} FROM {$this->entity}";
-        
+        if ($terms){
+            $this->terms = "WHERE " . $terms;
+            \parse_str($params, $this->params); 
+        }
+
+        $this->query = "SELECT {$columns} FROM {$this->entity} {$this->terms}";
+
         return $this;
 
     }
 
-    public function fetch(bool $all = false){
-
+    public function fetch(bool $all = false) {
         $stmt = Connect::getInstance()->prepare($this->query);
-        $stmt->execute();
+        $stmt->execute($this->params);
+
+        if (!$stmt->rowCount()) {
+
+            return null;
+
+        }
 
         if ($all) {
             

@@ -9,8 +9,9 @@ $app->get('/', function (Request $request, Response $response, $args) {
 
     $user = new User();
 
-    $result = $user->find()->fetch(true);
+    $username = "dcmunhoz";
 
+    $result = $user->find()->fetch(true);
 
     var_dump($result);
     die;
