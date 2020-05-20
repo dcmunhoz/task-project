@@ -11,8 +11,8 @@ $app->get('/', function (Request $request, Response $response, $args) {
 
     $username = "dcmunhoz";
 
-    $result = $user->find()->fetch(true);
+    $user->findById(1);
 
-    var_dump($result);
+    var_dump($user->username);
     die;
 });

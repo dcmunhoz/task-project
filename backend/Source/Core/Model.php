@@ -20,13 +20,14 @@ abstract class Model{
     private $key;
 
     /** @var string */
-    private $filters;
+    private $terms;
 
     /** @var array */
     private $params;
 
     /**
      * Model constructor
+     * 
      * @param string $entity Database entity
      * @param string $key Table primary key
      */
@@ -60,6 +61,12 @@ abstract class Model{
 
     /**
      * 
+     * Find in database using terms or not to return specific data.
+     * 
+     * @param string $terms Where clause to filter results
+     * @param string $param Parameters to bind on where
+     * @param string $columns Columns to return from te result
+     * 
      */
     public function find(?string $terms = null, ?string $params = null, string $columns = "*"): Model {
 
@@ -68,14 +75,29 @@ abstract class Model{
             \parse_str($params, $this->params); 
         }
 
-        $this->query = "SELECT {$columns} FROM {$this->entity} {$this->terms}";
+        $this->query = "SELECT {$columns} FROM {$this->entity}";
 
         return $this;
 
     }
 
+    public function findById(int $id){
+
+        $this->query = "SELECT * FROM {$this->entity}";
+        $this->terms = "WHERE {$this->key} = :id";
+        \parse_str(":id={$id}", $this->params);
+
+        $result = $this->fetch();
+
+        $this->setData($result);
+
+    }
+
     public function fetch(bool $all = false) {
-        $stmt = Connect::getInstance()->prepare($this->query);
+
+        $query = "{$this->query} {$this->terms}";
+
+        $stmt = Connect::getInstance()->prepare($query);
         $stmt->execute($this->params);
 
         if (!$stmt->rowCount()) {
@@ -91,6 +113,20 @@ abstract class Model{
         }
 
         return $stmt->fetch();
+
+    }
+
+    public function setData($data){
+
+        if (!empty($data)) {
+            foreach($data as $key => $value){
+
+                $this->{$key} = $value;
+    
+            }
+        }
+
+
 
     }
 
