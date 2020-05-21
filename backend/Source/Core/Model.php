@@ -164,10 +164,27 @@ abstract class Model{
                 return true;
             }
 
-        }catch(\PDOException $e){
-            throw new \PDOException($e->getMessage());
+        }catch(\Exception $e){
+            throw new \Exception($e->getMessage());
                         
         }
+    }
+
+    public function save(){
+
+        /** CREATE */
+        if (empty($this->data->{$this->key})) {
+
+            $result = $this->create();
+            $this->findById((Int) $result);
+
+        } else { /** UPDATE */
+
+            $this->update();
+            $this->findById((Int) $this->data->{$this->key});
+
+        }
+
     }
 
     /**

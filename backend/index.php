@@ -7,6 +7,8 @@ $app->addBodyParsingMiddleware();
 
 $app->addErrorMiddleware(true, false, false);
 
+
+
 require __DIR__ . '/source/Routes/admin.php';
 
 $app->run();
