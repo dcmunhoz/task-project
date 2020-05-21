@@ -8,7 +8,7 @@ use Source\Core\Connect;
 abstract class Model{
 
     /** @var object|null */
-    protected $data;
+    private $data;
 
     /** @var string|null */
     private $query;
@@ -20,20 +20,26 @@ abstract class Model{
     private $key;
 
     /** @var string */
-    private $filters;
+    private $terms;
 
     /** @var array */
     private $params;
 
+    /** @var array */
+    private $protected;
+
     /**
      * Model constructor
+     * 
      * @param string $entity Database entity
      * @param string $key Table primary key
      */
-    public function __construct(string $entity, string $key){
+    public function __construct(string $entity, string $key, array $protected = ["created_at", "updated_at"]){
 
         $this->entity = $entity;
         $this->key = $key;
+        $this->protected = $protected;
+        $this->protected[] = $key;
 
     }
 
@@ -60,22 +66,50 @@ abstract class Model{
 
     /**
      * 
+     * Find in database using terms or not to return specific data.
+     * 
+     * @param string $terms Where clause to filter results
+     * @param string $param Parameters to bind on where
+     * @param string $columns Columns to return from te result
+     * 
      */
     public function find(?string $terms = null, ?string $params = null, string $columns = "*"): Model {
 
         if ($terms){
             $this->terms = "WHERE " . $terms;
+        }
+
+        if ($params) {
             \parse_str($params, $this->params); 
         }
 
-        $this->query = "SELECT {$columns} FROM {$this->entity} {$this->terms}";
+        $this->query = "SELECT {$columns} FROM {$this->entity}";
 
         return $this;
 
     }
 
+    /**
+     * @param int $id
+     */
+    public function findById(int $id){
+
+        $result = $this->find("{$this->key} = $id ")->fetch();
+
+        if ($result){
+            $this->setData($result);
+        }
+
+    }
+
+    /**
+     * @param bool $all
+     */
     public function fetch(bool $all = false) {
-        $stmt = Connect::getInstance()->prepare($this->query);
+
+        $query = "{$this->query} {$this->terms}";
+
+        $stmt = Connect::getInstance()->prepare($query);
         $stmt->execute($this->params);
 
         if (!$stmt->rowCount()) {
@@ -91,6 +125,101 @@ abstract class Model{
         }
 
         return $stmt->fetch();
+    }
+
+    public function create() {
+
+        try{
+            $keys = \array_keys((Array)$this->data);
+            $keys = \implode(", ", $keys);
+            $values = "'" . \implode("', '", (Array)$this->data) . "'";
+            $stmt = Connect::getInstance()->prepare("INSERT INTO {$this->entity} ({$keys}) VALUES({$values})");
+            $stmt->execute();
+
+            return Connect::getInstance()->lastInsertId();
+
+        }catch(\PDOException $e){
+
+            throw new \PDOException($e->getMessage());
+            
+
+        }
+    }
+
+    public function update(string $filter = ""){
+        try{
+            
+            foreach ((Array) $this->data as $key => $value) {
+
+                if (!in_array($key, $this->protected)) {
+                    $dataset[] = "{$key} = :{$key}";
+                    $data[":" . $key] = $value;
+                }
+
+            }
+
+            $dataset = \implode(', ', $dataset);
+
+            $stmt = Connect::getInstance()->prepare("UPDATE {$this->entity} SET {$dataset} WHERE {$this->key} = {$this->data->{$this->key}}");
+            $stmt->execute($data);
+
+            if ($stmt->rowCount() >= 0) {
+                return true;
+            }
+
+        }catch(\Exception $e){
+            throw new \Exception($e->getMessage());
+                        
+        }
+    }
+
+    public function save(){
+
+        /** CREATE */
+        if (empty($this->data->{$this->key})) {
+
+            $result = $this->create();
+            $this->findById((Int) $result);
+
+        } else { /** UPDATE */
+
+            $this->update();
+            $this->findById((Int) $this->data->{$this->key});
+
+        }
+
+    }
+
+    public function destroy(){
+        
+        $data = (Array) $this->data;
+
+        if (isset($data[$this->key]) && !empty($data[$this->key])) {
+
+            $stmt = Connect::getInstance()->prepare("DELETE FROM {$this->entity} WHERE {$this->key} = :{$this->key}");
+            $stmt->execute([":{$this->key}" => $data[$this->key]]);
+            
+            if ($stmt->rowCount() >= 0) {
+
+                return true;
+
+            }
+        }
+
+    }
+    
+    /**
+     * @param object $data
+     */
+    public function setData(object $data){
+
+        if (!empty($data)) {
+            foreach($data as $key => $value){
+
+                $this->{$key} = $value;
+    
+            }
+        }
 
     }
 

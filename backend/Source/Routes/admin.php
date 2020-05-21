@@ -8,11 +8,11 @@ use Source\Models\User;
 $app->get('/', function (Request $request, Response $response, $args) {
 
     $user = new User();
-
-    $username = "dcmunhoz";
-
-    $result = $user->find()->fetch(true);
-
-    var_dump($result);
+    $user->username = "usuariot";
+    $user->password = "teste";
+    $user->email = "teste@1234.com";
+    $user->save();
+    $user->destroy();
     die;
+
 });

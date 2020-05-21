@@ -12,5 +12,4 @@ class User extends Model{
         parent::__construct("users", "id_user");
 
     }
-
 }
