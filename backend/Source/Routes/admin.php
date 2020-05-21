@@ -6,5 +6,13 @@ use Source\Core\Model;
 use Source\Models\User;
 
 $app->get('/', function (Request $request, Response $response, $args) {
-    
+
+    $user = new User();
+    $user->username = "usuariot";
+    $user->password = "teste";
+    $user->email = "teste@1234.com";
+    $user->save();
+    $user->destroy();
+    die;
+
 });
