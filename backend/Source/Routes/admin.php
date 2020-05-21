@@ -9,10 +9,22 @@ $app->get('/', function (Request $request, Response $response, $args) {
 
     $user = new User();
 
-    $username = "dcmunhoz";
+    // $user->username = "createtest";
+    // $user->password = "teste";
+    // $user->email = "teste@email.com";
 
-    $user->findById(1);
+    // $result = $user->create();
 
-    var_dump($user->username);
+    $user->findById(20);
+
+    $user->username = "novouser4";
+    $user->password = "senha";
+    
+    if ($user->update()) {
+        $user->findById(20);
+    }
+
+    var_dump($user);
+
     die;
 });
