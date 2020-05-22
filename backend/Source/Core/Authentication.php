@@ -18,14 +18,14 @@ class Authentication {
      * 
      * @return string
      */
-    public static function auth(string $username, string $password): string
+    public static function auth(string $username, string $password)
     {
 
         $user = new User();
         $result = $user->find("username = :username and password = :password", ":username=$username&:password=$password")->fetch();
         
         if (!$result) {
-            throw new \Exception("Usuário não encontrado");
+            return false;
         } 
 
         $user->setData($result);

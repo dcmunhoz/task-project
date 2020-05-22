@@ -3,10 +3,12 @@ require __DIR__ . '/vendor/autoload.php';
 use Slim\Factory\AppFactory;
 
 $app = AppFactory::create();
+$app->addErrorMiddleware(true, false, false);
 $app->addBodyParsingMiddleware();
 
-$app->addErrorMiddleware(true, false, false);
+$app->add(new Source\Middlewares\Cors());
 
+require __DIR__ . '/source/Routes/routes.php';
 require __DIR__ . '/source/Routes/admin.php';
 
 $app->run();

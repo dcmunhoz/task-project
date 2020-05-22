@@ -114,7 +114,7 @@ abstract class Model{
      * 
      * @param bool $all
      */
-    public function fetch(bool $all = false): object 
+    public function fetch(bool $all = false): ?object 
     {
 
         $query = "{$this->query} {$this->terms}";

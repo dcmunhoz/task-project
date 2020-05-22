@@ -6,9 +6,27 @@ import Button from './../../components/Button';
 
 import './style.css';
 
+import httpRequest from './../../http';
+
 const Login = () => {
-    let [user, setUser] = useState("");
+    let [username, setUser] = useState("");
     let [password, setPassword] = useState("");
+
+    async function handleLogin(){
+
+        let response = await httpRequest("POST", "/login", {
+            username,
+            password
+        })          
+        
+        if (!response){
+            console.log("não autorizado");
+            return;
+        }
+
+        console.log("autorizado")
+
+    }
 
 
 
@@ -27,14 +45,14 @@ const Login = () => {
                         <Input 
                             placeholder="Entre com seu usuário."
                             icon="FaUser"
-                            value={user}
-                            onChange={(e)=> {setUser(e.value)}}
+                            value={username}
+                            onChange={(e)=> {setUser(e.target.value)}}
                         />
                         <Input 
                             placeholder="Agora com sua senha."
                             icon="FaKey"
                             value={password}
-                            onChange={(e) => {setPassword(e.value)}}
+                            onChange={(e) => {setPassword(e.target.value)}}
                         />
                         <p>Esqueceu sua senha? <a href="">Clique Aqui !</a></p>
                     </section>
@@ -43,6 +61,7 @@ const Login = () => {
                         <Button
                             color="green"
                             icon="FaSignInAlt"
+                            onClick={handleLogin}
                         >
                             Entrar
                         </Button>
