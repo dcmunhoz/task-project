@@ -14,17 +14,18 @@ async function httpRequest(method, url, params = {}, config = {}){
         break;
         case "GET":
             response = await http.get(url, params, config);
-            
     }
 
-    let { success } = response.data;
+    const { data } = response;
 
-    if (success) {
-        return response.data;
-    } else {
-        alert("opppps " + response.data.payload);
-        return false;
+    if (data.error && data.error.type === "sys") {
+
+        console.error(data.error);
+        alert("Oppps...\n Parece que houve um erro interno, contate um administrador");
+        
     }
+    
+    return response;    
 }
 
 export default httpRequest;

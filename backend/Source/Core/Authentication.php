@@ -25,8 +25,22 @@ class Authentication {
         $result = $user->find("username = :username and password = :password", ":username=$username&:password=$password")->fetch();
         
         if (!$result) {
-            return false;
-        } 
+            if ($user->fail) {
+                $response = [
+                    "error" => [
+                        "type" => "sys",
+                        "message" => $user->fail,
+                        "from" => self::class
+                    ]
+                ];
+                return $response;
+            }
+
+            $response = [
+                "error"=> "Usuário ou senha incorretos"
+            ];
+            return $response;
+        }
 
         $user->setData($result);
 

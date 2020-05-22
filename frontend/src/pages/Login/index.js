@@ -1,4 +1,5 @@
 import React,{ useState } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 
 import Container from './../../components/Container';
 import Input from './../../components/Input';
@@ -6,11 +7,14 @@ import Button from './../../components/Button';
 
 import './style.css';
 
-import httpRequest from './../../http';
+import httpRequest from '../../services/http';
+
+import auth from './../../services/auth';
 
 const Login = () => {
     let [username, setUser] = useState("");
     let [password, setPassword] = useState("");
+    let history = useHistory();
 
     async function handleLogin(){
 
@@ -19,16 +23,18 @@ const Login = () => {
             password
         })          
         
-        if (!response){
-            console.log("não autorizado");
-            return;
+        const { data } = response;
+ 
+        if (data.error) {
+            if (data.error.type !== "sys") alert(data.error);
+            return
         }
 
-        console.log("autorizado")
+        await auth.authenticate(data);
+
+        history.push("/");    
 
     }
-
-
 
     return (
         <Container>

@@ -28,6 +28,9 @@ abstract class Model{
     /** @var array */
     private $protected;
 
+    /** @var */
+    public $fail;
+
     /**
      * Model constructor
      * 
@@ -114,27 +117,34 @@ abstract class Model{
      * 
      * @param bool $all
      */
-    public function fetch(bool $all = false): ?object 
+    public function fetch(bool $all = false) 
     {
+        try{
 
-        $query = "{$this->query} {$this->terms}";
+            $query = "{$this->query}a {$this->terms}";
+            Connect::getInstance()->beginTransaction();
+            $stmt = Connect::getInstance()->prepare($query);
+            $stmt->execute($this->params);
+    
+            if (!$stmt->rowCount()) {
+                return false;
+            }
+    
+            if ($all) {
+                
+                return $stmt->fetchAll();
+                
+            }
 
-        $stmt = Connect::getInstance()->prepare($query);
-        $stmt->execute($this->params);
-
-        if (!$stmt->rowCount()) {
-
-            return null;
-
-        }
-
-        if ($all) {
+            return $stmt->fetch();
             
-            return $stmt->fetchAll();
+        }catch (\PDOException $e) {
 
+            Connect::getInstance()->rollBack();
+            $this->fail = $e->getMessage() . " \n \n [QUERY]: $query";
+            return false;
         }
-
-        return $stmt->fetch(); 
+        
     }
 
     /** Insert on database */

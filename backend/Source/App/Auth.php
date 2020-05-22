@@ -15,20 +15,14 @@ class Auth{
 
         $result = Authentication::auth($body['username'], $body['password']);
 
-        if (!$result){
-            $res->getBody()->write(\json_encode([
-                "success"=>false,
-                "payload"=>"Usuário ou senha incorreto."
-            ]));
-            return $res;
+        if (isset($result["error"])){
+            $res->getBody()->write(\json_encode($result));
+            $response = $res->withHeader("Content-Type", "application/json");
+            return $response;
         }
 
-        $res->getBody()->write(\json_encode([
-            "success"=>true,
-            "payload"=>$result
-        ]));        
-
-        return $res;
+        $res->getBody()->write($result);        
+        return $res->withHeader("Content-Type", "application/json");
 
     }
 
