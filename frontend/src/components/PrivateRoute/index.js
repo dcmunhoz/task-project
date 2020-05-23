@@ -1,26 +1,26 @@
-import React from 'react';
+import React, { useEffect, Component } from 'react';
 import { Route, Redirect } from 'react-router-dom'; 
 
 import auth from './../../services/auth';
 
-function PrivateRoute({ children, ...rest }) {
-    return (
-      <Route
-        {...rest}
-        render={({ location }) =>
-          (auth.isAuthenticates()) ? (
-            children
-          ) : (
-            <Redirect
-              to={{
-                pathname: "/login",
-                state: { from: location }
-              }}
-            />
-          )
-        }
-      />
-    );
-  }
+function PrivateRoute({component: Component, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        (!auth.isAuthenticated()) ? (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: props.location }
+            }}
+          />
+        ) : (
+          <Component {...props} />
+        )
+      }
+    />
+  );
+}
 
 export default PrivateRoute;

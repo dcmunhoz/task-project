@@ -49,6 +49,12 @@ a:hover{
     color: var(--link-h);
 }
 
+.icon{
+    position: relative;
+    left: 3px;
+    top: 2px;
+}
+
 .icon path{
     color: #FFF;
 }

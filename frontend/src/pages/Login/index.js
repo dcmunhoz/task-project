@@ -1,20 +1,22 @@
 import React,{ useState } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import Container from './../../components/Container';
 import Input from './../../components/Input';
 import Button from './../../components/Button';
 
-import './style.css';
-
 import httpRequest from '../../services/http';
-
 import auth from './../../services/auth';
+
+import './style.css';
 
 const Login = () => {
     let [username, setUser] = useState("");
     let [password, setPassword] = useState("");
+    let dispatch = useDispatch();
     let history = useHistory();
+
 
     async function handleLogin(){
 
@@ -24,9 +26,15 @@ const Login = () => {
         })          
         
         const { data } = response;
- 
+
         if (data.error) {
-            if (data.error.type !== "sys") alert(data.error);
+            if (data.error.type !== "sys")
+            dispatch({
+                type: "SHOW_MODAL_MESSAGE",
+                payload: {
+                    message: data.error
+                }
+            });;
             return
         }
 

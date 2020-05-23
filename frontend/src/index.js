@@ -1,28 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 
-import PrivateRoute from './components/PrivateRoute'
-import Login from './pages/Login';
-import Main from './pages/Main';
-
-import auth from './services/auth';
+import App from './App';
 
 import './index.css';
 
-
+const defaultStore = store();
 
 ReactDOM.render(
-  <Router>
-    <Switch>
-      <Route exact path="/login">
-        <Login />
-      </Route>
-      <PrivateRoute path="/">
-        <Main/>
-      </PrivateRoute>
-    </Switch>
-  </Router>
-  ,
-  document.getElementById('root')
+  <Provider store={defaultStore}>
+    <App />
+  </Provider>
+  , document.getElementById('root')
 );
