@@ -121,7 +121,7 @@ abstract class Model{
     {
         try{
 
-            $query = "{$this->query}a {$this->terms}";
+            $query = "{$this->query} {$this->terms}";
             Connect::getInstance()->beginTransaction();
             $stmt = Connect::getInstance()->prepare($query);
             $stmt->execute($this->params);

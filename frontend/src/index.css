@@ -3,9 +3,11 @@
 
 :root{
     
+    /* TEXTS */
     --text-dark: #263238;
     --text-light: #D7D7D7;
 
+    /* BUTTONS */
     --btn-green:   #00ADB5;
     --btn-green-h: #008b92;
     --btn-blue: #005792;
@@ -15,6 +17,7 @@
     --btn-yellow: #e9d520;
     --btn-yellow-h: #cfbd18;
 
+    /* LINKS */
     --link: #00ADB5;
     --link-h: #008b92;
 

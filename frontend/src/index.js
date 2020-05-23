@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import PrivateRoute from './components/PrivateRoute'
 import Login from './pages/Login';
+import Main from './pages/Main';
 
 import auth from './services/auth';
 
@@ -18,8 +19,7 @@ ReactDOM.render(
         <Login />
       </Route>
       <PrivateRoute path="/">
-        <h1>Pagina Principal</h1>
-        <p>Logado como: {auth.getToken()}</p>
+        <Main/>
       </PrivateRoute>
     </Switch>
   </Router>
