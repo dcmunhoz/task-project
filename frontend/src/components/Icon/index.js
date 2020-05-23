@@ -4,12 +4,14 @@ import { IconContext } from 'react-icons';
 
 import './style.css';
 
-const Icon = ({iconName, color = "#FFF"}) => {
+const Icon = ({iconName, color = "#FFF", className}) => {
     let CustomIcon = RI[iconName];
     return(
         
         <IconContext.Provider value={{ color, className:"icon"}}>
-            <CustomIcon  />
+            <CustomIcon 
+                className={className}
+            />
         </IconContext.Provider>
 
     );

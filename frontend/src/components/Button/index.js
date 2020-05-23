@@ -7,8 +7,8 @@ const Button = (props) =>{
 
     return(
         <button 
-            className={`btn ${(props.color) ? 'btn_' + props.color : ''} ${(props.size) ? 'btn_' + props.size : ''}`} 
-            onClick={props.action} 
+            className={`btn ${props.className} ${(props.color) ? 'btn_' + props.color : ''} ${(props.size) ? 'btn_' + props.size : ''}`} 
+            onClick={props.onClick} 
         > 
 
             {(props.icon) ? <Icon iconName={props.icon} color={props.iconColor} /> : null }      

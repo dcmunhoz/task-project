@@ -1,4 +1,5 @@
 import React,{ useState } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 
 import Container from './../../components/Container';
 import Input from './../../components/Input';
@@ -6,11 +7,34 @@ import Button from './../../components/Button';
 
 import './style.css';
 
+import httpRequest from '../../services/http';
+
+import auth from './../../services/auth';
+
 const Login = () => {
-    let [user, setUser] = useState("");
+    let [username, setUser] = useState("");
     let [password, setPassword] = useState("");
+    let history = useHistory();
 
+    async function handleLogin(){
 
+        let response = await httpRequest("POST", "/login", {
+            username,
+            password
+        })          
+        
+        const { data } = response;
+ 
+        if (data.error) {
+            if (data.error.type !== "sys") alert(data.error);
+            return
+        }
+
+        await auth.authenticate(data);
+
+        history.push("/");    
+
+    }
 
     return (
         <Container>
@@ -27,14 +51,14 @@ const Login = () => {
                         <Input 
                             placeholder="Entre com seu usuário."
                             icon="FaUser"
-                            value={user}
-                            onChange={(e)=> {setUser(e.value)}}
+                            value={username}
+                            onChange={(e)=> {setUser(e.target.value)}}
                         />
                         <Input 
                             placeholder="Agora com sua senha."
                             icon="FaKey"
                             value={password}
-                            onChange={(e) => {setPassword(e.value)}}
+                            onChange={(e) => {setPassword(e.target.value)}}
                         />
                         <p>Esqueceu sua senha? <a href="">Clique Aqui !</a></p>
                     </section>
@@ -43,6 +67,7 @@ const Login = () => {
                         <Button
                             color="green"
                             icon="FaSignInAlt"
+                            onClick={handleLogin}
                         >
                             Entrar
                         </Button>
