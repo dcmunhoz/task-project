@@ -40,15 +40,15 @@
     margin-bottom: 20px;
 }
 
-.modal header .modal-close{
+.modal-close{
     font-size: 24px;
 }
 
-.modal header .modal-close:hover .icon path{
+.modal-close:hover .icon path{
     color: var(--btn-red);
 }
 
-.modal header .modal-close .icon path{
+.modal-close .icon path{
     color: var(--text-light);
     transition: 150ms;
 }

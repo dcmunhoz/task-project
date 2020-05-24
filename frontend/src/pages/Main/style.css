@@ -51,6 +51,7 @@
 
 .sidebar .menu-items nav ul li {
     padding: 0 10px;
+    list-style: none;
 }
 
 .sidebar .menu-items nav ul li a,

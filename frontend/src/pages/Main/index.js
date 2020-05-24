@@ -8,6 +8,8 @@ import Cards from './../Cards';
 import Container from './../../components/Container';
 import Icon from './../../components/Icon';
 import Button from './../../components/Button';
+import NewTicket from './components/NewTicket';
+
 
 import './style.css';
 
@@ -15,6 +17,7 @@ export default function Main(){
     return(
         <Container> 
             <Router>
+                <NewTicket  />
                 <aside className="sidebar">
                     <header className="toggler">
                         <Icon 
