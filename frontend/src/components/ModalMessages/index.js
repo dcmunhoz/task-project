@@ -10,7 +10,6 @@ export default function ModalMessages(){
     const dispatch = useDispatch();
 
     function handleCloseModal(e){
-        console.log(e.target, e.currentTarget)
         if (e.target === e.currentTarget) {
            
         }

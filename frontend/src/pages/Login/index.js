@@ -5,8 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Container from './../../components/Container';
 import Input from './../../components/Input';
 import Button from './../../components/Button';
-
-import httpRequest from '../../services/http';
+import useHttp from '../../services/useHttp';
 import auth from './../../services/auth';
 
 import './style.css';
@@ -16,6 +15,7 @@ const Login = () => {
     let [password, setPassword] = useState("");
     let dispatch = useDispatch();
     let history = useHistory();
+    let httpRequest = useHttp();
 
 
     async function handleLogin(){
@@ -23,7 +23,7 @@ const Login = () => {
         let response = await httpRequest("POST", "/login", {
             username,
             password
-        })          
+        });          
         
         const { data } = response;
 
