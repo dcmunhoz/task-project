@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Icon from './../../../../components/Icon';
 import NewTaskInput from './components/NewTaskInput';
 import Select from './../../../../components/Select';
+import Button from './../../../../components/Button';
+import TextArea from './../../../../components/TextArea';
 
 import './style.css';
 
@@ -40,7 +42,7 @@ const users = [
 
 const NewTicket = () =>{
     return(
-        <div className="new-ticket-container">
+        <div className="new-ticket-container show">
             <section className="new-ticket-modal">
                 
                 <header className="modal-header">
@@ -73,10 +75,47 @@ const NewTicket = () =>{
                             Integrantes
                         </span>
                         <div className="block-content">
-                            <button className="rouded-button">
-                                a
-                            </button>
+                            <Button 
+                                icon="FaPlus" 
+                                size="sm"
+                                className="rouded-button"
+                            />
                         </div>
+                    </div>
+                </div>
+
+                <div className="new-ticket-options">
+                    <div className="options-block">
+                        <span className="block-title">
+                            Etiquetas
+                        </span>
+                        <div className="block-content">
+                             <Button 
+                                icon="FaPlus" 
+                                size="sm"
+                                className="label-button"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="new-ticket-options">
+                    <div className="options-block full">
+                        <span className="block-title">
+                            Descrição
+                        </span>
+                        <div className="block-content">
+                            <TextArea></TextArea>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="new-ticket-options">
+                    <div className="options-block full">
+                       <Button
+                            icon="FaCheck"
+                            color="blue"
+                        > Abrir Tarefa </Button>
                     </div>
                 </div>
 
