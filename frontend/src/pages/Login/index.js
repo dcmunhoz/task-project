@@ -1,6 +1,6 @@
 import React,{ useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import Container from './../../components/Container';
 import Input from './../../components/Input';
@@ -15,6 +15,7 @@ const Login = () => {
     let [password, setPassword] = useState("");
     let dispatch = useDispatch();
     let history = useHistory();
+    let location = useLocation();
     let httpRequest = useHttp();
 
 
@@ -40,7 +41,7 @@ const Login = () => {
 
         await auth.authenticate(data);
 
-        history.push("/");    
+        history.replace("/");
 
     }
 
