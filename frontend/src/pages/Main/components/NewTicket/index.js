@@ -42,7 +42,7 @@ const users = [
 
 const NewTicket = () =>{
     return(
-        <div className="new-ticket-container show">
+        <div className="new-ticket-container show_">
             <section className="new-ticket-modal">
                 
                 <header className="modal-header">

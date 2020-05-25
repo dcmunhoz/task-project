@@ -1,0 +1,131 @@
+:root{
+    --animation-time: 500ms;
+}
+
+/* SIDEBAR */
+.sidebar{
+    background-color: #030C17;
+    height: 100%;
+    max-width: 210px;
+    color: var(--text-light);
+    position: relative;
+    transition: var(--animation-time);
+    overflow: none;
+}
+
+.sidebar.closed{
+    max-width: 60px;
+}
+
+.sidebar .toggler{
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 5px 0;
+    position: relative;
+    
+}
+
+.sidebar.closed .toggler{
+    right: 7px;
+}
+
+.sidebar .toggler .icon{
+    font-size: 28px;
+}
+
+.sidebar .profile-info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid #37474F;
+    box-sizing: border-box;
+    padding-top: 10px;
+}
+
+.sidebar .profile-info .user-avatar{
+    padding-bottom: 8px;
+}
+
+.sidebar .profile-info .user-avatar img{
+    max-width: 90px;
+    border-radius: 50px;
+    border: 2px solid #afafaf;
+    transition: var(--animation-time);
+}
+
+.sidebar.closed .profile-info .user-avatar img{
+    max-width: 39px;
+}
+
+.sidebar .profile-info .user-name{
+    font-weight: 600;
+    font-size: 16px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    padding-bottom: 25px;
+    width: 100%;
+    text-align: center;
+    min-width: 210px;
+    transition: var(--animation-time);
+}
+
+.sidebar.closed .profile-info .user-name{
+    opacity: 0;
+    font-size: 0px;
+    padding-bottom: 0px;
+}
+
+.sidebar .menu-items{
+    margin-top: 20px;
+}
+
+.sidebar .menu-items nav ul li {
+    padding: 0 10px;
+    list-style: none;
+    overflow: hidden;
+}
+
+.sidebar .menu-items nav ul li a .screen-title,
+.sidebar .sidebar-footer a .footer-title{
+    color: var(--text-light);
+    transition: var(--animation-time);
+    position: absolute;
+    margin-left: 10px;
+}
+.sidebar.closed .menu-items nav ul li a .screen-title,
+.sidebar.closed .sidebar-footer a .footer-title{
+    position: absolute;
+    font-size: 0px;
+
+}
+
+.sidebar .menu-items nav ul li a,
+.sidebar .sidebar-footer a{
+    display: flex;
+    color: var(--text-light);
+    padding: 10px 10px;
+    display: block;
+    width: 100%;
+    border-radius: 5px;
+    overflow: hidden;
+    flex-wrap: nowrap;
+}
+
+.sidebar .menu-items nav ul li a:hover,
+.sidebar .sidebar-footer a:hover{
+    background-color: #112D4E;
+    padding-left: 20px;
+}
+
+.sidebar.closed .menu-items nav ul li a:hover,
+.sidebar.closed .sidebar-footer a:hover{
+    padding: 10px;
+}
+
+.sidebar .sidebar-footer{
+    padding: 0 10px;
+    width: 100%;
+    position: absolute;
+    bottom: 50px;
+}
