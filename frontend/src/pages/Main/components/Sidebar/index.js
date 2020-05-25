@@ -1,23 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Icon from './../../../../components/Icon';
 
 import './style.css'
 
 const Sidebar = ({screens}) => {
-    const [closed, setClosed] = useState(false);
+    const [closed, setClosed] = useState(true);
     const [toggleIcon, setToggle] = useState('FaAngleDoubleLeft');
+    const [activeScreen, setActiveScreen] = useState('');
+    const history = useHistory();
+
+    useEffect(()=>{
+        screens.forEach((screen)=>{
+            
+            if (screen.default) {
+                setActiveScreen(screen.title)
+                history.push(screen.path);
+            }
+        })
+    }, [])
 
     useEffect(() => {
 
-        setToggle((closed) ? "FaBars" : 'FaAngleDoubleLeft')
+        setToggle((closed) ? "FaAngleDoubleRight" : 'FaAngleDoubleLeft')
 
     },[closed])
 
     function handleToggleSidebar(){ 
         setClosed((closed) ? false : true);
     }
-
+    
     return(
         <aside className={`sidebar ${(closed) ? 'closed' : ''}`}>
             <header className="toggler" >
@@ -42,20 +54,26 @@ const Sidebar = ({screens}) => {
             <div className="menu-items">
                 <nav>
                     <ul>
-                        { screens.map((screen, i)=>(
-                            <li>
-                                <Link to={screen.path}> 
-                                    <Icon iconName={screen.icon} /> <span className="screen-title">{screen.title}</span>
-                                </Link>
-                            </li>
-                        )) }
+                        { screens.map((screen, i)=>{
+                            return(
+                                <li key={i}>
+                                    <Link 
+                                        to={screen.path} 
+                                        onClick={()=>{setActiveScreen(screen.title)}}
+                                        className={(activeScreen == screen.title) ? 'active' : ''}
+                                    > 
+                                        <Icon iconName={screen.icon} /> <span className="screen-title">{screen.title}</span>
+                                    </Link>
+                                </li>
+                            )
+                        })}
                     </ul>
                 </nav>                    
             </div>  
 
             <footer className="sidebar-footer">
                 <a href="">
-                    <Icon iconName="FaCog" /> <span class="footer-title">Configurações</span>                                 
+                    <Icon iconName="FaCog" /> <span className="footer-title">Configurações</span>                                 
                 </a>
             </footer>
 

@@ -40,9 +40,19 @@ const users = [
 
 ]
 
-const NewTicket = () =>{
+const NewTicket = ({showModal, setModal}) =>{
+
+    function handleCloseNTModal(e){
+        if (e.target == e.currentTarget){
+            setModal(false);
+        }
+    }
+       
     return(
-        <div className="new-ticket-container show_">
+        <div 
+            className={`new-ticket-container ${(showModal) ? 'show' : ''}`}
+            onClick={handleCloseNTModal}
+        >
             <section className="new-ticket-modal">
                 
                 <header className="modal-header">
@@ -51,7 +61,7 @@ const NewTicket = () =>{
                     </div>                    
                     <div>
                         <div className="modal-close"
-                            onClick={() => {}}
+                            onClick={()=>{setModal(false)}}
                         >
                             <Icon 
                                 iconName="FaWindowClose"

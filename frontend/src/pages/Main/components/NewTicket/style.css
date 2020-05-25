@@ -6,22 +6,28 @@
     display: none;
     flex-direction: column;
     align-items: center;
-
+    background-color: rgba(0, 0, 0, 0.24);
+    opacity: 0;
 }
 
 .new-ticket-container.show{
     display: flex;
+    animation: showNTContainer 150ms ease forwards;
 }
 
 .new-ticket-container .new-ticket-modal{
     background-color: #F3F3F3;
     position: relative;
-    top: 100px;
+    top: 50px;
     width: 800px;
     border-radius: 5px;
     box-sizing: border-box;
     padding: 20px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.24);
+}
+
+.new-ticket-container.show .new-ticket-modal{
+    animation: bringModalNTDown 150ms ease forwards;
 }
 
 .new-ticket-modal .modal-header{
@@ -72,4 +78,20 @@
 
 .label-button{
 
+}
+
+@keyframes showNTContainer {
+    from {
+
+    }to{
+        opacity: 1;
+    }
+}
+
+@keyframes bringModalNTDown {
+    from{
+
+    }to{
+        top: 100px
+    }
 }

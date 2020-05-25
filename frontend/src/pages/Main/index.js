@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { HashRouter as Router, Link, Switch,  } from 'react-router-dom';
 
 import PrivateRoute from './../../components/PrivateRoute';
@@ -13,10 +13,19 @@ import Screens from './screens';
 import './style.css';
 
 export default function Main(){
+    const [showNewTicketModal, setModal] = useState(false);
+    
+    function handleShowNewTicketModal(){
+        setModal(true);
+    }
+
     return(
         <Container> 
             <Router>
-                <NewTicket  />
+                <NewTicket 
+                    showModal={showNewTicketModal} 
+                    setModal={setModal}
+                />
                 <Sidebar
                     screens={Screens}
                 />
@@ -28,6 +37,7 @@ export default function Main(){
                             icon="FaPlus"
                             size="md"
                             className="new-task"
+                            onClick={handleShowNewTicketModal}
                         >
                             Nova Tarefa
                         </Button>
@@ -42,7 +52,7 @@ export default function Main(){
                     <div className="inner-container">
                         <Switch>
                             {Screens.map((screen, i)=>(
-                                <PrivateRoute admin path={screen.path} component={screen.component} />
+                                <PrivateRoute key={i} admin path={screen.path} component={screen.component} />
                             ))}
                         </Switch>    
                     </div>

@@ -7,6 +7,7 @@ const Screens = [
         title: 'Dashboard',
         icon: "FaChartArea",
         path: '/dashboard',
+        default: true,
         component: Dashboard
     },{
         title: 'Tarefas',

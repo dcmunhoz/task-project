@@ -1,5 +1,5 @@
 :root{
-    --animation-time: 500ms;
+    --animation-time: 400ms;
 }
 
 /* SIDEBAR */
@@ -84,6 +84,7 @@
     padding: 0 10px;
     list-style: none;
     overflow: hidden;
+    margin-bottom: 5px;
 }
 
 .sidebar .menu-items nav ul li a .screen-title,
@@ -113,13 +114,18 @@
 }
 
 .sidebar .menu-items nav ul li a:hover,
-.sidebar .sidebar-footer a:hover{
+.sidebar .sidebar-footer a:hover,
+.sidebar .menu-items nav ul li a.active,
+.sidebar .sidebar-footer a.active
+{
     background-color: #112D4E;
     padding-left: 20px;
 }
 
 .sidebar.closed .menu-items nav ul li a:hover,
-.sidebar.closed .sidebar-footer a:hover{
+.sidebar.closed .sidebar-footer a:hover,
+.sidebar.closed .menu-items nav ul li a.active,
+.sidebar.closed .sidebar-footer a.active{
     padding: 10px;
 }
 
