@@ -1,38 +1,49 @@
 import React,{ useState } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import Container from './../../components/Container';
 import Input from './../../components/Input';
 import Button from './../../components/Button';
+import useHttp from '../../services/useHttp';
+import auth from './../../services/auth';
 
 import './style.css';
-
-import httpRequest from '../../services/http';
-
-import auth from './../../services/auth';
 
 const Login = () => {
     let [username, setUser] = useState("");
     let [password, setPassword] = useState("");
+    let dispatch = useDispatch();
     let history = useHistory();
+    let location = useLocation();
+    let httpRequest = useHttp();
+
 
     async function handleLogin(){
 
         let response = await httpRequest("POST", "/login", {
             username,
             password
-        })          
+        });          
         
+        if (!response) return false;
+
         const { data } = response;
- 
+
         if (data.error) {
-            if (data.error.type !== "sys") alert(data.error);
+            dispatch({
+                type: "SHOW_MODAL_MESSAGE",
+                payload: {
+                    title: "Oooops...",
+                    message: data.error
+                }
+            });;
             return
         }
 
         await auth.authenticate(data);
 
-        history.push("/");    
+        history.replace("/");
 
     }
 

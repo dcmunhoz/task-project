@@ -1,76 +1,96 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux';
+import { HashRouter as Router, Switch,  } from 'react-router-dom';
+
+import PrivateRoute from './../../components/PrivateRoute';
 
 import Container from './../../components/Container';
 import Icon from './../../components/Icon';
 import Button from './../../components/Button';
+import NewTicket from './components/NewTicket';
+import Sidebar from './components/Sidebar';
+import Screens from './screens';
+
+import useHttp from './../../services/useHttp';
 
 import './style.css';
 
 export default function Main(){
-    return(
+    const [showNewTicketModal, setModal] = useState(false);
+    const dispatch = useDispatch();
+    const httpRequest = useHttp();
 
-        <Container>
-            <aside className="sidebar">
-                <header className="toggler">
-                    <Icon 
-                        iconName="FaAngleDoubleLeft"
-                    />
-                </header>
-                <div className="profile-info">
-                    <div className="user-avatar">
-                        <img src="https://via.placeholder.com/1920" alt=""/>
-                    </div>
-                    <div className="user-name">
-                        Daniel Munhoz
-                    </div>
-                </div>
+    useEffect(()=>{
+        async function getUserdata() {
+            let response = await httpRequest("GET", "/user-authenticated");
 
-                <div className="menu-items">
-                    <nav>
-                        <ul>
-                            <li>
-                                <a href="">
-                                    <Icon iconName="FaChartArea"/> Dashboard
-                                </a>
-                            </li>
-                            <li>
-                                <a href="">
-                                    <Icon iconName="FaList" /> Tarefas                          
-                                </a>
-                            </li>
-                            <li>
-                                <a href="">
-                                    <Icon iconName="FaTable" /> Cartões                                    
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>                    
-                </div>  
-
-                <footer className="sidebar-footer">
-                    <a href="">
-                        <Icon iconName="FaCog" /> Configurações                                    
-                    </a>
-                </footer>
+            if(!response) return false;
     
-            </aside>
+            const { data } = response;
+    
+            if (data.erro){
+                dispatch({
+                    type: "SHOW_MODAL_MESSAGE",
+                    payload: {
+                        title: "Oooops...",
+                        message: data.error
+                    }
+                });;
+                return
+            }
+    
+            dispatch({
+                type: "SET_USER_DATA",
+                payload: data
+            });
+        }
+        
+        getUserdata();
+    });
+    
+    function handleShowNewTicketModal(){
+        setModal(true);
+    }
 
-            <header className="page-header">
-                <Button
-                    color="green"
-                    icon="FaPlus"
-                    size="md"
-                    className="new-task"
-                >
-                    Nova Tarefa
-                </Button>
+    return(
+        <Container> 
+            <Router>
+                <NewTicket 
+                    showModal={showNewTicketModal} 
+                    setModal={setModal}
+                />
+                <Sidebar
+                    screens={Screens}
+                />
 
-                <a href="" className="signout">
-                    <Icon
-                        iconName="FaSignOutAlt"
-                    />
-                </a>
-            </header>
+                <section className="main-container">
+                    <header className="page-header">
+                        <Button
+                            color="green"
+                            icon="FaPlus"
+                            size="md"
+                            className="new-task"
+                            onClick={handleShowNewTicketModal}
+                        >
+                            Nova Tarefa
+                        </Button>
+
+                        <a href="" className="signout">
+                            <Icon
+                                iconName="FaSignOutAlt"
+                            />
+                        </a>
+                    </header>
+
+                    <div className="inner-container">
+                        <Switch>
+                            {Screens.map((screen, i)=>(
+                                <PrivateRoute key={i} admin path={screen.path} component={screen.component} />
+                            ))}
+                        </Switch>    
+                    </div>
+                </section>
+            </Router>
         </Container>
        
 

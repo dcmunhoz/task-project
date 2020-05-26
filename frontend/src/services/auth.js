@@ -6,7 +6,7 @@ const methods = {
 
     },
 
-    isAuthenticates(){
+    isAuthenticated(){
 
         let token = sessionStorage.getItem("token");
 
@@ -19,7 +19,7 @@ const methods = {
     },
 
     getToken(){
-        return sessionStorage.getItem("token");
+        return sessionStorage.getItem("token") ?? '';
     }
 
 }

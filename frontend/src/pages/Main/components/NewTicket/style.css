@@ -1,0 +1,97 @@
+.new-ticket-container{
+    z-index: 1;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.24);
+    opacity: 0;
+}
+
+.new-ticket-container.show{
+    display: flex;
+    animation: showNTContainer 150ms ease forwards;
+}
+
+.new-ticket-container .new-ticket-modal{
+    background-color: #F3F3F3;
+    position: relative;
+    top: 50px;
+    width: 800px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding: 20px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.24);
+}
+
+.new-ticket-container.show .new-ticket-modal{
+    animation: bringModalNTDown 150ms ease forwards;
+}
+
+.new-ticket-modal .modal-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.new-ticket-modal .modal-close{
+    margin-left: 15px;
+    font-size: 24px;
+}
+
+.new-ticket-title{
+    display: flex;
+    width: 100%;
+}
+
+.new-ticket-options{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.new-ticket-options .options-block{
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.options-block .block-title{
+    color: #707070;
+    font-weight: bold;
+    
+}
+
+.options-block.full{
+    
+    width: 100%;
+}
+
+.block-content{
+    margin-top: 3px;
+}
+
+.rouded-button{
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.label-button{
+
+}
+
+@keyframes showNTContainer {
+    from {
+
+    }to{
+        opacity: 1;
+    }
+}
+
+@keyframes bringModalNTDown {
+    from{
+
+    }to{
+        top: 100px
+    }
+}
