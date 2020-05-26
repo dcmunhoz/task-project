@@ -50,6 +50,7 @@ class Authentication {
         ];
 
         $payload = [
+            "id"=> $user->id_user,
             "name"=> $user->username,
             "admin" => false
         ];
@@ -106,7 +107,7 @@ class Authentication {
      * 
      * @return array
      */
-    private static function decode(string $token): array
+    public static function decode(string $token): Object
     {
 
         self::isToken($token);

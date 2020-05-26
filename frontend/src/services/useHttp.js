@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
+import auth from './auth';
 
 const useHttp = () => {
     const http = axios.create({
@@ -14,14 +15,22 @@ const useHttp = () => {
             type:"SHOW_LOADING_SCREEN"
         });
 
+        const token = {
+            headers:{
+                Authorization: `Bearer ${auth.getToken()}`
+            }
+        };
+
+        const defaultConfig = { ...token, ...config };
+
         let response;
         
         switch(method){
             case "POST":
-                response = await http.post(url, params, config);
+                response = await http.post(url, params, defaultConfig);
             break;
             case "GET":
-                response = await http.get(url, params, config);
+                response = await http.get(url, defaultConfig);
         }
 
         dispatch({
@@ -30,11 +39,18 @@ const useHttp = () => {
 
         const { data } = response;
     
-        if (data.error && data.error.type === "sys") {
+        if (data.error && data.type === "sys") {
     
             console.error(data.error);
-            alert("Oppps...\n Parece que houve um erro interno, contate um administrador");
+            dispatch({
+                type: "SHOW_MODAL_MESSAGE",
+                payload: {
+                    title: "Erro Interno",
+                    message: "Oppps...\n \n Parece que houve um erro interno, contate um administrador para verificar o problema."
+                }
+            });;
             
+            return false;
         }
         
         return response;    

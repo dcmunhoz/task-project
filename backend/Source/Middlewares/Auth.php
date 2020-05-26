@@ -23,7 +23,8 @@ class Auth {
             if (!isset($headers['Authorization'])) {
 
                 $response->getBody()->write(\json_encode([
-                    "error" => "Token de autorização não encontrado ."
+                    "error" => "Token de autorização não encontrado .",
+                    "type" => "sys"
                 ]));
 
                 return $response->withStatus(200)
@@ -37,7 +38,8 @@ class Auth {
             $authorization = $headers['Authorization'][0];
             if (explode(" ", $authorization)[0] !== "Bearer") {
                 $response->getBody()->write(\json_encode([
-                    "error" => "Bearer não foi encontrado, verifque o cabeçalho de autorização."
+                    "error" => "Bearer não foi encontrado, verifque o cabeçalho de autorização.",
+                    "type" => "sys"
                 ]));
 
                 return $response->withStatus(200)
@@ -53,7 +55,8 @@ class Auth {
             if (!Authentication::validate($token)) {
 
                 $response->getBody()->write(\json_encode([
-                    "error" => "Token de autorização invalido, por favor, faça login novamente."
+                    "error" => "Token de autorização invalido, por favor, faça login novamente.",
+                    "type" => "sys"
                 ]));
 
                 return $response->withStatus(200)

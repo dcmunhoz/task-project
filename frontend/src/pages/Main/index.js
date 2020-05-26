@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { HashRouter as Router, Link, Switch,  } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux';
+import { HashRouter as Router, Switch,  } from 'react-router-dom';
 
 import PrivateRoute from './../../components/PrivateRoute';
 
@@ -10,10 +11,42 @@ import NewTicket from './components/NewTicket';
 import Sidebar from './components/Sidebar';
 import Screens from './screens';
 
+import useHttp from './../../services/useHttp';
+
 import './style.css';
 
 export default function Main(){
     const [showNewTicketModal, setModal] = useState(false);
+    const dispatch = useDispatch();
+    const httpRequest = useHttp();
+
+    useEffect(()=>{
+        async function getUserdata() {
+            let response = await httpRequest("GET", "/user-authenticated");
+
+            if(!response) return false;
+    
+            const { data } = response;
+    
+            if (data.erro){
+                dispatch({
+                    type: "SHOW_MODAL_MESSAGE",
+                    payload: {
+                        title: "Oooops...",
+                        message: data.error
+                    }
+                });;
+                return
+            }
+    
+            dispatch({
+                type: "SET_USER_DATA",
+                payload: data
+            });
+        }
+        
+        getUserdata();
+    });
     
     function handleShowNewTicketModal(){
         setModal(true);

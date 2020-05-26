@@ -8,7 +8,7 @@ export default function ModalReducer(state = INITIAL_STATE, action = {}){
     
     switch(action.type){
         case "SHOW_MODAL_MESSAGE":
-            return state = { ...state, show: true, message: action.payload.message  }
+            return state = { ...state, show: true, message: action.payload.message, title: action.payload.title  }
         case "CLOSE_MODAL_MESSAGE":
             return state  = {...state, show: false }
             

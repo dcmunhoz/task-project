@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Icon from './../../../../components/Icon';
+
 
 import './style.css'
 
 const Sidebar = ({screens}) => {
     const [closed, setClosed] = useState(true);
+    const [userName, setUserName] = useState("");
     const [toggleIcon, setToggle] = useState('FaAngleDoubleLeft');
     const [activeScreen, setActiveScreen] = useState('');
     const history = useHistory();
+    const { fullname } = useSelector(store => store.user);
 
     useEffect(()=>{
         screens.forEach((screen)=>{
@@ -17,8 +21,19 @@ const Sidebar = ({screens}) => {
                 setActiveScreen(screen.title)
                 history.push(screen.path);
             }
-        })
+        });
     }, [])
+
+    useEffect(()=>{
+
+        let arrayName = fullname.split(" ");
+
+        let firstName = arrayName[0];
+        let lastName = arrayName[arrayName.length - 1];
+
+        setUserName(firstName + " " + lastName);
+        
+    }, [fullname]);
 
     useEffect(() => {
 
@@ -47,7 +62,7 @@ const Sidebar = ({screens}) => {
                     <img src="https://via.placeholder.com/1920" alt=""/>
                 </div>
                 <div className="user-name">
-                    Daniel Munhoz
+                    { userName }
                 </div>
             </div>
 

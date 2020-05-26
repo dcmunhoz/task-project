@@ -26,13 +26,15 @@ const Login = () => {
             password
         });          
         
+        if (!response) return false;
+
         const { data } = response;
 
         if (data.error) {
-            if (data.error.type !== "sys")
             dispatch({
                 type: "SHOW_MODAL_MESSAGE",
                 payload: {
+                    title: "Oooops...",
                     message: data.error
                 }
             });;
