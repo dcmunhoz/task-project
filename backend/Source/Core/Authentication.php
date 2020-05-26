@@ -76,7 +76,7 @@ class Authentication {
      * 
      * @return bool
      */
-    private static function validate(string $token): bool
+    public static function validate(string $token): bool
     {
         
         self::isToken($token);

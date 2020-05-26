@@ -7,6 +7,7 @@ $app->addErrorMiddleware(true, false, false);
 $app->addBodyParsingMiddleware();
 
 $app->add(new Source\Middlewares\Cors());
+$app->add(new Source\Middlewares\Auth());
 
 require __DIR__ . '/source/Routes/routes.php';
 require __DIR__ . '/source/Routes/admin.php';
