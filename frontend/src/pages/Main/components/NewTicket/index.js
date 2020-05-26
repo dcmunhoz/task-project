@@ -1,53 +1,92 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Icon from './../../../../components/Icon';
 import NewTaskInput from './components/NewTaskInput';
 import Select from './../../../../components/Select';
 import Button from './../../../../components/Button';
 import TextArea from './../../../../components/TextArea';
+import useHttp from './../../../../services/useHttp';
 
 import './style.css';
 
-const users = [
-    {
-        id: 1,
-        name: 'Daniel Munhoz 1'
-    },{
-        id: 2,
-        name: 'Daniel Munhoz 2'
-    },{
-        id: 3,
-        name: 'Daniel Munhoz 3'
-    },{
-        id: 4,
-        name: 'Daniel Munhoz 4'
-    },{
-        id: 5,
-        name: 'Daniel Munhoz 5'
-    },{
-        id: 6,
-        name: 'Daniel Munhoz 6'
-    },{
-        id: 7,
-        name: 'Daniel Munhoz 7'
-    },{
-        id: 8,
-        name: 'Daniel Munhoz 8'
-    },{
-        id: 9,
-        name: 'Daniel Munhoz 9'
-    },
-
-]
-
 const NewTicket = ({showModal, setModal}) =>{
+    const httpRequest = useHttp();
+    const [users, setUsers] = useState([]);
+    const dispatch = useDispatch();
+    
+    const { id_user: idUserCreation } = useSelector(state => state.user);
+    const [idRequester, setRequester] = useState(0);
+    const [taskTitle, setTaskTitle] = useState("");
+    const [taskDescription, setTaskDescription] = useState("");
+
+    useEffect(()=>{
+        async function loadUsersList(){
+            const request = await httpRequest("GET", "/users")
+            if (!request)return false;
+            
+            const { data } = request;
+
+            if (data.error){
+                // Tratar erros
+                return false;
+            }
+
+            setUsers(data);
+
+        }
+
+        loadUsersList();
+    }, []);
 
     function handleCloseNTModal(e){
         if (e.target == e.currentTarget){
             setModal(false);
         }
     }
+
+    async function handleCreateNewTask(){
+
+        const task = {
+            title: taskTitle,
+            description: taskDescription,
+            id_requester: idRequester,
+            id_user_creation: idUserCreation
+        }
+
+        const response = await httpRequest("POST", '/task', task);
+
+        if (!response) return false;
+
+        const { data } = response;
+
+        if  (data.error){
+            dispatch({
+                type: "SHOW_MODAL_MESSAGE",
+                payload:{
+                    title: "Ooops...",
+                    message: `Houve um erro ao tentar cadastrar uma nova tarefa, por favor, contate um administrador`
+                }
+            });
+            return false;
+        }
        
+        dispatch({
+            type: "SHOW_MODAL_MESSAGE",
+            payload:{
+                title: "Sucesso",
+                message: `Tarefa [${data.id_task}]${data.title} criada com sucesso.`
+            }
+        });
+
+        setRequester(0);
+        setTaskTitle("");
+        setTaskDescription("");
+        setModal(false);
+
+
+    }
+
     return(
         <div 
             className={`new-ticket-container ${(showModal) ? 'show' : ''}`}
@@ -57,7 +96,10 @@ const NewTicket = ({showModal, setModal}) =>{
                 
                 <header className="modal-header">
                     <div className="new-ticket-title">
-                        <NewTaskInput />              
+                        <NewTaskInput 
+                            value={taskTitle}
+                            onChange={(e) => setTaskTitle(e.target.value)}
+                        />              
                     </div>                    
                     <div>
                         <div className="modal-close"
@@ -76,7 +118,11 @@ const NewTicket = ({showModal, setModal}) =>{
                             Solicitante
                         </span>
                         <div className="block-content">
-                            <Select data={users} />
+                            <Select 
+                                data={users} 
+                                value={idRequester}
+                                onChange={(e) => setRequester(e.target.value)}
+                            />
                         </div>
                     </div>
 
@@ -115,7 +161,10 @@ const NewTicket = ({showModal, setModal}) =>{
                             Descrição
                         </span>
                         <div className="block-content">
-                            <TextArea></TextArea>
+                            <TextArea
+                                value={taskDescription}
+                                onChange={(e)=>setTaskDescription(e.target.value)}
+                            ></TextArea>
                         </div>
                     </div>
                 </div>
@@ -125,6 +174,7 @@ const NewTicket = ({showModal, setModal}) =>{
                        <Button
                             icon="FaCheck"
                             color="blue"
+                            onClick={handleCreateNewTask}
                         > Abrir Tarefa </Button>
                     </div>
                 </div>

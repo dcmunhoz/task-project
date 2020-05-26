@@ -1,5 +1,5 @@
 .loading-screen{
-    z-index: 1;
+    z-index: 9999;
     position: fixed;
     display: none;
     width: 100%;

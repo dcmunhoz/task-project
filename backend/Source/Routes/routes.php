@@ -8,5 +8,6 @@ $app->group("/api", function($group) {
     $group->post("/login", Auth::class . ":login");
     $group->post("/task", TaskController::class . ":create");
     $group->get("/user-authenticated", UserController::class . ":authenticatedUser");
+    $group->get("/users", UserController::class . ":list");
 });
 

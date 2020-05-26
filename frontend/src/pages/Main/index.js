@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux';
-import { HashRouter as Router, Switch,  } from 'react-router-dom';
+import { HashRouter as Router, Switch, useHistory  } from 'react-router-dom';
 
 import PrivateRoute from './../../components/PrivateRoute';
 
@@ -12,6 +12,7 @@ import Sidebar from './components/Sidebar';
 import Screens from './screens';
 
 import useHttp from './../../services/useHttp';
+import auth from './../../services/auth';
 
 import './style.css';
 
@@ -19,6 +20,7 @@ export default function Main(){
     const [showNewTicketModal, setModal] = useState(false);
     const dispatch = useDispatch();
     const httpRequest = useHttp();
+    const history = useHistory();
 
     useEffect(()=>{
         async function getUserdata() {
@@ -46,10 +48,16 @@ export default function Main(){
         }
         
         getUserdata();
-    });
+    }, []);
     
     function handleShowNewTicketModal(){
         setModal(true);
+    }
+
+    function signout(e){
+        e.preventDefault();
+        auth.signout();        
+        history.push("/login");
     }
 
     return(
@@ -75,7 +83,10 @@ export default function Main(){
                             Nova Tarefa
                         </Button>
 
-                        <a href="" className="signout">
+                        <a 
+                            className="signout"
+                            onClick={signout}
+                        >
                             <Icon
                                 iconName="FaSignOutAlt"
                             />

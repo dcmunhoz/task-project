@@ -24,10 +24,8 @@ class TaskController {
         if (!$task->save()) {
     
             $response->getBody()->write(\json_encode([
-                "error"=> [
-                    "type"=>"sys",
-                    "message"=> $task->fail
-                ]
+                "error"=> $task->fail,
+                "type" => "sys"
             ]));
             
             return $response->withHeader("Content-Type", "application/json");
