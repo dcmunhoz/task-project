@@ -137,6 +137,7 @@ abstract class Model{
             }
 
             return $stmt->fetch();
+            Connect::getInstance()->commit();
             
         }catch (\PDOException $e) {
 
@@ -148,7 +149,7 @@ abstract class Model{
     }
 
     /** Insert on database */
-    public function create(): string
+    public function create()
     {
 
         try{
@@ -162,15 +163,19 @@ abstract class Model{
                 $dataset[":" . $key] = $value;
             }
 
+            Connect::getInstance()->beginTransaction();
             $stmt = Connect::getInstance()->prepare("INSERT INTO {$this->entity} ({$keys}) VALUES({$values})");
             $stmt->execute($dataset);
+            $lastId = Connect::getInstance()->lastInsertId();
+            Connect::getInstance()->commit();
 
-            return Connect::getInstance()->lastInsertId();
+            return $lastId;
+            
 
         }catch(\PDOException $e){
-
-            throw new \PDOException($e->getMessage());
-            
+            Connect::getInstance()->rollBack();
+            $this->fail = $e->getMessage() . " \n \n";
+            return false;
 
         }
     }
@@ -191,16 +196,19 @@ abstract class Model{
 
             $dataset = \implode(', ', $dataset);
 
+            Connect::getInstance()->beginTransaction();
             $stmt = Connect::getInstance()->prepare("UPDATE {$this->entity} SET {$dataset} WHERE {$this->key} = {$this->data->{$this->key}}");
             $stmt->execute($data);
+            Connect::getInstance()->commit();
 
             if ($stmt->rowCount() >= 0) {
                 return true;
             }
 
         }catch(\Exception $e){
-            throw new \Exception($e->getMessage());
-                        
+            Connect::getInstance()->rollBack();
+            $this->fail = $e->getMessage() . " \n \n [QUERY]: $query";
+            return false;
         }
     }
 
@@ -208,21 +216,28 @@ abstract class Model{
      * Save the object in database based on id, 
      * if is set then update a record else create them
      */
-    public function save(): void
+    public function save(): bool
     {
 
         /** CREATE */
         if (empty($this->data->{$this->key})) {
 
             $result = $this->create();
+            if (!$result){
+                return false;
+            }
             $this->findById((Int) $result);
 
         } else { /** UPDATE */
 
-            $this->update();
+            if (!$this->update()) {
+                return false;
+            }
             $this->findById((Int) $this->data->{$this->key});
 
         }
+
+        return true;
 
     }
 
@@ -262,6 +277,14 @@ abstract class Model{
             }
         }
 
+    }
+
+    /** 
+     * Get model data
+     */
+    public function getData(): array
+    {
+        return (array) $this->data;
     }
 
 }

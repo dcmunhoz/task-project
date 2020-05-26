@@ -14,36 +14,55 @@ class Auth {
         
         $headers = $request->getHeaders();
 
-        $response = new Response();
-        if (!isset($headers['Authorization'])) {
+        $excluded = ['/api/login'];
 
-            $response->getBody()->write(\json_encode([
-                "error" => "Token de autorização não encontrado ."
-            ]));
+        if (!\in_array($request->getUri()->getPath(), $excluded)) {
 
-            return $response->withStatus(401);
+            $response = new Response();
 
-        }
+            if (!isset($headers['Authorization'])) {
 
-        $authorization = $headers['Authorization'][0];
-        if (explode(" ", $authorization)[0] !== "Bearer") {
-            $response->getBody()->write(\json_encode([
-                "error" => "Bearer não foi encontrado, verifque o cabeçalho de autorização."
-            ]));
+                $response->getBody()->write(\json_encode([
+                    "error" => "Token de autorização não encontrado ."
+                ]));
 
-            return $response->withStatus(401);
+                return $response->withStatus(200)
+                ->withHeader('Access-Control-Allow-Origin', '*')
+                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization, Referer, User-Agent')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+                ->withHeader('Access-Control-Allow-Credentials', 'true');
 
-        }
+            }
 
-        $token = \explode(" ", $authorization)[1];
+            $authorization = $headers['Authorization'][0];
+            if (explode(" ", $authorization)[0] !== "Bearer") {
+                $response->getBody()->write(\json_encode([
+                    "error" => "Bearer não foi encontrado, verifque o cabeçalho de autorização."
+                ]));
 
-        if (!Authentication::validate($token)) {
+                return $response->withStatus(200)
+                ->withHeader('Access-Control-Allow-Origin', '*')
+                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+                ->withHeader('Access-Control-Allow-Credentials', 'true');
 
-            $response->getBody()->write(\json_encode([
-                "error" => "Token de autorização invalido, por favor, faça login novamente."
-            ]));
+            }
 
-            return $response->withStatus(401);
+            $token = \explode(" ", $authorization)[1];
+
+            if (!Authentication::validate($token)) {
+
+                $response->getBody()->write(\json_encode([
+                    "error" => "Token de autorização invalido, por favor, faça login novamente."
+                ]));
+
+                return $response->withStatus(200)
+                ->withHeader('Access-Control-Allow-Origin', '*')
+                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+                ->withHeader('Access-Control-Allow-Credentials', 'true');
+
+            }
 
         }
 

@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 const useHttp = () => {
     const http = axios.create({
-        baseURL: "http://localhost"
+        baseURL: "http://localhost/api"
     });
     const dispatch = useDispatch();
 
