@@ -1,0 +1,36 @@
+.task-list-content{
+    flex: 1;
+    box-sizing: border-box;
+    padding: 30px 100px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background-color: #EDEDED;
+    
+}
+
+.task-list-content header{
+    margin-bottom: 30px;
+}
+
+.task-list-content header h1{
+    font-size: 32px;
+}
+
+.task-list{
+    width: 100%;
+    flex: 1;
+}
+
+.task-list ul li {
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+.task-list ul li .task-box{
+    background-color: #FFF;
+    box-sizing: border-box;
+    padding: 20px 10px;
+    border-radius: 5px;
+
+}
