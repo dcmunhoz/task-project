@@ -136,8 +136,10 @@ abstract class Model{
                 
             }
 
-            return $stmt->fetch();
+            $result = $stmt->fetch();
             Connect::getInstance()->commit();
+            
+            return $result;
             
         }catch (\PDOException $e) {
 
