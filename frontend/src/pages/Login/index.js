@@ -15,7 +15,6 @@ const Login = () => {
     let [password, setPassword] = useState("");
     let dispatch = useDispatch();
     let history = useHistory();
-    let location = useLocation();
     let httpRequest = useHttp();
 
 

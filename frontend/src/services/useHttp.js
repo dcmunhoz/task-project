@@ -8,7 +8,6 @@ const useHttp = () => {
     });
     const dispatch = useDispatch();
 
-
     async function httpRequest(method, url, params = {}, config = {}, delayEffect){
 
         dispatch({

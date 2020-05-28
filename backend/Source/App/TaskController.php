@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Source\Models\Task;
 use Source\Models\Situation;
+use Source\Models\User;
 
 class TaskController {
 
@@ -46,6 +47,35 @@ class TaskController {
         }
 
         $response->getBody()->write(\json_encode($task->getData()));
+        return $response->withHeader("Content-Type", "application/json");
+
+    }
+
+    public function list(Request $request, Response $response){
+
+        $task = new Task();
+        $tasks = $task->find()->fetch(true);
+
+        $dataset = [];
+
+        foreach($tasks as $task){
+
+            $situation = new Situation();
+            $situation->findById((Int) $task->id_situation);
+            $task->situation = $situation->situation;
+
+            $requester = new User();
+            $requester->findById((Int) $task->id_requester);
+            $task->requester = $requester->first_name;
+
+            $createdAt = new \DateTime($task->created_at);
+            $task->creation_date = $createdAt->format("d/m/Y");
+            $task->creation_time = $createdAt->format("H:i");
+
+            $dataset[] = $task;
+        }
+
+        $response->getBody()->write(\json_encode($dataset));
         return $response->withHeader("Content-Type", "application/json");
 
     }

@@ -34,7 +34,7 @@ CREATE TABLE tasks(
 	id_task INT NOT NULL AUTO_INCREMENT,
 	id_situation INT NOT NULL,
 	title VARCHAR(60) NOT NULL,
-	description VARCHAR(60) NOT NULL,
+	description TEXT NOT NULL,
 	id_user_creation INT NOT NULL,
 	id_requester INT NOT NULL,
 	estimated_start DATE,
@@ -58,3 +58,4 @@ INSERT INTO roles (role, description) VALUES('T', 'Técnico');
 INSERT INTO roles (role, description) VALUES('U', 'Usuário');
 
 INSERT INTO users(username, password, email, first_name, last_name, id_role) values('admin', 'admin', 'admin@pandora.com', "Pandora", "System Administrator", 1); 
+INSERT INTO users(username, password, email, first_name, last_name, id_role) values('teste', 'teste', 'teste@pandora.com', "Usuário", "Teste", 3); 
