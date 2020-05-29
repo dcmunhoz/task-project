@@ -5,12 +5,14 @@
     height: 100%;
     box-sizing: border-box;
     overflow: hidden;
+    
 }
 
-.inner-container{
+.main-container .inner-container{
     width: 100%;
     height: 100%;
-    overflow-y: hidden;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 /* HEADER */

@@ -94,8 +94,20 @@ class TaskController {
             return $response->withHeader("Content-Type", "application/json");
         }
 
-        $response->getBody()->write(\json_encode($result));
-        return $response;
+        $dataset = [];
+
+        foreach ($result as $task){
+
+            $creationDate = new \DateTime($task->created_at);
+            $task->creationDate = $creationDate->format("d/m/Y");
+            $task->creationTime = $creationDate->format("H:i");
+
+            $dataset[] = $task;
+
+        }
+
+        $response->getBody()->write(\json_encode($dataset));
+        return $response->withHeader("Content-Type", "application/json");
     }
 
 }

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 
 import useHttp from './../../../../services/useHttp';
+import Icon from './../../../../components/Icon';
 
 import './style.css';
 
@@ -43,21 +44,36 @@ const SituationContainer = ({ id, title }) => {
                                     [{card.id_task}] - {card.title}
                                 </div>
                                 <div className="card-tags">
-                                    <span className="tag" style={{backgroundColor: "red"}}> </span>
-                                    <span className="tag" style={{backgroundColor: "green"}}> </span>
-                                    <span className="tag" style={{backgroundColor: "blue"}}> </span>
+                                    <span className="tag" style={{backgroundColor: "#F44B4B"}}> </span>
+                                    <span className="tag" style={{backgroundColor: "#3B8AE7"}}> </span>
+                                    <span className="tag" style={{backgroundColor: "#CCE52F"}}> </span>
                                 </div>
 
                                 <div className="card-information">
-                                    
+                                    <div className="card-date-oppening">
+                                        <Icon iconName="FaCalendar" /> <span> {card.creationDate} </span>
+                                    </div>  
+                                    <div className="card-time-oppening">
+                                        <Icon iconName="FaClock" /> <span> {card.creationTime} </span>
+                                    </div>
                                 </div>
 
-                                <div className="card-description">
+                                <div className="card-description" >
                                     {card.description}
                                 </div>
 
                                 <div className="card-footer">
-
+                                    <div className="card-action">
+                                        {/* <Icon iconName="FaPlayCircle" />
+                                        <span>
+                                            00:00
+                                        </span> */}
+                                    </div>
+                                    <div className="card-members">
+                                        <img src="https://via.placeholder.com/1920" alt=""/>
+                                        <img src="https://via.placeholder.com/1920" alt=""/>
+                                        <img src="https://via.placeholder.com/1920" alt=""/>
+                                    </div>
                                 </div>
 
                             </div>

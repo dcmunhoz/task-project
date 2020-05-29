@@ -14,6 +14,8 @@ class SituationController {
         $situation = new Situation();
         $result = $situation->find()->fetch(true);
 
+
+
         $response->getBody()->write(\json_encode($result));
         return $response->withHeader("Content-Type", "application/json");
 
