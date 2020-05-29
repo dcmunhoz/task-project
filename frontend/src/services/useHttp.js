@@ -23,7 +23,7 @@ const useHttp = () => {
         const defaultConfig = { ...token, ...config };
 
         let response;
-        
+
         switch(method){
             case "POST":
                 response = await http.post(url, params, defaultConfig);

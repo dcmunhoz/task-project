@@ -80,4 +80,22 @@ class TaskController {
 
     }
 
+    public function listBySituation(Request $request, Response $response, $args){
+        
+        $params = $request->getQueryParams();
+
+        $idSituation = $params['situation_id'];
+
+        $task = new Task();
+        $result = $task->find("id_situation = :id_situation", ":id_situation={$idSituation}")->fetch(true);
+
+        if (!$result){
+            $response->getBody()->write(\json_encode([]));
+            return $response->withHeader("Content-Type", "application/json");
+        }
+
+        $response->getBody()->write(\json_encode($result));
+        return $response;
+    }
+
 }
