@@ -1,0 +1,105 @@
+.situation-container{
+    background-color: #EDEDED;
+    margin-right: 30px ;
+    width: 289px;
+    min-width: 289px;
+    border-radius: 5px 5px 0 0;
+    padding: 20px 20px 0 20px;
+}
+
+.situation-container .situation-title{
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 18px;
+    color: #263238;
+    margin-bottom: 20px;
+}
+
+.situation-container .cards-list {
+
+}
+
+.situation-container .cards-list ul li{
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+.situation-container .cards-list .card-box{
+
+    background-color: #FFF;
+    box-sizing: border-box;
+    padding: 10px 10px;
+    border-radius: 5px;
+}
+
+.situation-container .cards-list .card-box .card-header{
+    color: #263238;
+    font-size: 16px;
+    font-weight: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.situation-container .cards-list .card-box .card-tags{
+
+}
+
+.situation-container .cards-list .card-box .card-tags .tag{
+    content: "";
+    display: inline-block;
+    width: 40px;
+    height: 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.situation-container .cards-list .card-box .card-information{
+    display: flex;
+    font-size: 14px;
+    padding: 3px 0;
+}
+
+.situation-container .cards-list .card-box .card-information div{
+    margin-right: 10px;
+}
+
+.situation-container .cards-list .card-box .card-information div .icon path,
+.situation-container .cards-list .card-box .card-information div span{
+    color: #777E82;
+    font-weight: 400;
+}
+
+.situation-container .cards-list .card-box .card-description{
+    padding: 10px 0;
+}
+
+.situation-container .cards-list .card-box .card-footer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 24px;
+}
+
+.situation-container .cards-list .card-box .card-footer .card-action{
+    display: flex;
+    align-items: center;
+}
+
+.situation-container .cards-list .card-box .card-footer .card-action .icon path{
+    color: #00ADB5;
+}
+
+.situation-container .cards-list .card-box .card-footer .card-action span{
+    font-weight: bold;
+    font-size: 16px;
+    margin-left: 5px;
+}
+
+.situation-container .cards-list .card-box .card-footer .card-members img{
+    width: 30px;
+    border-radius: 100px;
+    border: 2px solid gray;
+    margin-left: 5px;
+}

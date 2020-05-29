@@ -104,7 +104,7 @@ abstract class Model{
     public function findById(int $id): void
     {
 
-        $result = $this->find("{$this->key} = $id ")->fetch();
+        $result = $this->find("{$this->key} = :id ", ":id=$id")->fetch();
 
         if ($result){
             $this->setData($result);
@@ -122,7 +122,6 @@ abstract class Model{
         try{
 
             $query = "{$this->query} {$this->terms}";
-            Connect::getInstance()->beginTransaction();
             $stmt = Connect::getInstance()->prepare($query);
             $stmt->execute($this->params);
     
@@ -136,12 +135,12 @@ abstract class Model{
                 
             }
 
-            return $stmt->fetch();
-            Connect::getInstance()->commit();
+            $result = $stmt->fetch();
+            
+            return $result;
             
         }catch (\PDOException $e) {
 
-            Connect::getInstance()->rollBack();
             $this->fail = $e->getMessage() . " \n \n [QUERY]: $query";
             return false;
         }

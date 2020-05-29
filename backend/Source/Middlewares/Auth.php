@@ -31,7 +31,8 @@ class Auth {
                 ->withHeader('Access-Control-Allow-Origin', '*')
                 ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization, Referer, User-Agent')
                 ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
-                ->withHeader('Access-Control-Allow-Credentials', 'true');
+                ->withHeader('Access-Control-Allow-Credentials', 'true')
+                ->withHeader('Content-Type', "application/json");
 
             }
 
@@ -46,8 +47,8 @@ class Auth {
                 ->withHeader('Access-Control-Allow-Origin', '*')
                 ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
                 ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
-                ->withHeader('Access-Control-Allow-Credentials', 'true');
-
+                ->withHeader('Access-Control-Allow-Credentials', 'true')
+                ->withHeader('Content-Type', "application/json");
             }
 
             $token = \explode(" ", $authorization)[1];
@@ -63,7 +64,8 @@ class Auth {
                 ->withHeader('Access-Control-Allow-Origin', '*')
                 ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
                 ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
-                ->withHeader('Access-Control-Allow-Credentials', 'true');
+                ->withHeader('Access-Control-Allow-Credentials', 'true')
+                ->withHeader('Content-Type', "application/json");
 
             }
 

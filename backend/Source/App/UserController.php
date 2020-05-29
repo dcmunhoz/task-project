@@ -32,4 +32,20 @@ class UserController {
 
     }
 
+    public function list(Request $req, Response $res){
+
+        $user = new User();
+
+        $result = $user->find(null, null, "id_user as id, username, first_name as label, last_name")->fetch(true);
+
+        if (!$result){
+            if ($user->fail) {
+                // Tratar erros
+            }
+        }
+
+        $res->getBody()->write(\json_encode($result));
+        return $res->withHeader("Content-Type", "application/json");
+    }
+
 }

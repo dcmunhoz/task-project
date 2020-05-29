@@ -1,7 +1,6 @@
 CREATE DATABASE project_pandora DEFAULT CHARACTER SET = "utf8";
 
 set foreign_key_checks = 1;
-drop table users;
 
 CREATE TABLE users (
 	id_user INT NOT NULL AUTO_INCREMENT,
@@ -17,10 +16,25 @@ CREATE TABLE users (
 	CONSTRAINT pk_user PRIMARY KEY (id_user)
 ) CHARACTER SET utf8;
 
+CREATE TABLE situations(
+	id_situation INT NOT NULL AUTO_INCREMENT,
+	situation VARCHAR(60) NOT NULL,
+	`default` BOOL DEFAULT FALSE,
+	concluded BOOL DEFAULT FALSE,
+	CONSTRAINT pk_situation PRIMARY KEY (id_situation) 
+)CHARACTER SET utf8;
+
+INSERT INTO SITUATIONS(situation, `default`, concluded) VALUES('a fazer', true, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded) VALUES('em execução', false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded) VALUES('aguardando', false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded) VALUES('concluido', false, true);
+INSERT INTO SITUATIONS(situation, `default`, concluded) VALUES('cancelada', false, false);
+
 CREATE TABLE tasks(
 	id_task INT NOT NULL AUTO_INCREMENT,
+	id_situation INT NOT NULL,
 	title VARCHAR(60) NOT NULL,
-	description VARCHAR(60) NOT NULL,
+	description TEXT NOT NULL,
 	id_user_creation INT NOT NULL,
 	id_requester INT NOT NULL,
 	estimated_start DATE,
@@ -28,7 +42,8 @@ CREATE TABLE tasks(
 	updated_at TIMESTAMP DEFAULT NOW() ON UPDATE NOW(),
 	CONSTRAINT pk_task PRIMARY KEY (id_task),
 	CONSTRAINT fk_user_tasks1 FOREIGN KEY (id_user_creation) REFERENCES users(id_user),
-	CONSTRAINT fk_user_tasks2 FOREIGN KEY (id_requester) REFERENCES users(id_user) 
+	CONSTRAINT fk_user_tasks2 FOREIGN KEY (id_requester) REFERENCES users(id_user),
+	CONSTRAINT fk_situation_task FOREIGN KEY (id_situation) REFERENCES situations(id_situation) 
 ) CHARACTER SET utf8;
 
 CREATE TABLE roles(
@@ -43,3 +58,4 @@ INSERT INTO roles (role, description) VALUES('T', 'Técnico');
 INSERT INTO roles (role, description) VALUES('U', 'Usuário');
 
 INSERT INTO users(username, password, email, first_name, last_name, id_role) values('admin', 'admin', 'admin@pandora.com', "Pandora", "System Administrator", 1); 
+INSERT INTO users(username, password, email, first_name, last_name, id_role) values('teste', 'teste', 'teste@pandora.com', "Usuário", "Teste", 3); 

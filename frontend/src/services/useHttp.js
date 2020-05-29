@@ -8,7 +8,6 @@ const useHttp = () => {
     });
     const dispatch = useDispatch();
 
-
     async function httpRequest(method, url, params = {}, config = {}, delayEffect){
 
         dispatch({
@@ -24,7 +23,7 @@ const useHttp = () => {
         const defaultConfig = { ...token, ...config };
 
         let response;
-        
+
         switch(method){
             case "POST":
                 response = await http.post(url, params, defaultConfig);

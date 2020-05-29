@@ -7,7 +7,6 @@ const Screens = [
         title: 'Dashboard',
         icon: "FaChartArea",
         path: '/dashboard',
-        default: true,
         component: Dashboard
     },{
         title: 'Tarefas',
@@ -18,6 +17,7 @@ const Screens = [
         title: 'Cartões',
         icon: "FaTable",
         path: '/cards',
+        default: true,
         component: Cards
     },
 ];

@@ -75,7 +75,7 @@ const Sidebar = ({screens}) => {
                                     <Link 
                                         to={screen.path} 
                                         onClick={()=>{setActiveScreen(screen.title)}}
-                                        className={(activeScreen == screen.title) ? 'active' : ''}
+                                        className={(activeScreen === screen.title) ? 'active' : ''}
                                     > 
                                         <Icon iconName={screen.icon} /> <span className="screen-title">{screen.title}</span>
                                     </Link>
@@ -87,7 +87,7 @@ const Sidebar = ({screens}) => {
             </div>  
 
             <footer className="sidebar-footer">
-                <a href="">
+                <a href="/">
                     <Icon iconName="FaCog" /> <span className="footer-title">Configurações</span>                                 
                 </a>
             </footer>

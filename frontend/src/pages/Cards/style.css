@@ -1,0 +1,7 @@
+.cards-container {
+    display: flex;
+    box-sizing: border-box;
+    padding: 30px 20px 0 30px;
+    min-width: 100%;
+    overflow-x: auto;
+}

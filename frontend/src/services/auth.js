@@ -20,6 +20,10 @@ const methods = {
 
     getToken(){
         return sessionStorage.getItem("token") ?? '';
+    },
+
+    signout(){
+        sessionStorage.removeItem("token");
     }
 
 }
