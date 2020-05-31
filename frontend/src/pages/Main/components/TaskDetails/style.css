@@ -1,0 +1,14 @@
+.task-details-modal-container{
+    z-index: 9997;
+    position: absolute;
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.24);
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+
+}
+
+.task-details-modal-container .task-details-modal {
+    background-color: #fff;
+}

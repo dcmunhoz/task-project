@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { HashRouter as Router, Switch, useHistory  } from 'react-router-dom';
 
 import PrivateRoute from './../../components/PrivateRoute';
@@ -10,6 +10,7 @@ import Button from './../../components/Button';
 import NewTicket from './components/NewTicket';
 import Sidebar from './components/Sidebar';
 import Screens from './screens';
+import TaskDetails from './components/TaskDetails';
 
 import useHttp from './../../services/useHttp';
 import auth from './../../services/auth';
@@ -18,6 +19,8 @@ import './style.css';
 
 export default function Main(){
     const [showNewTicketModal, setModal] = useState(false);
+    const [showTaskDetails, setTaskDetail] = useState(false);
+    const { show_modal } = useSelector(state => state.task);
     const dispatch = useDispatch();
     const httpRequest = useHttp();
     const history = useHistory();
@@ -49,6 +52,10 @@ export default function Main(){
         
         getUserdata();
     }, []);
+
+    useEffect(()=>{
+        setTaskDetail(show_modal);
+    }, [show_modal]);
     
     function handleShowNewTicketModal(){
         setModal(true);
@@ -67,6 +74,9 @@ export default function Main(){
                     showModal={showNewTicketModal} 
                     setModal={setModal}
                 />
+
+                {(showTaskDetails) ? (<TaskDetails />) : null}
+
                 <Sidebar
                     screens={Screens}
                 />

@@ -18,7 +18,6 @@ const Cards = () => {
             if (!response) return false;
 
             const { data } = response;
-            console.log(data);
 
             setSituations(data);
         }

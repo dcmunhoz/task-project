@@ -37,6 +37,13 @@ const Tasks = () => {
 
     }, []);
 
+    function handleShowTaskDetail(e){
+        dispatch({
+            type: "SHOW_TASK_DETAIL_MODAL",
+            payload: true
+        })
+    }
+
     return(
         <Content
             sidebarFiltersComponent={()=>(
@@ -50,8 +57,8 @@ const Tasks = () => {
                 <div className="task-list">
                     <ul>
                         {taskList.map(task=>(
-                            <li key={task.id_task}>
-                                <div className="task-box">
+                            <li key={task.id_task} >
+                                <div className="task-box" onClick={handleShowTaskDetail}>
                                     <div className="action-icon">
                                         <Icon iconName="FaArrowCircleDown" />
                                     </div>

@@ -22,8 +22,6 @@ const SituationContainer = ({ id, title }) => {
 
             setCards(response.data);
             
-
-
         }
 
         loadSituationCards();

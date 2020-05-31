@@ -12,12 +12,12 @@ const Screens = [
         title: 'Tarefas',
         icon: "FaList",
         path: '/tasks',
+        default: true,
         component: Tasks
     },{
         title: 'Cartões',
         icon: "FaTable",
         path: '/cards',
-        default: true,
         component: Cards
     },
 ];
