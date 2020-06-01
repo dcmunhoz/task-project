@@ -16,9 +16,9 @@
     background-color: #F3F3F3;
     position: relative;
     top: 50px;
-    
+    width: 800px;
     box-sizing: border-box;
-    padding: 10px 30px;
+    padding: 20px 40px;
     border-radius: 5px;
     animation: bringModalTaskDown 150ms ease forwards;
 }   
@@ -27,6 +27,7 @@
     display: flex;
     justify-content: space-between;
     flex-direction: row;
+    margin-bottom: 20px;
 }
 
 .task-details-modal header .task-header-informations{
@@ -57,30 +58,43 @@
     color: var(--btn-red-h);
 }
 
-.task-details-modal div{
+.task-details-modal .task-row-detail{
     display: flex;
-    
+    flex-direction: row;
 }
 
-.task-details-modal div .task-actions{
-    
-}
-
-.task-details-modal div .task-members{
-    
-}
-
-.task-details-modal div .task-members .member-avatar{
+.task-details-modal .task-members .member-avatar{
     display: inline-block;
     margin-right: 3px;
 }
 
-.task-details-modal div .task-members .member-avatar img{
+.task-details-modal .task-members .member-avatar img{
     width: 30px;
     border-radius: 100px;
     border: 2px solid gray;
 }
 
+.task-details-modal .date-field{
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    color: #263238;
+}
+
+.task-details-modal .tags-list .tag{
+    text-align: center;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: gray;
+    margin-right: 10px;
+    padding: 11px 15px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    min-width: 100px;
+    text-transform: uppercase;
+}
 
 @keyframes showTaskContainer{
     from{

@@ -1,0 +1,22 @@
+.task-details-modal .task-block{
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.task-details-modal .task-block header{
+    margin-bottom: 5px;
+}
+
+.task-details-modal .task-block header span{
+    font-size: 14px;
+    font-weight: bold;
+    color: #707070;
+    text-transform: capitalize;
+}
+
+.task-details-modal .task-block section{
+    display: flex;
+    flex-direction: row;
+}

@@ -74,7 +74,8 @@ export default function Main(){
                     showModal={showNewTicketModal} 
                     setModal={setModal}
                 />
-
+                
+                <TaskDetails />
                 {(showTaskDetails) ? (<TaskDetails />) : null}
 
                 <Sidebar

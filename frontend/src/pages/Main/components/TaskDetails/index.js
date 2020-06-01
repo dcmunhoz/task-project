@@ -2,11 +2,13 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Icon from './../../../../components/Icon';
+import Select from './../../../../components/Select';
+import Button from './../../../../components/Button';
+import DetailtBox from './components/DetailBox';
 
 import './style.css';
 
 const TaskDetails = () => {
-    const { show_modal } = useSelector(state => state.task);
     const dispatch = useDispatch();
 
     function handleHideTaskDetails(){
@@ -15,6 +17,29 @@ const TaskDetails = () => {
             payload: false
         })
     }
+
+    const data = [
+        {
+            id: 1,
+            label: "a fazer"
+        },{
+            id: 2,
+            label: "fazendo"
+        },{
+            id: 3,
+            label: "feito"
+        },{
+            id: 4,
+            label: "cancelado"
+        },
+    ]
+
+    const requester = [
+        {
+            id: 1,
+            label: "Daniel munhoz"
+        }
+    ]
 
 
     return(
@@ -33,8 +58,8 @@ const TaskDetails = () => {
                         </a>
                     </div>
                 </header>
-                <div> 
-                    <div className="task-actions">
+                <div className="task-row-detail"> 
+                    <DetailtBox label="atividade" >
                         <a href="">
                             <Icon 
                                 iconName="FaPlayCircle"
@@ -45,9 +70,12 @@ const TaskDetails = () => {
                                 iconName="FaCheckCircle"
                             />
                         </a>
-                    </div>
+                    </DetailtBox>
 
-                    <div className="task-members">
+                    <DetailtBox 
+                        label="integrantes"
+                        customClass="task-members"
+                    >
                         <div className="member-avatar">
                             <img src="https://via.placeholder.com/1920" alt=""/>
                         </div>
@@ -57,42 +85,85 @@ const TaskDetails = () => {
                         <div className="member-avatar">
                             <img src="https://via.placeholder.com/1920" alt=""/>
                         </div>
-                    </div>
+                    </DetailtBox>
 
-                    <div className="task-situation">
+                    <DetailtBox label="situação">
+                        <Select 
+                            data={data}
+                            value={1}
+                            style={{
+                                backgroundColor: "#263238",
+                                color: "#FFF",
+                                textTransform: "uppercase"
+                            }}
+                        />
+                    </DetailtBox>
 
-                    </div>
-
-                    <div className="task-estimated-start">
-
-                    </div>
+                    <DetailtBox 
+                        label="Inicio Desejado"
+                        customClass="estimated-start"
+                    >
+                        <span className="date-field">
+                            18/05/2020
+                        </span>
+                    </DetailtBox>
                 </div>
 
-                <div className="">
-                    <div className="task-requester">
+                <div className="task-row-detail">
+                    <DetailtBox label="solicitante">
+                        <Select 
+                            data={requester}
+                            value={1}
+                        />
+                    </DetailtBox>
 
+                    <DetailtBox label="abertura">
+                        <span className="date-field">
+                            18/05/2020
+                        </span>
+                    </DetailtBox>
+
+                    <DetailtBox label="conclusão">
+                        <span className="date-field">
+                            18/05/2020
+                        </span>
+                    </DetailtBox>
+                </div>
+
+                <DetailtBox label="etiquetas">
+                    <div className="tags-list">
+                        <span className="tag">
+                            Etiqueta 1
+                        </span>
+
+                        <span className="tag">
+                            Etiqueta 2
+                        </span>
+
+                        <span className="tag">
+                            Etiqueta 3
+                        </span>
+
+                        <span className="tag">
+                            oi
+                        </span>
                     </div>
-
-                    <div className="task-opening">
-
+                    <div className="new-tag-button">
+                        <Button icon="FaPlus" />
                     </div>
+                </DetailtBox>
 
-                    <div className="task-conclusion">
+                <DetailtBox label="descrição">
+                    <textarea name="" id="" cols="30" rows="10">
+                        descrição
+                    </textarea>
+                </DetailtBox>
 
-                    </div>
-                </div>
-
-                <div className="task-tags">
-
-                </div>
-
-                <div classNAme="task-description">
-
-                </div>
-
-                <div className="task-messages">
-
-                </div>
+                <DetailtBox label="mensagens">
+                    <textarea name="" id="" cols="30" rows="10">
+                        mensagem
+                    </textarea>
+                </DetailtBox>
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
 .select-list {
-    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
+    appearance: none;
     display: block;
     border: none;
     background-color: #E0E0E0;
