@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import Content from './../../components/Content';
 import useHttp from './../../services/useHttp';
@@ -11,6 +12,7 @@ const Tasks = () => {
     const httpRequest = useHttp();
     const dispatch = useDispatch();
     const [taskList, setTaskList] = useState([]);
+    const history = useHistory();
 
     useEffect(()=>{
         async function loadTasks(){
@@ -38,6 +40,10 @@ const Tasks = () => {
     }, []);
 
     function handleShowTaskDetail(e){
+
+        const { id: task_id } = e.currentTarget;
+        history.replace(`?task=${task_id}`);
+        
         dispatch({
             type: "SHOW_TASK_DETAIL_MODAL",
             payload: true
@@ -58,7 +64,7 @@ const Tasks = () => {
                     <ul>
                         {taskList.map(task=>(
                             <li key={task.id_task} >
-                                <div className="task-box" onClick={handleShowTaskDetail}>
+                                <div className="task-box" id={task.id_task} onClick={handleShowTaskDetail}>
                                     <div className="action-icon">
                                         <Icon iconName="FaArrowCircleDown" />
                                     </div>

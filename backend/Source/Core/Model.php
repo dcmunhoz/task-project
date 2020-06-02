@@ -106,9 +106,12 @@ abstract class Model{
 
         $result = $this->find("{$this->key} = :id ", ":id=$id")->fetch();
 
-        if ($result){
-            $this->setData($result);
+        if (!$result) {
+            $this->fail = true;
+            return;
         }
+
+        $this->setData($result);
 
     }
 

@@ -10,6 +10,8 @@ import auth from './../../services/auth';
 
 import './style.css';
 
+import logo from './../../images/logo.svg';
+
 const Login = () => {
     let [username, setUser] = useState("");
     let [password, setPassword] = useState("");
@@ -53,9 +55,7 @@ const Login = () => {
                 
                 <div className="login-box">
                     <header>
-                        <p>
-                            Project Pandora
-                        </p>
+                        <img src={logo} alt=""/>
                     </header>
                     <section className="input-box">
                         <Input 

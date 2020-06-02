@@ -11,4 +11,5 @@ $app->group("/api", function($group){
     $group->get("/task/list", TaskController::class . ":list");
     $group->get("/situations", SituationController::class . ":list");
     $group->get("/cards", TaskController::class . ":listBySituation");
+    $group->get("/task/{idTask}", TaskController::class . ":show");
 });

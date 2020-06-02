@@ -110,4 +110,60 @@ class TaskController {
         return $response->withHeader("Content-Type", "application/json");
     }
 
+    public function show(Request $request, Response $response, $args){
+        $idTask = $args['idTask'];
+
+        $task = new Task();
+        $task->findById((Int) $idTask);
+
+        if ($task->fail) {
+            $response->getBody()->write(\json_encode([
+                "error"=>true,
+                "message" => "A tarefa requisitada não existe na base de dados"
+            ]));
+
+            return $response->withStatus(400)->withHeader("Content-Type", "application/json");
+        }
+
+        $user = new User();
+        $user->findById((Int) $task->id_requester);
+
+        $createdAt = new \DateTime($task->created_at);
+        $conclusion = null; // fix
+
+        $estimated = null;
+        if ($task->estimated_start){
+            $estimated = new \DateTime($task->estimated_start);
+            $estimated = $estimated->format("d/m/Y");
+        }
+
+        $result = [
+            "id_task" => $task->id_task,
+            "title"   => $task->title,
+            "situation" => $task->id_situation,
+            "created_date" => $createdAt->format("d/m/Y"),
+            "created_time" => $createdAt->format("H:i"),
+            "estimated" => $estimated,
+            "conclusion" => $conclusion,
+            "description" => $task->description
+        ];
+
+        $result['requester'] = [
+            "id" => $user->id_user,
+            "name" => $user->getShortName(),
+            "email" => $user->email
+        ];
+
+        $result['members'] = [];
+        $result['tags'][] = [
+            "id"=> 1,
+            "label" => "teste"
+        ];
+
+        $result['messages'] = [];
+
+        $response->getBody()->write(\json_encode($result));
+        return $response->withHeader("Content-Type", "application/json");
+    }
+
 }
