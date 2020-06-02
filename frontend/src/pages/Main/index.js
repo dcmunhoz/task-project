@@ -75,7 +75,6 @@ export default function Main(){
                     setModal={setModal}
                 />
                 
-                <TaskDetails />
                 {(showTaskDetails) ? (<TaskDetails />) : null}
 
                 <Sidebar

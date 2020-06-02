@@ -12,4 +12,12 @@ class User extends Model{
         parent::__construct("users", "id_user");
 
     }
+
+    public function getShortName(){
+        $firtName = $this->first_name;
+        $splitedLastName = \explode(" ", $this->last_name);
+        $lastName = $splitedLastName[count($splitedLastName) - 1];
+
+        return $firtName . " " . $lastName;
+    }
 }
