@@ -6,9 +6,12 @@ import NewTaskInput from './components/NewTaskInput';
 import Select from './../../../../components/Select';
 import Button from './../../../../components/Button';
 import TextArea from './../../../../components/TextArea';
+import ComboSelect from './../../../../components/ComboSelect';
+import DetailBox from './../../../../components/DetailBox';
 import useHttp from './../../../../services/useHttp';
 
 import './style.css';
+import DetailtBox from './../../../../components/DetailBox';
 
 const NewTicket = ({showModal, setModal}) =>{
     const httpRequest = useHttp();
@@ -18,7 +21,41 @@ const NewTicket = ({showModal, setModal}) =>{
     const { id_user: idUserCreation } = useSelector(state => state.user);
     const [idRequester, setRequester] = useState(0);
     const [taskTitle, setTaskTitle] = useState("");
+    const [taskMembers, setTaskMembers] = useState([]);
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [showMembersComboSelect, setShowMembersComboSelect] = useState(false);
+    const [showTagsComboSelect, setShowTagsComboSelect] = useState(false);
     const [taskDescription, setTaskDescription] = useState("");
+
+    const dataMembers = [
+        {
+            id: 1,
+            name: "Daniel Munhoz"
+        }, {
+            id: 2,
+            name: "Teste Combo"
+        }
+    ];
+
+    const dataTags = [
+        {
+            id: 1,
+            name: "Teste"
+        },
+        {
+            id: 2,
+            name: "Teste"
+        },
+        {
+            id: 3,
+            name: "Teste"
+        },
+        {
+            id: 4,
+            name: "Teste"
+        },
+
+    ]
 
     useEffect(()=>{
         async function loadUsersList(){
@@ -46,6 +83,10 @@ const NewTicket = ({showModal, setModal}) =>{
     }
 
     async function handleCreateNewTask(){
+
+        console.log(taskMembers, selectedTags);
+
+        return false;
 
         const task = {
             title: taskTitle,
@@ -84,12 +125,11 @@ const NewTicket = ({showModal, setModal}) =>{
         setTaskDescription("");
         setModal(false);
 
-
     }
 
     return(
         <div 
-            className={`new-ticket-container ${(showModal) ? 'show' : ''}`}
+            className={`new-ticket-container ${(true) ? 'show' : ''}`}
             onClick={handleCloseNTModal}
         >
             <section className="new-ticket-modal">
@@ -113,71 +153,74 @@ const NewTicket = ({showModal, setModal}) =>{
                 </header>
 
                 <div className="new-ticket-options">
-                    <div className="options-block">
-                        <span className="block-title">
-                            Solicitante
-                        </span>
+                    <DetailtBox label="solicitante" >
                         <div className="block-content">
                             <Select 
                                 data={users} 
                                 value={idRequester}
                                 onChange={(e) => setRequester(e.target.value)}
                             />
-                        </div>
-                    </div>
 
-                    <div className="options-block">
-                        <span className="block-title">
-                            Integrantes
-                        </span>
-                        <div className="block-content">
+                        </div>
+                    </DetailtBox>
+
+                    <DetailtBox label="Integrantes">
+                        <div className="members-combo-select-button">
                             <Button 
                                 icon="FaPlus" 
                                 size="sm"
                                 className="rouded-button"
+                                onClick={()=>setShowMembersComboSelect(true)}
                             />
                         </div>
-                    </div>
-                </div>
 
-                <div className="new-ticket-options">
-                    <div className="options-block">
-                        <span className="block-title">
-                            Etiquetas
-                        </span>
-                        <div className="block-content">
-                             <Button 
-                                icon="FaPlus" 
-                                size="sm"
-                                className="label-button"
+                        {(showMembersComboSelect) ? (
+                            <ComboSelect 
+                                label="Integrantes"
+                                data={dataMembers}
+                                value={taskMembers}
+                                setValue={setTaskMembers}
+                                closeComboSelect={setShowMembersComboSelect}
                             />
-                        </div>
-                    </div>
+                        ) : null}
+                    </DetailtBox>
+
                 </div>
 
-                <div className="new-ticket-options">
-                    <div className="options-block full">
-                        <span className="block-title">
-                            Descrição
-                        </span>
-                        <div className="block-content">
-                            <TextArea
-                                value={taskDescription}
-                                onChange={(e)=>setTaskDescription(e.target.value)}
-                            ></TextArea>
-                        </div>
+                <DetailtBox label="etiquetas" >
+                    <div className="tags-combo-select-button">
+                        <Button 
+                            icon="FaPlus" 
+                            size="sm"
+                            className="label-button"
+                            onClick={()=>setShowTagsComboSelect(true)}
+                        />
                     </div>
-                </div>
+                    {(showTagsComboSelect) ? (
+                            <ComboSelect 
+                                label="Etiquetas"
+                                data={dataTags}
+                                value={selectedTags}
+                                setValue={setSelectedTags}
+                                closeComboSelect={setShowTagsComboSelect}
+                            />
+                        ) : null}
+                </DetailtBox>
 
-                <div className="new-ticket-options">
-                    <div className="options-block full">
-                       <Button
-                            icon="FaCheck"
-                            color="blue"
-                            onClick={handleCreateNewTask}
-                        > Abrir Tarefa </Button>
-                    </div>
-                </div>
+                <DetailtBox label="Descrição" >
+                    <TextArea
+                        value={taskDescription}
+                        onChange={(e)=>setTaskDescription(e.target.value)}
+                    ></TextArea>
+                </DetailtBox>
+
+                <DetailtBox>
+                    <Button
+                        icon="FaCheck"
+                        color="blue"
+                        onClick={handleCreateNewTask}
+                    > Abrir Tarefa </Button>
+                </DetailtBox>
 
             </section>
         </div>
