@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
 import Icon from './../../../../components/Icon';
 import Select from './../../../../components/Select';
 import Button from './../../../../components/Button';
-import DetailtBox from './components/DetailBox';
+import DetailtBox from '../../../../components/DetailBox';
 import useHttp from './../../../../services/useHttp';
 
 import './style.css';
@@ -47,16 +47,20 @@ const TaskDetails = () => {
 
     }, []);
 
-    useEffect(()=>{
-        
-    }, [task])
+    function handleHideTaskDetails(e){
+       e.preventDefault();
 
-    function handleHideTaskDetails(){
-        history.replace('/tasks');
-        dispatch({
-            type:"SHOW_TASK_DETAIL_MODAL",
-            payload: false
-        })
+        if(e.target.getAttribute('data-close')){
+
+            console.log(location.pathname);
+
+            history.replace(location.pathname);
+
+            dispatch({
+                type:"SHOW_TASK_DETAIL_MODAL",
+                payload: false
+            })
+        }
     }
 
     const data = [
@@ -84,19 +88,19 @@ const TaskDetails = () => {
 
 
     return(
-        <div className={`task-details-modal-container`} onClick={handleHideTaskDetails}>
+        <div className={`task-details-modal-container`} data-close onClick={handleHideTaskDetails}>
             <div className="task-details-modal">
                 <header>
                     <div className="task-header-informations">
                         <h1>#{task.id_task} - {task.title}</h1>
                         <span>Criado Por { requester.name }&lt;{ requester.email }&gt; em {task.created_date} ás {task.created_time}</span>
                     </div>
-                    <div className="button-close-task-modal">
-                        <a onClick={handleHideTaskDetails}>
+                    <div  className="button-close-task-modal">
+                        <span onClick={handleHideTaskDetails} data-close >
                             <Icon 
                                 iconName="FaWindowClose"
                             />
-                        </a>
+                        </span>
                     </div>
                 </header>
                 <div className="task-row-detail"> 

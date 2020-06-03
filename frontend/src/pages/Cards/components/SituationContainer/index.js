@@ -5,7 +5,7 @@ import Icon from './../../../../components/Icon';
 
 import './style.css';
 
-const SituationContainer = ({ id, title }) => {
+const SituationContainer = ({ id, title, showDetail }) => {
     const http = useHttp();
     const [cards, setCards] = useState([]);
 
@@ -20,7 +20,11 @@ const SituationContainer = ({ id, title }) => {
 
             if (!response) return false;
 
-            setCards(response.data);
+            const { data } = response;
+
+            data.sort((a, b) => b.id_task - a.id_task);
+
+            setCards(data);
             
         }
 
@@ -37,7 +41,7 @@ const SituationContainer = ({ id, title }) => {
                 <ul>
                     {cards.map((card)=>(
                         <li key={card.id_task}>
-                            <div className="card-box">
+                            <div className="card-box" id={card.id_task} onClick={showDetail}>
                                 <div className="card-header">
                                     [{card.id_task}] - {card.title}
                                 </div>

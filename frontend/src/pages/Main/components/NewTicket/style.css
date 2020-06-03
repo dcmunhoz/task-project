@@ -51,33 +51,14 @@
     flex-direction: row;
 }
 
-.new-ticket-options .options-block{
-    display: inline-block;
-    margin-right: 10px;
-}
-
-.options-block .block-title{
-    color: #707070;
-    font-weight: bold;
-    
-}
-
-.options-block.full{
-    
-    width: 100%;
-}
-
-.block-content{
-    margin-top: 3px;
-}
-
 .rouded-button{
     border-radius: 50%;
     padding: 5px;
 }
 
-.label-button{
-
+.members-combo-select-button,
+.tags-combo-select-button{
+    position: relative;
 }
 
 @keyframes showNTContainer {

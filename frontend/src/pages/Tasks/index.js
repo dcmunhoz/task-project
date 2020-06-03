@@ -32,6 +32,8 @@ const Tasks = () => {
                 });
             }
 
+            data.sort((a,b) => b.id_task - a.id_task);
+
             setTaskList(data);
 
         }
