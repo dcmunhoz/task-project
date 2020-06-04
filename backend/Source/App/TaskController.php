@@ -58,6 +58,18 @@ class TaskController {
 
         $dataset = [];
 
+        if (!$tasks){
+            // if ($task->fail) {
+            //     $response->getBody()->write(\json_encode([
+            //         "error" => $task->fail
+            //     ]));
+            // }
+
+            $response->getBody()->write(\json_encode($dataset));
+            return $response->withHeader("Content-Type", "application/json");
+        }
+
+
         foreach($tasks as $task){
 
             $situation = new Situation();
