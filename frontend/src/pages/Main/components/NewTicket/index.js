@@ -198,6 +198,11 @@ const NewTicket = ({showModal, setModal}) =>{
         setSelectedMembers([]);
         setSelectedTags([]);
 
+        dispatch({
+            type: 'LOAD_TASKS',
+            payload: true
+        });
+
     }
 
     return(

@@ -1,4 +1,6 @@
 import React, {useState, useEffect} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 
 import useHttp from './../../../../services/useHttp';
 import Icon from './../../../../components/Icon';
@@ -6,30 +8,54 @@ import Icon from './../../../../components/Icon';
 import './style.css';
 
 const SituationContainer = ({ id, title, showDetail }) => {
+    const { shuldLoadTasks } = useSelector(state => state.global);
     const http = useHttp();
     const [cards, setCards] = useState([]);
+    const dispatch = useDispatch();
 
     useEffect(()=>{
-        async function loadSituationCards(){
-
-            const response = await http("GET", `/cards`, {}, {
-                params:{
-                    situation_id: id
-                }
-            });
-
-            if (!response) return false;
-
-            const { data } = response;
-
-            data.sort((a, b) => b.id_task - a.id_task);
-
-            setCards(data);
-            
-        }
-
         loadSituationCards();
     }, []);
+
+    useEffect(()=>{
+
+        let mounted = true;
+
+        if (mounted){
+            if (shuldLoadTasks) {
+
+                loadSituationCards();
+    
+                dispatch({
+                    type: "LOAD_TASKS",
+                    payload: false
+                });
+    
+            }
+        }
+
+        return () => mounted = false;
+
+        
+    }, [shuldLoadTasks]);
+
+    async function loadSituationCards(){
+
+        const response = await http("GET", `/cards`, {}, {
+            params:{
+                situation_id: id
+            }
+        });
+
+        if (!response) return false;
+
+        const { data } = response;
+
+        data.sort((a, b) => b.id_task - a.id_task);
+
+        setCards(data);
+        
+    }
 
     return(
         <div className="situation-container">

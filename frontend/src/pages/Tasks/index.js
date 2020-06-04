@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import Content from './../../components/Content';
@@ -9,37 +9,59 @@ import Icon from './../../components/Icon';
 import './style.css';
 
 const Tasks = () => {
+    const { shuldLoadTasks } = useSelector(store => store.global);
     const httpRequest = useHttp();
     const dispatch = useDispatch();
     const [taskList, setTaskList] = useState([]);
     const history = useHistory();
 
     useEffect(()=>{
-        async function loadTasks(){
-
-            const response = await httpRequest("GET", '/task/list');
-
-            if (!response) return false;
-
-            const { data } = response;
-
-            if (data.error) {
-                dispatch({
-                    type:"SHOW_ERROR_MESSAGE",
-                    payload: {
-                        message: "Houve um erro ao processar uma informação, por favor, contato um administrador do sistema",
-                    }
-                });
-            }
-
-            data.sort((a,b) => b.id_task - a.id_task);
-
-            setTaskList(data);
-
-        }
-        loadTasks();         
-
+        loadTasks();
     }, []);
+
+    useEffect(()=>{
+        
+        let mounted = true;
+
+        if (mounted){
+            if (shuldLoadTasks) {
+
+                loadTasks();   
+    
+                dispatch({
+                    type: "LOAD_TASKS",
+                    payload: false
+                });
+    
+            }
+        }
+
+        return () => mounted = false;        
+
+    }, [shuldLoadTasks]);
+
+    async function loadTasks(){
+
+        const response = await httpRequest("GET", '/task/list');
+
+        if (!response) return false;
+
+        const { data } = response;
+
+        if (data.error) {
+            dispatch({
+                type:"SHOW_ERROR_MESSAGE",
+                payload: {
+                    message: "Houve um erro ao processar uma informação, por favor, contato um administrador do sistema",
+                }
+            });
+        }
+
+        data.sort((a,b) => b.id_task - a.id_task);
+
+        setTaskList(data);
+
+    }
 
     function handleShowTaskDetail(e){
 
