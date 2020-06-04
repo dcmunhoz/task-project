@@ -116,6 +116,14 @@
     border: 2px solid gray;
 }
 
+.task-box .ticket-informations .ticket-members .no-members{
+    position: relative;
+    top: -5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: gray
+}
+
 .task-box .ticket-informations .informations{
     display: flex;
     flex-direction: row;

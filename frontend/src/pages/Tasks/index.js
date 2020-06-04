@@ -59,6 +59,8 @@ const Tasks = () => {
 
         data.sort((a,b) => b.id_task - a.id_task);
 
+        console.log(data);
+
         setTaskList(data);
 
     }
@@ -103,11 +105,18 @@ const Tasks = () => {
 
                                     <div className="sub-informations">
                                         <div className="ticket-tags">
-                                            <span className="tag" style={{backgroundColor: "#F44B4B"}}> </span>
-                                            
-                                            <span className="tag" style={{backgroundColor: "#3B8AE7"}}> </span>
-                                            
-                                            <span className="tag" style={{backgroundColor: "#CCE52F"}}> </span>
+                                            {/* { (task.tags) ? task.tags.map(tag=>(
+                                                <span className="tag" style={{backgroundColor: tag.background_color}} label={tag.title}> </span>
+                                            )) : (
+                                                <span className="tag" style={{backgroundColor: "red"}} > </span>
+                                            )} */}
+
+                                            {(task.tags.length >= 1) ? (task.tags.map(tag=>(
+                                                <span className="tag" style={{backgroundColor: tag.background_color}} label={tag.title}> </span>
+                                            ))) : ( 
+                                                <span className="tag" style={{backgroundColor: "rgb(0, 0, 0, 0,)"}} > </span>
+                                            )}
+
                                         </div>
                                         <div title={task.description}>
                                             {task.description}
@@ -116,13 +125,13 @@ const Tasks = () => {
 
                                     <div className="ticket-informations">
                                         <div className="ticket-members">
-                                            <img src="https://via.placeholder.com/1920" alt=""/>
+                                            {(task.members.length >= 1) ? (task.members.map(member=>(
+                                                <img src={member.avatar} alt=""/>
+                                            ))) : ( 
+                                                <span className="no-members">Tarefa sem membros</span>
+                                            )}
                                             
-                                            <img src="https://via.placeholder.com/1920" alt=""/>
                                             
-                                            <img src="https://via.placeholder.com/1920" alt=""/>
-                                            
-                                            <img src="https://via.placeholder.com/1920" alt=""/>
                                         </div>
                                         <div className="informations">
                                             <div className="opening-date">

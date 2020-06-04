@@ -72,9 +72,10 @@ const SituationContainer = ({ id, title, showDetail }) => {
                                     [{card.id_task}] - {card.title}
                                 </div>
                                 <div className="card-tags">
-                                    <span className="tag" style={{backgroundColor: "#F44B4B"}}> </span>
-                                    <span className="tag" style={{backgroundColor: "#3B8AE7"}}> </span>
-                                    <span className="tag" style={{backgroundColor: "#CCE52F"}}> </span>
+                                    {card.tags.map(tag=>(
+                                        <span className="tag" style={{backgroundColor: tag.background_color}}> </span>
+                                    ))}
+
                                 </div>
 
                                 <div className="card-information">
@@ -98,9 +99,9 @@ const SituationContainer = ({ id, title, showDetail }) => {
                                         </span> */}
                                     </div>
                                     <div className="card-members">
-                                        <img src="https://via.placeholder.com/1920" alt=""/>
-                                        <img src="https://via.placeholder.com/1920" alt=""/>
-                                        <img src="https://via.placeholder.com/1920" alt=""/>
+                                        {card.members.map(member=>(
+                                            <img src={member.avatar} alt={`Avatar ${member.name}`} title={member.name}/>
+                                        ))}
                                     </div>
                                 </div>
 
