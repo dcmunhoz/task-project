@@ -57,4 +57,21 @@ CREATE TABLE tags(
     CONSTRAINT pk_tag PRIMARY KEY (id_tag)
 ) CHARACTER SET utf8;
 
+CREATE TABLE taskxmembers(
+	id_taskxmember INT NOT NULL AUTO_INCREMENT,
+    id_task INT NOT NULL,
+    id_user INT NOT NULL,
+    CONSTRAINT pk_taskxmember PRIMARY KEY(id_taskxmember),
+    CONSTRAINT fk_task_taskxmember FOREIGN KEY (id_task) REFERENCES tasks(id_task),
+    CONSTRAINT fk_user_taskxmember FOREIGN KEY (id_user) REFERENCES users(id_user) 
+) CHARACTER SET utf8;
+
+CREATE TABLE taskxtags(
+	id_taskxtags INT NOT NULL AUTO_INCREMENT,
+    id_task INT NOT NULL,
+    id_tag INT NOT NULL,
+    PRIMARY KEY (id_taskxtags),
+    FOREIGN KEY (id_task) REFERENCES tasks(id_task),
+    FOREIGN KEY (id_tag) REFERENCES tags(id_tag)
+) CHARACTER SET utf8;
 

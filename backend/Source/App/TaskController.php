@@ -46,6 +46,35 @@ class TaskController {
             return $response->withHeader("Content-Type", "application/json");
         }
 
+        if (!empty($body['selectedMembers'])) {
+
+            $selectedMembers = $body['selectedMembers'];
+
+            foreach($selectedMembers as $member){
+
+                $task->raw("INSERT INTO taskxmembers (id_task, id_user) VALUES (:id_task, :id_user)", [
+                    ":id_task" => $task->id_task,
+                    ":id_user" => $member
+                ]);
+
+            }
+                      
+        }
+
+        if (!empty($body['selectedTags'])) {
+
+            $selectesTags = $body['selectedTags'];
+
+            foreach ($selectesTags as $tag) {
+
+                $task->raw("INSERT INTO taskxtags (id_task, id_tag) VALUES (:id_task, :id_tag)", [
+                    ":id_task" => $task->id_task,
+                    ":id_tag" => $tag
+                ]);
+            }
+
+        }
+        
         $response->getBody()->write(\json_encode($task->getData()));
         return $response->withHeader("Content-Type", "application/json");
 

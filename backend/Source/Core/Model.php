@@ -310,4 +310,27 @@ abstract class Model{
         return (array) $this->data;
     }
 
+    /**
+     * Execute a raw query
+     *
+     * @param string $query
+     * @param array $filters
+     * @return void
+     */
+    public function raw(string $query, array $filters = [])
+    {
+        $stmt = Connect::getInstance()->prepare($query);
+        $stmt->execute($filters);
+
+        if (\explode(" ", $query)[0] === "INSERT" || \explode(" ", $query)[0] === "UPDATE"   ) {
+
+            $result = Connect::getInstance()->lastInsertId(); 
+
+        } else {
+
+            $result = $stmt->fetchAll();
+        }
+
+        return $result;
+    }
 }

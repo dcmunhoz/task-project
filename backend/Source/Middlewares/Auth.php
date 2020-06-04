@@ -14,7 +14,7 @@ class Auth {
         
         $headers = $request->getHeaders();
 
-        $excluded = ['/api/login'];
+        $excluded = ['/api/login', '/'];
 
         if (!\in_array($request->getUri()->getPath(), $excluded)) {
 

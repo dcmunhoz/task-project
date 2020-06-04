@@ -195,6 +195,8 @@ const NewTicket = ({showModal, setModal}) =>{
         setTaskTitle("");
         setTaskDescription("");
         setModal(false);
+        setSelectedMembers([]);
+        setSelectedTags([]);
 
     }
 
