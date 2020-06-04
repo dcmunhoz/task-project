@@ -4,30 +4,10 @@ import Icon from './../../components/Icon';
 
 import './style.css';
 
-const ComboSelect = ({closeComboSelect, label, data, value, setValue}) => {
-
-    const [arrValues, setArrValue] = useState(value);
-
-    function handleAddOnMembers(e){
-
-        const arr = [...arrValues];
-
-        const { id } = e.target;
-
-        if (arr.indexOf(id) === -1){
-            arr.push(id);
-        } else {
-            arr.splice(arr.indexOf(id), 1);
-        }
-
-        arr.sort((a,b) => a-b);
-
-        setArrValue(arr);
-
-    }
+const ComboSelect = ({closeComboSelect, label, data, selectedItems, onSelect}) => {
 
     function handleCloseComboSelect(){
-        setValue(arrValues);
+        
         closeComboSelect(false);
     }
 
@@ -47,8 +27,16 @@ const ComboSelect = ({closeComboSelect, label, data, value, setValue}) => {
                     <div className="data-list">
                         <ul>
                             {data.map((item, i)=>(
-                                <li onClick={handleAddOnMembers} key={item.id} id={item.id}>
-                                    {(arrValues.includes(String(item.id))) ? (<Icon iconName="FaCheck" />) : ""} {item.name}
+                                <li 
+                                    onClick={onSelect} 
+                                    key={item.id} 
+                                    id={item.id}    
+                                    style={{
+                                        backgroundColor: item.background_color,
+                                        color: item.foreground_color
+                                    }}
+                                >
+                                    {(selectedItems.find(i => i.id === item.id )) ? (<Icon iconName="FaCheck" />) : ""} {item.name}
                                 </li>
                             ))}
                         </ul>

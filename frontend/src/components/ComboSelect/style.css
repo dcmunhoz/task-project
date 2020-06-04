@@ -60,8 +60,11 @@
     margin-bottom: 5px;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
 }
 
 .combo-select section .data-list ul li .icon path{
-    color: gray;
+    /* color: gray; */
 }

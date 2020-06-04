@@ -59,7 +59,7 @@ const Sidebar = ({screens}) => {
             </header>
             <div className="profile-info">
                 <div className="user-avatar">
-                    <img src="https://via.placeholder.com/1920" alt=""/>
+                    <img src="http://localhost/public/assets/avatars/example_avatar.jpg" alt="Avatar"/>
                 </div>
                 <div className="user-name">
                     { userName }

@@ -40,6 +40,34 @@
     font-size: 24px;
 }
 
+.new-ticket-modal .selected-members-list,
+.new-ticket-modal .selected-tags-list{
+    display: flex;
+    flex-direction: row;
+}
+
+.new-ticket-modal .selected-members-list img {
+    width: 30px;
+    border-radius: 100px;
+    border: 2px solid gray;
+    margin-left: 3px;
+}
+
+.new-ticket-modal .selected-tags-list span{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 5px;
+    padding: 0px 10px;
+    box-sizing: border-box;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-left: 5px;
+    font-size: 14px;
+    min-width: 100px;
+}
+
 .new-ticket-title{
     display: flex;
     width: 100%;
