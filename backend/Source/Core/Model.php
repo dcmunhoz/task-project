@@ -22,6 +22,9 @@ abstract class Model{
     /** @var string */
     private $terms;
 
+    /** @var string */
+    private $join;
+
     /** @var array */
     private $params;
 
@@ -116,6 +119,23 @@ abstract class Model{
     }
 
     /**
+     * Make the join between two or more tables
+     *
+     * @param string $entity
+     * @param string $args
+     * @return Model
+     */
+    public function join(string $entity, string $args): Model
+    {
+        if(!empty($entity) && !empty($args)){
+
+            $this->join = "JOIN {$entity} ON {$args}";
+        }
+
+        return $this;
+    }
+
+    /**
      * Execute database query
      * 
      * @param bool $all
@@ -124,7 +144,8 @@ abstract class Model{
     {
         try{
 
-            $query = "{$this->query} {$this->terms}";
+            $query = "{$this->query} {$this->join} {$this->terms}";
+
             $stmt = Connect::getInstance()->prepare($query);
             $stmt->execute($this->params);
     
