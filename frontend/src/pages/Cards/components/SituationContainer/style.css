@@ -27,11 +27,15 @@
 }
 
 .situation-container .cards-list .card-box{
-
     background-color: #FFF;
     box-sizing: border-box;
     padding: 10px 10px;
     border-radius: 5px;
+    transition: 150ms;
+}
+
+.situation-container .cards-list .card-box:hover{
+    background-color: #fafafa;
 }
 
 .situation-container .cards-list .card-box .card-header{

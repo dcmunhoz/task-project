@@ -49,12 +49,15 @@
     font-size: 20px;
 }
 
-.task-details-modal header .button-close-task-modal a .icon path{
+.task-details-modal header .button-close-task-modal span .icon{
+    pointer-events: none;
+}
+.task-details-modal header .button-close-task-modal span .icon path{
     color: var(--btn-red);
     transition: 150ms;
 }
 
-.task-details-modal header .button-close-task-modal a:hover .icon path{
+.task-details-modal header .button-close-task-modal span:hover .icon path{
     color: var(--btn-red-h);
 }
 

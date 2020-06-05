@@ -1,31 +1,61 @@
 import React, {useState, useEffect} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 
 import useHttp from './../../../../services/useHttp';
 import Icon from './../../../../components/Icon';
 
 import './style.css';
 
-const SituationContainer = ({ id, title }) => {
+const SituationContainer = ({ id, title, showDetail }) => {
+    const { shuldLoadTasks } = useSelector(state => state.global);
     const http = useHttp();
     const [cards, setCards] = useState([]);
+    const dispatch = useDispatch();
 
     useEffect(()=>{
-        async function loadSituationCards(){
-
-            const response = await http("GET", `/cards`, {}, {
-                params:{
-                    situation_id: id
-                }
-            });
-
-            if (!response) return false;
-
-            setCards(response.data);
-            
-        }
-
         loadSituationCards();
     }, []);
+
+    useEffect(()=>{
+
+        let mounted = true;
+
+        if (mounted){
+            if (shuldLoadTasks) {
+
+                loadSituationCards();
+    
+                dispatch({
+                    type: "LOAD_TASKS",
+                    payload: false
+                });
+    
+            }
+        }
+
+        return () => mounted = false;
+
+        
+    }, [shuldLoadTasks]);
+
+    async function loadSituationCards(){
+
+        const response = await http("GET", `/cards`, {}, {
+            params:{
+                situation_id: id
+            }
+        });
+
+        if (!response) return false;
+
+        const { data } = response;
+
+        data.sort((a, b) => b.id_task - a.id_task);
+
+        setCards(data);
+        
+    }
 
     return(
         <div className="situation-container">
@@ -37,14 +67,15 @@ const SituationContainer = ({ id, title }) => {
                 <ul>
                     {cards.map((card)=>(
                         <li key={card.id_task}>
-                            <div className="card-box">
+                            <div className="card-box" id={card.id_task} onClick={showDetail}>
                                 <div className="card-header">
                                     [{card.id_task}] - {card.title}
                                 </div>
                                 <div className="card-tags">
-                                    <span className="tag" style={{backgroundColor: "#F44B4B"}}> </span>
-                                    <span className="tag" style={{backgroundColor: "#3B8AE7"}}> </span>
-                                    <span className="tag" style={{backgroundColor: "#CCE52F"}}> </span>
+                                    {card.tags.map(tag=>(
+                                        <span className="tag" style={{backgroundColor: tag.background_color}}> </span>
+                                    ))}
+
                                 </div>
 
                                 <div className="card-information">
@@ -68,9 +99,9 @@ const SituationContainer = ({ id, title }) => {
                                         </span> */}
                                     </div>
                                     <div className="card-members">
-                                        <img src="https://via.placeholder.com/1920" alt=""/>
-                                        <img src="https://via.placeholder.com/1920" alt=""/>
-                                        <img src="https://via.placeholder.com/1920" alt=""/>
+                                        {card.members.map(member=>(
+                                            <img src={member.avatar} alt={`Avatar ${member.name}`} title={member.name}/>
+                                        ))}
                                     </div>
                                 </div>
 

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
 import SituationContainer from './components/SituationContainer';
 import Content from './../../components/Content';
@@ -7,24 +9,38 @@ import useHttp from './../../services/useHttp';
 import './style.css';
 
 const Cards = () => {
+    const { shuldLoadTasks } = useSelector(store => store.global);
     const http = useHttp();
     const [situations, setSituations] = useState([]);
+    const history = useHistory();
+    const dispatch = useDispatch();
 
     useEffect(()=>{
-
-        async function laodSituations(){
-            const response = await http("GET", "/situations");
-
-            if (!response) return false;
-
-            const { data } = response;
-
-            setSituations(data);
-        }
-
         laodSituations();
     }, []);
 
+    
+
+    async function laodSituations(){
+        const response = await http("GET", "/situations");
+
+        if (!response) return false;
+
+        const { data } = response;
+
+        setSituations(data);
+    }
+
+    function handleShowTaskDetail(e){
+
+        const { id: task_id } = e.currentTarget;
+        history.replace(`?task=${task_id}`);
+        
+        dispatch({
+            type: "SHOW_TASK_DETAIL_MODAL",
+            payload: true
+        })
+    }
 
     return(
         <Content 
@@ -38,6 +54,7 @@ const Cards = () => {
                         key={situation.id_situation} 
                         id={situation.id_situation}
                         title={situation.situation} 
+                        showDetail={handleShowTaskDetail}
                     />
                 ))}
             </div>

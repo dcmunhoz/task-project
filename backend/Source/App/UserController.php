@@ -36,16 +36,93 @@ class UserController {
 
         $user = new User();
 
-        $result = $user->find(null, null, "id_user as id, username, first_name as label, last_name")->fetch(true);
+        $results = $user->find(null, null, 'id_user')->fetch(true);
 
-        if (!$result){
+        if (!$results){
             if ($user->fail) {
                 // Tratar erros
             }
         }
 
-        $res->getBody()->write(\json_encode($result));
+        $dataset = [];
+
+        foreach ($results as $field) {
+            
+            $user = new User();
+            $user->findById((Int) $field->id_user);
+
+            $dataset[] = [
+                "id" => $user->id_user,
+                "name" => $user->getShortName()
+            ];
+
+        }
+
+
+        $res->getBody()->write(\json_encode($dataset));
         return $res->withHeader("Content-Type", "application/json");
+    }
+
+    public function listMembers(Request $request, Response $response){
+        $user = new User();
+        $data = $user->find("roles.role = :role", ":role=T")
+                ->join("roles", "roles.id_role = users.id_role")
+                ->fetch(true);
+
+        if (!$data){
+            $response->getBody()->write(\json_encode([
+                "error" => "Não foi possivel completar sua socilitação"
+            ]));
+            return $response->withHeader("Content-Type", "application/json");
+        }
+
+
+        $dataset = [];
+
+        foreach($data as $userResult){
+
+            $user = new User();
+            $user->findById((Int) $userResult->id_user);
+
+            $dataset[] = [
+                "id" => $user->id_user,
+                "name" => $user->getShortName()
+            ];
+        }
+
+        $response->getBody()->write(\json_encode($dataset));
+        return $response->withHeader("Content-Type", "application/json");
+        
+    
+
+    }
+
+    public function show(Request $request, Response $response, $args){
+
+        $idUser = $args['idUser'];
+
+        $user = new User();
+        $user->findById((Int) $idUser);
+
+        if ($user->fail) {
+            $response->getBody()->write(\json_encode([
+                "error" => "Usuário não encontrado na base de dados"
+            ]));
+
+            return $response->withHeader("Content-Type", "application/json");
+        }
+
+        $return = [
+            "id" => $user->id_user,
+            "name" => $user->getShortName(),
+            "avatar" => $user->avatar,
+
+        ];
+
+        $response->getBody()->write(\json_encode($return));
+
+        return $response->withHeader("Content-Type", "application/json");
+
     }
 
 }

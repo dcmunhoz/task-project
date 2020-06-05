@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import Content from './../../components/Content';
@@ -9,35 +9,61 @@ import Icon from './../../components/Icon';
 import './style.css';
 
 const Tasks = () => {
+    const { shuldLoadTasks } = useSelector(store => store.global);
     const httpRequest = useHttp();
     const dispatch = useDispatch();
     const [taskList, setTaskList] = useState([]);
     const history = useHistory();
 
     useEffect(()=>{
-        async function loadTasks(){
-
-            const response = await httpRequest("GET", '/task/list');
-
-            if (!response) return false;
-
-            const { data } = response;
-
-            if (data.error) {
-                dispatch({
-                    type:"SHOW_ERROR_MESSAGE",
-                    payload: {
-                        message: "Houve um erro ao processar uma informação, por favor, contato um administrador do sistema",
-                    }
-                });
-            }
-
-            setTaskList(data);
-
-        }
-        loadTasks();         
-
+        loadTasks();
     }, []);
+
+    useEffect(()=>{
+        
+        let mounted = true;
+
+        if (mounted){
+            if (shuldLoadTasks) {
+
+                loadTasks();   
+    
+                dispatch({
+                    type: "LOAD_TASKS",
+                    payload: false
+                });
+    
+            }
+        }
+
+        return () => mounted = false;        
+
+    }, [shuldLoadTasks]);
+
+    async function loadTasks(){
+
+        const response = await httpRequest("GET", '/task/list');
+
+        if (!response) return false;
+
+        const { data } = response;
+
+        if (data.error) {
+            dispatch({
+                type:"SHOW_ERROR_MESSAGE",
+                payload: {
+                    message: "Houve um erro ao processar uma informação, por favor, contato um administrador do sistema",
+                }
+            });
+        }
+
+        data.sort((a,b) => b.id_task - a.id_task);
+
+        console.log(data);
+
+        setTaskList(data);
+
+    }
 
     function handleShowTaskDetail(e){
 
@@ -79,11 +105,18 @@ const Tasks = () => {
 
                                     <div className="sub-informations">
                                         <div className="ticket-tags">
-                                            <span className="tag" style={{backgroundColor: "#F44B4B"}}> </span>
-                                            
-                                            <span className="tag" style={{backgroundColor: "#3B8AE7"}}> </span>
-                                            
-                                            <span className="tag" style={{backgroundColor: "#CCE52F"}}> </span>
+                                            {/* { (task.tags) ? task.tags.map(tag=>(
+                                                <span className="tag" style={{backgroundColor: tag.background_color}} label={tag.title}> </span>
+                                            )) : (
+                                                <span className="tag" style={{backgroundColor: "red"}} > </span>
+                                            )} */}
+
+                                            {(task.tags.length >= 1) ? (task.tags.map(tag=>(
+                                                <span className="tag" style={{backgroundColor: tag.background_color}} label={tag.title}> </span>
+                                            ))) : ( 
+                                                <span className="tag" style={{backgroundColor: "rgb(0, 0, 0, 0,)"}} > </span>
+                                            )}
+
                                         </div>
                                         <div title={task.description}>
                                             {task.description}
@@ -92,13 +125,13 @@ const Tasks = () => {
 
                                     <div className="ticket-informations">
                                         <div className="ticket-members">
-                                            <img src="https://via.placeholder.com/1920" alt=""/>
+                                            {(task.members.length >= 1) ? (task.members.map(member=>(
+                                                <img src={member.avatar} alt=""/>
+                                            ))) : ( 
+                                                <span className="no-members">Tarefa sem membros</span>
+                                            )}
                                             
-                                            <img src="https://via.placeholder.com/1920" alt=""/>
                                             
-                                            <img src="https://via.placeholder.com/1920" alt=""/>
-                                            
-                                            <img src="https://via.placeholder.com/1920" alt=""/>
                                         </div>
                                         <div className="informations">
                                             <div className="opening-date">

@@ -6,6 +6,7 @@ namespace Source\App;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Source\Models\Task;
+use Source\Models\Tag;
 use Source\Models\Situation;
 use Source\Models\User;
 
@@ -46,6 +47,35 @@ class TaskController {
             return $response->withHeader("Content-Type", "application/json");
         }
 
+        if (!empty($body['selectedMembers'])) {
+
+            $selectedMembers = $body['selectedMembers'];
+
+            foreach($selectedMembers as $member){
+
+                $task->raw("INSERT INTO taskxmembers (id_task, id_user) VALUES (:id_task, :id_user)", [
+                    ":id_task" => $task->id_task,
+                    ":id_user" => $member
+                ]);
+
+            }
+                      
+        }
+
+        if (!empty($body['selectedTags'])) {
+
+            $selectesTags = $body['selectedTags'];
+
+            foreach ($selectesTags as $tag) {
+
+                $task->raw("INSERT INTO taskxtags (id_task, id_tag) VALUES (:id_task, :id_tag)", [
+                    ":id_task" => $task->id_task,
+                    ":id_tag" => $tag
+                ]);
+            }
+
+        }
+        
         $response->getBody()->write(\json_encode($task->getData()));
         return $response->withHeader("Content-Type", "application/json");
 
@@ -58,21 +88,85 @@ class TaskController {
 
         $dataset = [];
 
-        foreach($tasks as $task){
+        if (!$tasks){
+            // if ($task->fail) {
+            //     $response->getBody()->write(\json_encode([
+            //         "error" => $task->fail
+            //     ]));
+            // }
+
+            $response->getBody()->write(\json_encode($dataset));
+            return $response->withHeader("Content-Type", "application/json");
+        }
+
+
+        foreach($tasks as $row){
 
             $situation = new Situation();
-            $situation->findById((Int) $task->id_situation);
-            $task->situation = $situation->situation;
+            $situation->findById((Int) $row->id_situation);
+            $row->situation = $situation->situation;
 
             $requester = new User();
-            $requester->findById((Int) $task->id_requester);
-            $task->requester = $requester->first_name;
+            $requester->findById((Int) $row->id_requester);
+            $row->requester = $requester->first_name;
 
-            $createdAt = new \DateTime($task->created_at);
-            $task->creation_date = $createdAt->format("d/m/Y");
-            $task->creation_time = $createdAt->format("H:i");
+            $createdAt = new \DateTime($row->created_at);
+            $row->creation_date = $createdAt->format("d/m/Y");
+            $row->creation_time = $createdAt->format("H:i");
 
-            $dataset[] = $task;
+            $task = new Task();
+            $taskxtags = $task
+                ->find(
+                    "tasks.id_task = :id_task", 
+                    ":id_task={$row->id_task}", 
+                    "taskxtags.id_task, taskxtags.id_tag"
+                )
+                ->join("taskxtags", "taskxtags.id_task = tasks.id_task")
+                ->fetch(true); 
+            $tags = [];
+            if ($taskxtags) {
+                
+                foreach ($taskxtags as $rowTags) {
+                
+                    $tag = new Tag();
+                    $tagData = $tag->find("id_tag = :id_tag", ":id_tag={$rowTags->id_tag}")->fetch();
+
+                    $tags[] = $tagData;
+                }
+
+            }
+            $row->tags = $tags;
+
+            $taskxmembers = $task
+                ->find(
+                    "tasks.id_task = :id_task", 
+                    ":id_task={$row->id_task}",
+                    "taskxmembers.id_task, taskxmembers.id_user"
+                )
+                ->join("taskxmembers", "taskxmembers.id_task = tasks.id_task")
+                ->fetch(true);
+            
+            $members = [];
+            if ($taskxmembers) {
+                foreach ($taskxmembers as $rowMember) {
+
+                    $user = new user();
+                    $user->findById((Int) $rowMember->id_user);
+
+                    $userData = [
+                        "id_user" => $user->id_user,
+                        "avatar" => $user->avatar,
+                        "name" => $user->getShortName()    
+                    ];
+
+                    $members[] = $userData;
+
+                }
+            }
+
+            $row->members = $members;
+            
+            $dataset[] = $row;
         }
 
         $response->getBody()->write(\json_encode($dataset));
@@ -87,22 +181,88 @@ class TaskController {
         $idSituation = $params['situation_id'];
 
         $task = new Task();
-        $result = $task->find("id_situation = :id_situation", ":id_situation={$idSituation}")->fetch(true);
+        $tasks = $task->find("id_situation = :id_situation", ":id_situation={$idSituation}")->fetch(true);
 
-        if (!$result){
+        if (!$tasks){
             $response->getBody()->write(\json_encode([]));
             return $response->withHeader("Content-Type", "application/json");
         }
 
         $dataset = [];
 
-        foreach ($result as $task){
+        foreach ($tasks as $row){
 
-            $creationDate = new \DateTime($task->created_at);
-            $task->creationDate = $creationDate->format("d/m/Y");
-            $task->creationTime = $creationDate->format("H:i");
+            // $creationDate = new \DateTime($task->created_at);
+            // $task->creationDate = $creationDate->format("d/m/Y");
+            // $task->creationTime = $creationDate->format("H:i");
 
-            $dataset[] = $task;
+            // $dataset[] = $task;
+
+            $situation = new Situation();
+            $situation->findById((Int) $row->id_situation);
+            $row->situation = $situation->situation;
+
+            $requester = new User();
+            $requester->findById((Int) $row->id_requester);
+            $row->requester = $requester->first_name;
+
+            $createdAt = new \DateTime($row->created_at);
+            $row->creationDate = $createdAt->format("d/m/Y");
+            $row->creationTime = $createdAt->format("H:i");
+
+            $task = new Task();
+            $taskxtags = $task
+                ->find(
+                    "tasks.id_task = :id_task", 
+                    ":id_task={$row->id_task}", 
+                    "taskxtags.id_task, taskxtags.id_tag"
+                )
+                ->join("taskxtags", "taskxtags.id_task = tasks.id_task")
+                ->fetch(true); 
+            $tags = [];
+            if ($taskxtags) {
+                
+                foreach ($taskxtags as $rowTags) {
+                
+                    $tag = new Tag();
+                    $tagData = $tag->find("id_tag = :id_tag", ":id_tag={$rowTags->id_tag}")->fetch();
+
+                    $tags[] = $tagData;
+                }
+
+            }
+            $row->tags = $tags;
+
+            $taskxmembers = $task
+                ->find(
+                    "tasks.id_task = :id_task", 
+                    ":id_task={$row->id_task}",
+                    "taskxmembers.id_task, taskxmembers.id_user"
+                )
+                ->join("taskxmembers", "taskxmembers.id_task = tasks.id_task")
+                ->fetch(true);
+            
+            $members = [];
+            if ($taskxmembers) {
+                foreach ($taskxmembers as $rowMember) {
+
+                    $user = new user();
+                    $user->findById((Int) $rowMember->id_user);
+
+                    $userData = [
+                        "id_user" => $user->id_user,
+                        "avatar" => $user->avatar,
+                        "name" => $user->getShortName()    
+                    ];
+
+                    $members[] = $userData;
+
+                }
+            }
+
+            $row->members = $members;
+            
+            $dataset[] = $row;
 
         }
 
