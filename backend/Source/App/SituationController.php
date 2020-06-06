@@ -14,9 +14,16 @@ class SituationController {
         $situation = new Situation();
         $result = $situation->find()->fetch(true);
 
+        $return = \array_map(function($arr){
 
+            $newArr = new \stdClass();
+            $newArr->id = $arr->id_situation;
+            $newArr->label = $arr->situation;
+            return $newArr;
 
-        $response->getBody()->write(\json_encode($result));
+        }, $result);
+
+        $response->getBody()->write(\json_encode($return));
         return $response->withHeader("Content-Type", "application/json");
 
 

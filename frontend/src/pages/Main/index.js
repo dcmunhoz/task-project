@@ -54,6 +54,56 @@ export default function Main(){
     }, []);
 
     useEffect(()=>{
+        async function loadUsersList(){
+            const request = await httpRequest("GET", "/users")
+            if (!request)return false;
+            
+            const { data } = request;
+
+            if (data.error){
+                // Tratar erros
+                return false;
+            }
+
+            const users = data.map(user => ({
+                id: user.id,
+                label: user.name,
+            }));
+
+            dispatch({
+                type:"SET_USERS_LIST",
+                payload: users
+            });
+
+        }
+
+        loadUsersList();
+    }, []);
+
+    useEffect(()=>{
+        async function loadSituations(){
+            const response = await httpRequest("GET", 'situations');
+
+            if (!response) return false;
+
+            const { data } = response;
+
+            if (data.error) {
+                alert("TRATAR ERRO");
+            }
+
+            dispatch({
+                type: "SET_SITUATIONS",
+                payload: data
+            });
+
+        }
+
+        loadSituations();
+
+    }, []);
+
+    useEffect(()=>{
         setTaskDetail(show_modal);
     }, [show_modal]);
     

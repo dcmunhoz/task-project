@@ -12,7 +12,7 @@ const Sidebar = ({screens}) => {
     const [toggleIcon, setToggle] = useState('FaAngleDoubleLeft');
     const [activeScreen, setActiveScreen] = useState('');
     const history = useHistory();
-    const { fullname } = useSelector(store => store.user);
+    const { fullname } = useSelector(store => store.user.authenticatedUser);
 
     useEffect(()=>{
         screens.forEach((screen)=>{

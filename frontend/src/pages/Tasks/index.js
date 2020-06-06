@@ -59,8 +59,6 @@ const Tasks = () => {
 
         data.sort((a,b) => b.id_task - a.id_task);
 
-        console.log(data);
-
         setTaskList(data);
 
     }
@@ -105,14 +103,9 @@ const Tasks = () => {
 
                                     <div className="sub-informations">
                                         <div className="ticket-tags">
-                                            {/* { (task.tags) ? task.tags.map(tag=>(
-                                                <span className="tag" style={{backgroundColor: tag.background_color}} label={tag.title}> </span>
-                                            )) : (
-                                                <span className="tag" style={{backgroundColor: "red"}} > </span>
-                                            )} */}
 
                                             {(task.tags.length >= 1) ? (task.tags.map(tag=>(
-                                                <span className="tag" style={{backgroundColor: tag.background_color}} label={tag.title}> </span>
+                                                <span key={tag.id_tag} className="tag" style={{backgroundColor: tag.background_color}} label={tag.title}> </span>
                                             ))) : ( 
                                                 <span className="tag" style={{backgroundColor: "rgb(0, 0, 0, 0,)"}} > </span>
                                             )}
@@ -126,7 +119,7 @@ const Tasks = () => {
                                     <div className="ticket-informations">
                                         <div className="ticket-members">
                                             {(task.members.length >= 1) ? (task.members.map(member=>(
-                                                <img src={member.avatar} alt=""/>
+                                                <img key={member.id_user} src={member.avatar} alt=""/>
                                             ))) : ( 
                                                 <span className="no-members">Tarefa sem membros</span>
                                             )}

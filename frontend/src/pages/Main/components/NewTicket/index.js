@@ -16,7 +16,8 @@ const NewTicket = ({showModal, setModal}) =>{
     const httpRequest = useHttp();
     const dispatch = useDispatch();
     
-    const { id_user: idUserCreation } = useSelector(state => state.user);
+    const { id_user: idUserCreation } = useSelector(state => state.user.authenticatedUser);
+    const usersList = useSelector(state => state.user.usersList);
     const [users, setUsers] = useState([]);
     const [members, setMembers] = useState([]);
     const [tags, setTags] = useState([]);
@@ -28,30 +29,6 @@ const NewTicket = ({showModal, setModal}) =>{
     
     const [showMembersComboSelect, setShowMembersComboSelect] = useState(false);
     const [showTagsComboSelect, setShowTagsComboSelect] = useState(false);
-
-    useEffect(()=>{
-        async function loadUsersList(){
-            const request = await httpRequest("GET", "/users")
-            if (!request)return false;
-            
-            const { data } = request;
-
-            if (data.error){
-                // Tratar erros
-                return false;
-            }
-
-            const users = data.map(user => ({
-                id: user.id,
-                label: user.name,
-            }));
-
-            setUsers(users);
-
-        }
-
-        loadUsersList();
-    }, []);
 
     useEffect(()=>{
         async function getAvailableMembers(){
@@ -95,6 +72,10 @@ const NewTicket = ({showModal, setModal}) =>{
         }
         getAvailableTags();
     }, []);
+
+    useEffect(()=>{
+        setUsers(usersList);
+    }, [usersList])
 
     function handleCloseNTModal(e){
         if (e.target == e.currentTarget){
@@ -233,7 +214,7 @@ const NewTicket = ({showModal, setModal}) =>{
                 <div className="new-ticket-options">
                     <DetailtBox label="solicitante" >
                         <Select 
-                            data={users} 
+                            data={usersList} 
                             value={idRequester}
                             onChange={(e) => setRequester(e.target.value)}
                         />
