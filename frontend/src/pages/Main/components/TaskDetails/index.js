@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
 import Icon from './../../../../components/Icon';
@@ -11,6 +11,8 @@ import useHttp from './../../../../services/useHttp';
 import './style.css';
 
 const TaskDetails = () => {
+    const usersList = useSelector(state => state.user.usersList);
+    const situations = useSelector(state => state.global.situations);
     const dispatch = useDispatch();
     const location = useLocation();
     const history = useHistory();
@@ -18,6 +20,9 @@ const TaskDetails = () => {
     const [task, setTask] = useState({});
     const [requester, setRequester] = useState({});
     const [tags, setTags] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [members, setMembers] = useState([]);
+    const [situationList, setSituationList] = useState([]);
 
     useEffect(()=>{
     
@@ -40,12 +45,21 @@ const TaskDetails = () => {
             setTask(data);
             setRequester(data.requester);
             setTags(data.tags);
+            setMembers(data.members);
 
         }
 
         getTaskDetails();
 
     }, []);
+
+    useEffect(()=>{
+        setUsers(usersList);
+    }, [usersList]);
+
+    useEffect(()=>{
+        setSituationList(situations);
+    }, [situations]);
 
     function handleHideTaskDetails(e){
        e.preventDefault();
@@ -62,30 +76,6 @@ const TaskDetails = () => {
             })
         }
     }
-
-    const data = [
-        {
-            id: 1,
-            label: "a fazer"
-        },{
-            id: 2,
-            label: "fazendo"
-        },{
-            id: 3,
-            label: "feito"
-        },{
-            id: 4,
-            label: "cancelado"
-        },
-    ]
-
-    const requesters = [
-        {
-            id: 1,
-            label: "Daniel munhoz"
-        }
-    ]
-
 
     return(
         <div className={`task-details-modal-container`} data-close onClick={handleHideTaskDetails}>
@@ -104,7 +94,7 @@ const TaskDetails = () => {
                     </div>
                 </header>
                 <div className="task-row-detail"> 
-                    <DetailtBox label="atividade" >
+                    {/* <DetailtBox label="atividade" >
                         <a href="">
                             <Icon 
                                 iconName="FaPlayCircle"
@@ -115,26 +105,22 @@ const TaskDetails = () => {
                                 iconName="FaCheckCircle"
                             />
                         </a>
-                    </DetailtBox>
+                    </DetailtBox> */}
 
                     <DetailtBox 
                         label="integrantes"
                         customClass="task-members"
                     >
-                        <div className="member-avatar">
-                            <img src="https://via.placeholder.com/1920" alt=""/>
-                        </div>
-                        <div className="member-avatar">
-                            <img src="https://via.placeholder.com/1920" alt=""/>
-                        </div>
-                        <div className="member-avatar">
-                            <img src="https://via.placeholder.com/1920" alt=""/>
-                        </div>
+                        {members.map(member=>(
+                            <div className="member-avatar" key={member.id_user}>
+                                <img src={member.avatar} alt="" />
+                            </div>
+                        ))}
                     </DetailtBox>
 
                     <DetailtBox label="situação">
                         <Select 
-                            data={data}
+                            data={situationList}
                             value={task.situation}
                             style={{
                                 backgroundColor: "#263238",
@@ -157,7 +143,7 @@ const TaskDetails = () => {
                 <div className="task-row-detail">
                     <DetailtBox label="solicitante">
                         <Select 
-                            data={requesters}
+                            data={usersList}
                             value={requester.id}
                         />
                     </DetailtBox>
@@ -178,8 +164,15 @@ const TaskDetails = () => {
                 <DetailtBox label="etiquetas">
                     <div className="tags-list">
                         {tags.map(tag=>(
-                            <span key={tag.id} className="tag">
-                                {tag.label}
+                            <span 
+                                key={tag.id_tag} 
+                                className="tag" 
+                                style={{ 
+                                    backgroundColor: tag.background_color, 
+                                    color: tag.foreground_color 
+                                }}
+                            >
+                                {tag.title}
                             </span>
                         ))}
 

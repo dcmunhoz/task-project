@@ -314,12 +314,58 @@ class TaskController {
             "email" => $user->email
         ];
 
-        $result['members'] = [];
-        $result['tags'][] = [
-            "id"=> 1,
-            "label" => "teste"
-        ];
+        
+        $taskxtags = $task
+            ->find(
+                "tasks.id_task = :id_task", 
+                ":id_task={$task->id_task}", 
+                "taskxtags.id_task, taskxtags.id_tag"
+            )
+            ->join("taskxtags", "taskxtags.id_task = tasks.id_task")
+            ->fetch(true); 
 
+        $tags = [];
+        if ($taskxtags) {
+            
+            foreach ($taskxtags as $rowTags) {
+            
+                $tag = new Tag();
+                $tagData = $tag->find("id_tag = :id_tag", ":id_tag={$rowTags->id_tag}")->fetch();
+
+                $tags[] = $tagData;
+            }
+
+        }
+        $result['tags'] = $tags;
+
+        $taskxmembers = $task
+            ->find(
+                "tasks.id_task = :id_task", 
+                ":id_task={$task->id_task}",
+                "taskxmembers.id_task, taskxmembers.id_user"
+            )
+            ->join("taskxmembers", "taskxmembers.id_task = tasks.id_task")
+            ->fetch(true);
+        
+        $members = [];
+        if ($taskxmembers) {
+            foreach ($taskxmembers as $rowMember) {
+
+                $user = new user();
+                $user->findById((Int) $rowMember->id_user);
+
+                $userData = [
+                    "id_user" => $user->id_user,
+                    "avatar" => $user->avatar,
+                    "name" => $user->getShortName()    
+                ];
+
+                $members[] = $userData;
+
+            }
+        }
+
+        $result['members'] = $members;
         $result['messages'] = [];
 
         $response->getBody()->write(\json_encode($result));
