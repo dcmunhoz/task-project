@@ -10,9 +10,9 @@ const useHttp = () => {
 
     async function httpRequest(method, url, params = {}, config = {}, delayEffect){
 
-        dispatch({
-            type:"SHOW_LOADING_SCREEN"
-        });
+        // dispatch({
+        //     type:"SHOW_LOADING_SCREEN"
+        // });
 
         const token = {
             headers:{
@@ -31,13 +31,16 @@ const useHttp = () => {
             case "PUT":
                 response = await http.put(url, params, defaultConfig);
             break;
+            case "DELETE":
+                response = await http.delete(url, defaultConfig);
+            break;
             case "GET":
                 response = await http.get(url, defaultConfig);
         }
 
-        dispatch({
-            type:"HIDE_LOADING_SCREEN"
-        });
+        // dispatch({
+        //     type:"HIDE_LOADING_SCREEN"
+        // });
 
         const { data } = response;
     

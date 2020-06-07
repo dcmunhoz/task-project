@@ -73,7 +73,7 @@ const SituationContainer = ({ id, title, showDetail }) => {
                                 </div>
                                 <div className="card-tags">
                                     {card.tags.map(tag=>(
-                                        <span className="tag" style={{backgroundColor: tag.background_color}}> </span>
+                                        <span key={tag.id_tag} className="tag" style={{backgroundColor: tag.background_color}}> </span>
                                     ))}
 
                                 </div>
@@ -100,7 +100,7 @@ const SituationContainer = ({ id, title, showDetail }) => {
                                     </div>
                                     <div className="card-members">
                                         {card.members.map(member=>(
-                                            <img src={member.avatar} alt={`Avatar ${member.name}`} title={member.name}/>
+                                            <img key={member.id_user} src={member.avatar} alt={`Avatar ${member.name}`} title={member.name}/>
                                         ))}
                                     </div>
                                 </div>

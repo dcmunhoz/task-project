@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Source\Core\Authentication;
 use Source\Models\User;
+use Source\Models\Task;
 
 class UserController {
 
@@ -121,6 +122,64 @@ class UserController {
 
         $response->getBody()->write(\json_encode($return));
 
+        return $response->withHeader("Content-Type", "application/json");
+
+    }
+
+    public function removeMember(Request $request, Response $response, $args){
+
+        $idTask = $args['idTask'];
+        $idMember = $args['idMember'];
+
+        $task = new Task();
+
+        $result = $task->raw("DELETE FROM taskxmembers WHERE id_task = :id_task AND id_user = :id_user", [
+            ":id_task" => $idTask,
+            ":id_user" => $idMember
+        ]);
+
+        if ($result == 0) {
+            $response->getBody()->write(\json_encode([
+                "error" => "Não foi possivel desvincular o membro selecionado."
+            ]));
+
+            return $response->withHeader("Content-Type", "application/json");
+        }
+
+        $response->getBody()->write(\json_encode($result));
+        return $response->withHeader("Content-Type", "application/json");
+
+    }
+
+    public function addMember(Request $request, Response $response, $args){
+
+        $idTask = $args['idTask'];
+        $idMember = $args['idMember'];
+
+        $task = new Task();
+        $result = $task->raw('INSERT INTO taskxmembers(id_task, id_user) VALUES(:id_task, :id_user)', [
+            ":id_task" => $idTask,
+            ":id_user" => $idMember
+        ]);
+
+        if (!$result) {
+
+            if ($task->fail) {
+                $response->getBody()->write(\json_encode([
+                    "error" => $task->fail,
+                    "type" => "sys"
+                ]));
+                return $response->withHeader("Content-Type", "application/json");
+            }
+
+            $response->getBody()->write(\json_encode([
+                "error" => "Não foi possivel adicionar o membro selecionado."
+            ]));
+
+            return $response->withHeader("Content-Type", "application/json");
+        }
+
+        $response->getBody()->write(\json_encode($result));
         return $response->withHeader("Content-Type", "application/json");
 
     }

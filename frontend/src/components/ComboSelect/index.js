@@ -44,7 +44,7 @@ const ComboSelect = ({label, data, selectedItems, onSelect, rounded}) => {
                                         <li 
                                             onClick={onSelect} 
                                             key={item.id} 
-                                            id={item.id}    
+                                            data-id={item.id}    
                                             style={{
                                                 backgroundColor: item.background_color,
                                                 color: item.foreground_color

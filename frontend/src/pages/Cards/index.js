@@ -51,9 +51,9 @@ const Cards = () => {
             <div className="cards-container">
                 {situations.map((situation)=>(
                     <SituationContainer 
-                        key={situation.id_situation} 
-                        id={situation.id_situation}
-                        title={situation.situation} 
+                        key={situation.id} 
+                        id={situation.id}
+                        title={situation.label} 
                         showDetail={handleShowTaskDetail}
                     />
                 ))}

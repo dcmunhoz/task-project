@@ -376,7 +376,33 @@ class TaskController {
 
         $body = $request->getParsedBody();
 
-        $response->getBody()->write(\json_encode($body));
+        $task = new Task();
+        $task->findById((Int) $body['id_task']);
+        $task->title = $body['title'];
+        $task->id_situation = $body['situation'];
+        $task->description = $body['description'];
+        $task->id_requester = $body['requester']['id'];
+        $task->estimated_start = $body['estimated'];
+
+        if (!$task->save()){
+            $response->getBody()->write(\json_encode([
+                "error" => "Houve um erro ao tentar salvar"
+            ]));
+
+            if ($task->fail) {
+
+                $response->getBody()->write(\json_encode([
+                    "error" => $task->fail,
+                    "type" => "sys"
+                ]));
+
+            }
+
+            return $response;
+
+        } 
+
+        $response->getBody()->write(\json_encode($task->getData()));
         return $response;
 
     }

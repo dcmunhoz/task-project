@@ -56,11 +56,9 @@ const TaskDetails = () => {
             const members = data.members.map(member => ({
                 id: member.id_user,
                 name: member.name,
-                ...member
+                avatar: member.avatar
             }));
             
-            console.log(data.members)
-
             setTask(data);
             setRequester(data.requester);
             setSelectedTags(tags);
@@ -120,6 +118,7 @@ const TaskDetails = () => {
         }
     }
 
+    /** ==== TITLE ==== */
     function handleChangeTaskTitle(e){
 
         setTask({
@@ -129,19 +128,175 @@ const TaskDetails = () => {
 
     }
 
-    async function handleTitleLoseFocus(){
-        await sendUpdateTask();
+    function handleTitleLoseFocus(e){
+
+        
+        sendUpdateTask(task);
+
+        setTitleFocused(false);
         
     }
 
-    async function sendUpdateTask(){
-        const response = await httpRequest("PUT", `/task/${task.id_task}/update`, {
-            ...task
+    /** ==== SITUATION ==== */
+    function handleChangeTaskSituation(e){
+
+        const newTask = {
+            ...task,
+            situation: e.target.value
+        }
+
+        sendUpdateTask(newTask);
+    }
+
+    /** ==== REQUESTER ==== */
+    function handleChangeTaskRequester(e){
+        const newTask = {
+            ...task,
+            requester: {
+                id: e.target.value
+            }
+        }
+
+        sendUpdateTask(newTask);
+    } 
+
+    /** ==== DESCRIPTION ==== */
+    function handleChangeTaskDescription(e){
+        setTask({
+            ...task,
+            description: e.target.value
+        })
+    }
+
+    function handleDescriptionLoseFocus(){
+        sendUpdateTask(task);
+    }
+    
+    /** ==== MEMBERS ==== */
+    async function handleChangeMembers(e){
+        const { id } = e.target.dataset;
+
+        const inArray = selectedMembers.find(member => member.id == id);
+
+        let response;
+
+        if (inArray) {
+            response = await httpRequest("DELETE", `/task/${task.id_task}/member/${id}/remove`);
+
+            if (!response) return false;
+
+            const newMembers = selectedMembers.filter(member => member.id !== id);
+
+            setSelectedMembers(newMembers);
+        } else {
+            response = await httpRequest("POST", `/task/${task.id_task}/member/${id}/add`);
+
+            if (!response) return false;
+
+            const memberData = await httpRequest("GET", `/user/${id}`);
+
+            if (!memberData) return false;
+            
+            setSelectedMembers([
+                ...selectedMembers,
+                memberData.data
+            ])
+        }
+
+        const { data } = response;
+        if (data.error) {
+            dispatch({
+                type: "SHOW_MODAL_MESSAGE",
+                payload:{
+                    title: "Ooooops",
+                    message: data.error
+                }
+            })
+            return false;
+        }
+
+
+
+        dispatch({
+            type: "LOAD_TASKS",
+            payload: true
         });
 
-        setTitleFocused(false);
+    }
 
-        console.log(response);
+    /** ==== TAGS ==== */
+    async function handleChangeTags(e){
+        const { id } = e.target.dataset;
+
+        const inArray = selectedTags.find(tag => tag.id == id);
+
+        let response;
+
+        if (inArray) {
+            response = await httpRequest("DELETE", `/task/${task.id_task}/tag/${id}/remove`);
+
+            if (!response) return false;
+
+            const newTags = selectedTags.filter(tag => tag.id !== id);
+
+            setSelectedTags(newTags);
+
+        } else {
+            response = await httpRequest("POST", `/task/${task.id_task}/tag/${id}/add`);
+
+            if (!response) return false;
+
+            const tagData = await httpRequest("GET", `/tag/${id}`);
+
+            if (!tagData) return false;
+
+            const newTagData = [tagData.data].map(tag => ({
+                id: tag.id_tag,
+                title: tag.title,
+                background_color: tag.background_color,
+                foreground_color: tag.foreground_color
+            }));
+            
+            setSelectedTags([
+                ...selectedTags,
+                newTagData[0]
+            ])
+        }
+
+        const { data } = response;
+        if (data.error) {
+            dispatch({
+                type: "SHOW_MODAL_MESSAGE",
+                payload:{
+                    title: "Ooooops",
+                    message: data.error
+                }
+            })
+            return false;
+        }
+
+        dispatch({
+            type: "LOAD_TASKS",
+            payload: true
+        });
+    }
+
+
+    async function sendUpdateTask(newTask){
+        
+        const response = await httpRequest("PUT", `/task/${newTask.id_task}/update`, {
+            ...newTask
+        });
+
+        if (!response) return false;
+
+        dispatch({
+            type: "LOAD_TASKS",
+            payload: true
+        });
+
+        setTask(newTask);
+        
     }
 
     return(
@@ -150,7 +305,7 @@ const TaskDetails = () => {
                 <header>
                     <div className={`task-header-informations`}>
                         <div className={`task-title ${(titleFocused) ? "focused" : ""}`}>
-                            <h1>#{task.id_task} - </h1><input value={task.title} onChange={handleChangeTaskTitle} onFocus={()=>setTitleFocused(true)} onBlur={handleTitleLoseFocus} />
+                            <h1>#{task.id_task} - &nbsp;</h1> <input value={task.title ?? ""} onChange={handleChangeTaskTitle} onFocus={()=>setTitleFocused(true)} onBlur={handleTitleLoseFocus} />
                         </div>
                         <span>Criado Por { requester.name }&lt;{ requester.email }&gt; em {task.created_date} ás {task.created_time}</span>
                     </div>
@@ -184,12 +339,12 @@ const TaskDetails = () => {
                             label="Integrantes"
                             data={membersList}
                             selectedItems={selectedMembers}
-                            onSelect={()=>{}}
+                            onSelect={handleChangeMembers}
                             rounded
                         />
 
                         {selectedMembers.map(member=>(
-                            <div className="member-avatar" key={member.id_user}>
+                            <div className="member-avatar" key={member.id}>
                                 <img src={member.avatar} alt="" />
                             </div>
                         ))}
@@ -204,6 +359,7 @@ const TaskDetails = () => {
                                 color: "#FFF",
                                 textTransform: "uppercase"
                             }}
+                            onChange={handleChangeTaskSituation}
                         />
                     </DetailtBox>
 
@@ -221,7 +377,8 @@ const TaskDetails = () => {
                     <DetailtBox label="solicitante">
                         <Select 
                             data={usersList}
-                            value={requester.id}
+                            value={(task.requester) ? task.requester.id : 0}
+                            onChange={handleChangeTaskRequester}
                         />
                     </DetailtBox>
 
@@ -244,13 +401,13 @@ const TaskDetails = () => {
                         label="Etiquetas"
                         data={tagsList}
                         selectedItems={selectedTags}
-                        onSelect={()=>{}}
+                        onSelect={handleChangeTags}
                     />
 
                     <div className="tags-list">
                         {selectedTags.map(tag=>(
                             <span 
-                                key={tag.id_tag} 
+                                key={tag.id} 
                                 className="tag" 
                                 style={{ 
                                     backgroundColor: tag.background_color, 
@@ -264,7 +421,11 @@ const TaskDetails = () => {
                 </DetailtBox>
 
                 <DetailtBox label="descrição">
-                    <textarea name="" id="" cols="30" rows="10" value={task.description}></textarea>
+                    <textarea 
+                        onChange={handleChangeTaskDescription} 
+                        onBlur={handleDescriptionLoseFocus} 
+                        value={task.description}
+                    />
                 </DetailtBox>
 
                 <DetailtBox label="mensagens">

@@ -319,18 +319,35 @@ abstract class Model{
      */
     public function raw(string $query, array $filters = [])
     {
-        $stmt = Connect::getInstance()->prepare($query);
-        $stmt->execute($filters);
+        
 
-        if (\explode(" ", $query)[0] === "INSERT" || \explode(" ", $query)[0] === "UPDATE"   ) {
+        try {
 
-            $result = Connect::getInstance()->lastInsertId(); 
+            $stmt = Connect::getInstance()->prepare($query);
+            $stmt->execute($filters);
 
-        } else {
+            if (\explode(" ", $query)[0] === "INSERT" || \explode(" ", $query)[0] === "UPDATE"   ) {
 
-            $result = $stmt->fetchAll();
+                $result = Connect::getInstance()->lastInsertId(); 
+    
+            } else if (\explode(" ", $query)[0] === "SELECT") {
+    
+                $result = $stmt->fetchAll();
+    
+            } else if (\explode(" ", $query)[0] === "DELETE"){
+    
+                $result = $stmt->rowCount();
+    
+            }
+    
+            return $result;
+
+        }catch(\PDOException $e){
+
+            $this->fail = $e->getMessage();
+            return false;
         }
 
-        return $result;
+        
     }
 }

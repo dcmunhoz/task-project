@@ -79,7 +79,7 @@ const NewTicket = ({showModal, setModal}) =>{
 
     async function handleSetSelectedMember(e){
 
-        const { id } = e.target;
+        const { id } = e.target.dataset;
 
         if (selectedMembers.find(item=>item.id === id)) {
 
@@ -102,7 +102,7 @@ const NewTicket = ({showModal, setModal}) =>{
 
     async function handleSetSelectedTags(e){
 
-        const { id } = e.target;
+        const { id } = e.target.dataset;
 
         if (selectedTags.find(tag=>tag.id === id)) {
 

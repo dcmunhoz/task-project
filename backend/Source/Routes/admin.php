@@ -18,4 +18,8 @@ $app->group("/api", function($group){
     $group->get('/user/{idUser}', UserController::class . ":show");
     $group->get("/tag/{idTag}", TagController::class . ":show");
     $group->put("/task/{idTask}/update", TaskController::class . ":update");
+    $group->delete("/task/{idTask}/member/{idMember}/remove", UserController::class . ":removeMember");
+    $group->post("/task/{idTask}/member/{idMember}/add", UserController::class . ":addMember");
+    $group->delete("/task/{idTask}/tag/{idTag}/remove", TagController::class . ":removeTag");
+    $group->post("/task/{idTask}/tag/{idTag}/add", TagController::class . ":addTag");
 });
