@@ -13,11 +13,9 @@ import useHttp from './../../../../services/useHttp';
 import './style.css';
 
 const NewTicket = ({showModal, setModal}) =>{
-    const httpRequest = useHttp();
-    const dispatch = useDispatch();
+    const { id_user: idUserCreation } = useSelector(state => state.user.authenticatedUser);
+    const usersList = useSelector(state => state.user.usersList);
     
-    const { id_user: idUserCreation } = useSelector(state => state.user);
-    const [users, setUsers] = useState([]);
     const [members, setMembers] = useState([]);
     const [tags, setTags] = useState([]);
     const [taskTitle, setTaskTitle] = useState("");
@@ -26,32 +24,9 @@ const NewTicket = ({showModal, setModal}) =>{
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [idRequester, setRequester] = useState(0);
     
-    const [showMembersComboSelect, setShowMembersComboSelect] = useState(false);
-    const [showTagsComboSelect, setShowTagsComboSelect] = useState(false);
-
-    useEffect(()=>{
-        async function loadUsersList(){
-            const request = await httpRequest("GET", "/users")
-            if (!request)return false;
-            
-            const { data } = request;
-
-            if (data.error){
-                // Tratar erros
-                return false;
-            }
-
-            const users = data.map(user => ({
-                id: user.id,
-                label: user.name,
-            }));
-
-            setUsers(users);
-
-        }
-
-        loadUsersList();
-    }, []);
+    
+    const dispatch = useDispatch();
+    const httpRequest = useHttp();
 
     useEffect(()=>{
         async function getAvailableMembers(){
@@ -104,7 +79,7 @@ const NewTicket = ({showModal, setModal}) =>{
 
     async function handleSetSelectedMember(e){
 
-        const { id } = e.target;
+        const { id } = e.target.dataset;
 
         if (selectedMembers.find(item=>item.id === id)) {
 
@@ -127,7 +102,7 @@ const NewTicket = ({showModal, setModal}) =>{
 
     async function handleSetSelectedTags(e){
 
-        const { id } = e.target;
+        const { id } = e.target.dataset;
 
         if (selectedTags.find(tag=>tag.id === id)) {
 
@@ -233,7 +208,7 @@ const NewTicket = ({showModal, setModal}) =>{
                 <div className="new-ticket-options">
                     <DetailtBox label="solicitante" >
                         <Select 
-                            data={users} 
+                            data={usersList} 
                             value={idRequester}
                             onChange={(e) => setRequester(e.target.value)}
                         />
@@ -241,43 +216,29 @@ const NewTicket = ({showModal, setModal}) =>{
 
                     <DetailtBox label="Integrantes">
                         
-                        <div className="members-combo-select-button">
-                            <Button 
-                                icon="FaPlus" 
-                                size="sm"
-                                className="rouded-button"
-                                onClick={()=>setShowMembersComboSelect(true)}
-                            />
-                        </div>
+                        <ComboSelect 
+                            label="Integrantes"
+                            data={members}
+                            selectedItems={selectedMembers}
+                            onSelect={handleSetSelectedMember}
+                            rounded
+                        />
 
                         <div className="selected-members-list">
                             {selectedMembers.map(member=>(
                                 <img key={member.id} src={member.avatar} alt={member.name} title={member.name} />
                             ))}
                         </div>
-
-                        {(showMembersComboSelect) ? (
-                            <ComboSelect 
-                                label="Integrantes"
-                                data={members}
-                                selectedItems={selectedMembers}
-                                onSelect={handleSetSelectedMember}
-                                closeComboSelect={setShowMembersComboSelect}
-                            />
-                        ) : null}
                     </DetailtBox>
-
                 </div>
 
                 <DetailtBox label="etiquetas" >
-                    <div className="tags-combo-select-button">
-                        <Button 
-                            icon="FaPlus" 
-                            size="sm"
-                            className="label-button"
-                            onClick={()=>setShowTagsComboSelect(true)}
-                        />
-                    </div>
+                    <ComboSelect 
+                        label="Etiquetas"
+                        data={tags}
+                        selectedItems={selectedTags}
+                        onSelect={handleSetSelectedTags}
+                    />
 
                     <div className="selected-tags-list">
                         {selectedTags.map(tag=>(
@@ -292,16 +253,6 @@ const NewTicket = ({showModal, setModal}) =>{
                             </span>
                         ))}
                     </div>
-
-                    {(showTagsComboSelect) ? (
-                        <ComboSelect 
-                            label="Etiquetas"
-                            data={tags}
-                            selectedItems={selectedTags}
-                            onSelect={handleSetSelectedTags}
-                            closeComboSelect={setShowTagsComboSelect}
-                        />
-                    ) : null}
                 </DetailtBox>
 
                 <DetailtBox label="Descrição" >

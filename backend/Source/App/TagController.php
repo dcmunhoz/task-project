@@ -34,4 +34,68 @@ class TagController {
         return $response->withHeader("Content-Type", "application/json");
 
     }
+
+    public function removeTag(Request $request, Response $response, $args){
+
+        $idTask = $args['idTask'];
+        $idTag = $args['idTag'];
+
+        $tag = new Tag();
+
+        $result = $tag->raw("DELETE FROM taskxtags WHERE id_task = :id_task AND id_tag = :id_tag", [
+            ":id_task" => $idTask,
+            ":id_tag" => $idTag
+        ]);
+
+        if (!$result) {
+            if ($tag->fail) {
+                $response->getBody()->write(\json_encode([
+                    "error" => $tag->fail,
+                    "type" => "sys"
+                ]));
+    
+                return $response->withHeader("Content-Type", "application/json");
+            }
+            $response->getBody()->write(\json_encode([
+                "error" => "Não foi possivel desvincular a etiqueta selecionado."
+            ]));
+            return $response->withHeader("Content-Type", "application/json");
+        }
+
+        $response->getBody()->write(\json_encode($result));
+        return $response->withHeader("Content-Type", "application/json");
+
+    }
+
+    public function addTag(Request $request, Response $response, $args){
+
+        $idTask = $args['idTask'];
+        $idTag = $args['idTag'];
+
+        $tag = new Tag();
+
+        $result = $tag->raw("INSERT INTO taskxtags(id_task, id_tag) VALUES(:id_task, :id_tag)", [
+            ":id_task" => $idTask,
+            ":id_tag" => $idTag
+        ]);
+
+        if (!$result) {
+            if ($tag->fail) {
+                $response->getBody()->write(\json_encode([
+                    "error" => $tag->fail,
+                    "type" => "sys"
+                ]));
+    
+                return $response->withHeader("Content-Type", "application/json");
+            }
+            $response->getBody()->write(\json_encode([
+                "error" => "Não foi possivel vincular a etiqueta selecionado."
+            ]));
+            return $response->withHeader("Content-Type", "application/json");
+        }
+
+        $response->getBody()->write(\json_encode($result));
+        return $response->withHeader("Content-Type", "application/json");
+
+    }
 }

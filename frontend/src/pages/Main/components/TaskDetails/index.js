@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
 import Icon from './../../../../components/Icon';
@@ -7,17 +7,27 @@ import Select from './../../../../components/Select';
 import Button from './../../../../components/Button';
 import DetailtBox from '../../../../components/DetailBox';
 import useHttp from './../../../../services/useHttp';
+import ComboSelect from './../../../../components/ComboSelect';
 
 import './style.css';
 
 const TaskDetails = () => {
+    const usersList = useSelector(state => state.user.usersList);
+    const situations = useSelector(state => state.global.situations);
+
+    const [titleFocused, setTitleFocused] = useState(false);
+    const [task, setTask] = useState({});
+    const [requester, setRequester] = useState({});
+    const [situationList, setSituationList] = useState([]);
+    const [membersList, setMembersList] = useState([]);
+    const [tagsList, setTagsList] = useState([]);
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [selectedMembers, setSelectedMembers] = useState([]);
+
     const dispatch = useDispatch();
     const location = useLocation();
     const history = useHistory();
     const httpRequest = useHttp();
-    const [task, setTask] = useState({});
-    const [requester, setRequester] = useState({});
-    const [tags, setTags] = useState([]);
 
     useEffect(()=>{
     
@@ -36,10 +46,23 @@ const TaskDetails = () => {
             if (data.erro) {
                 console.log("erro, ", data);
             }
+
+            const tags = data.tags.map(tag => ({
+                id: tag.id_tag,
+                name: tag.title,
+                ...tag
+            }));
+
+            const members = data.members.map(member => ({
+                id: member.id_user,
+                name: member.name,
+                avatar: member.avatar
+            }));
             
             setTask(data);
             setRequester(data.requester);
-            setTags(data.tags);
+            setSelectedTags(tags);
+            setSelectedMembers(members);
 
         }
 
@@ -47,12 +70,44 @@ const TaskDetails = () => {
 
     }, []);
 
+    useEffect(()=>{
+        async function loadAvailableMembers(){
+            const request = await httpRequest("GET", '/available-members');
+
+            if (!request) return false;
+
+            const { data } = request;
+
+            setMembersList(data);
+        }
+
+        loadAvailableMembers();
+    }, []);
+
+    useEffect(()=>{
+        async function loadAvailableTags(){
+            const response = await httpRequest("GET", "/available-tags");
+
+            if (!response) return false;
+
+            const { data } = response;
+
+            const tags = data.map(tag=> ({id: tag.id_tag, name: tag.title, ...tag}))
+
+            setTagsList(tags);
+        }
+
+        loadAvailableTags();
+    }, []);
+
+    useEffect(()=>{
+        setSituationList(situations);
+    }, [situations]);
+
     function handleHideTaskDetails(e){
        e.preventDefault();
 
         if(e.target.getAttribute('data-close')){
-
-            console.log(location.pathname);
 
             history.replace(location.pathname);
 
@@ -63,36 +118,195 @@ const TaskDetails = () => {
         }
     }
 
-    const data = [
-        {
-            id: 1,
-            label: "a fazer"
-        },{
-            id: 2,
-            label: "fazendo"
-        },{
-            id: 3,
-            label: "feito"
-        },{
-            id: 4,
-            label: "cancelado"
-        },
-    ]
+    /** ==== TITLE ==== */
+    function handleChangeTaskTitle(e){
 
-    const requesters = [
-        {
-            id: 1,
-            label: "Daniel munhoz"
+        setTask({
+            ...task,
+            title: e.target.value
+        });
+
+    }
+
+    function handleTitleLoseFocus(e){
+
+        
+        sendUpdateTask(task);
+
+        setTitleFocused(false);
+        
+    }
+
+    /** ==== SITUATION ==== */
+    function handleChangeTaskSituation(e){
+
+        const newTask = {
+            ...task,
+            situation: e.target.value
         }
-    ]
 
+        sendUpdateTask(newTask);
+    }
+
+    /** ==== REQUESTER ==== */
+    function handleChangeTaskRequester(e){
+        const newTask = {
+            ...task,
+            requester: {
+                id: e.target.value
+            }
+        }
+
+        sendUpdateTask(newTask);
+    } 
+
+    /** ==== DESCRIPTION ==== */
+    function handleChangeTaskDescription(e){
+        setTask({
+            ...task,
+            description: e.target.value
+        })
+    }
+
+    function handleDescriptionLoseFocus(){
+        sendUpdateTask(task);
+    }
+    
+    /** ==== MEMBERS ==== */
+    async function handleChangeMembers(e){
+        const { id } = e.target.dataset;
+
+        const inArray = selectedMembers.find(member => member.id == id);
+
+        let response;
+
+        if (inArray) {
+            response = await httpRequest("DELETE", `/task/${task.id_task}/member/${id}/remove`);
+
+            if (!response) return false;
+
+            const newMembers = selectedMembers.filter(member => member.id !== id);
+
+            setSelectedMembers(newMembers);
+        } else {
+            response = await httpRequest("POST", `/task/${task.id_task}/member/${id}/add`);
+
+            if (!response) return false;
+
+            const memberData = await httpRequest("GET", `/user/${id}`);
+
+            if (!memberData) return false;
+            
+            setSelectedMembers([
+                ...selectedMembers,
+                memberData.data
+            ])
+        }
+
+        const { data } = response;
+        if (data.error) {
+            dispatch({
+                type: "SHOW_MODAL_MESSAGE",
+                payload:{
+                    title: "Ooooops",
+                    message: data.error
+                }
+            })
+            return false;
+        }
+
+
+
+        dispatch({
+            type: "LOAD_TASKS",
+            payload: true
+        });
+
+    }
+
+    /** ==== TAGS ==== */
+    async function handleChangeTags(e){
+        const { id } = e.target.dataset;
+
+        const inArray = selectedTags.find(tag => tag.id == id);
+
+        let response;
+
+        if (inArray) {
+            response = await httpRequest("DELETE", `/task/${task.id_task}/tag/${id}/remove`);
+
+            if (!response) return false;
+
+            const newTags = selectedTags.filter(tag => tag.id !== id);
+
+            setSelectedTags(newTags);
+
+        } else {
+            response = await httpRequest("POST", `/task/${task.id_task}/tag/${id}/add`);
+
+            if (!response) return false;
+
+            const tagData = await httpRequest("GET", `/tag/${id}`);
+
+            if (!tagData) return false;
+
+            const newTagData = [tagData.data].map(tag => ({
+                id: tag.id_tag,
+                title: tag.title,
+                background_color: tag.background_color,
+                foreground_color: tag.foreground_color
+            }));
+            
+            setSelectedTags([
+                ...selectedTags,
+                newTagData[0]
+            ])
+        }
+
+        const { data } = response;
+        if (data.error) {
+            dispatch({
+                type: "SHOW_MODAL_MESSAGE",
+                payload:{
+                    title: "Ooooops",
+                    message: data.error
+                }
+            })
+            return false;
+        }
+
+        dispatch({
+            type: "LOAD_TASKS",
+            payload: true
+        });
+    }
+
+
+    async function sendUpdateTask(newTask){
+        
+        const response = await httpRequest("PUT", `/task/${newTask.id_task}/update`, {
+            ...newTask
+        });
+
+        if (!response) return false;
+
+        dispatch({
+            type: "LOAD_TASKS",
+            payload: true
+        });
+
+        setTask(newTask);
+        
+    }
 
     return(
         <div className={`task-details-modal-container`} data-close onClick={handleHideTaskDetails}>
             <div className="task-details-modal">
                 <header>
-                    <div className="task-header-informations">
-                        <h1>#{task.id_task} - {task.title}</h1>
+                    <div className={`task-header-informations`}>
+                        <div className={`task-title ${(titleFocused) ? "focused" : ""}`}>
+                            <h1>#{task.id_task} - &nbsp;</h1> <input value={task.title ?? ""} onChange={handleChangeTaskTitle} onFocus={()=>setTitleFocused(true)} onBlur={handleTitleLoseFocus} />
+                        </div>
                         <span>Criado Por { requester.name }&lt;{ requester.email }&gt; em {task.created_date} ás {task.created_time}</span>
                     </div>
                     <div  className="button-close-task-modal">
@@ -104,7 +318,7 @@ const TaskDetails = () => {
                     </div>
                 </header>
                 <div className="task-row-detail"> 
-                    <DetailtBox label="atividade" >
+                    {/* <DetailtBox label="atividade" >
                         <a href="">
                             <Icon 
                                 iconName="FaPlayCircle"
@@ -115,32 +329,37 @@ const TaskDetails = () => {
                                 iconName="FaCheckCircle"
                             />
                         </a>
-                    </DetailtBox>
+                    </DetailtBox> */}
 
                     <DetailtBox 
                         label="integrantes"
                         customClass="task-members"
                     >
-                        <div className="member-avatar">
-                            <img src="https://via.placeholder.com/1920" alt=""/>
-                        </div>
-                        <div className="member-avatar">
-                            <img src="https://via.placeholder.com/1920" alt=""/>
-                        </div>
-                        <div className="member-avatar">
-                            <img src="https://via.placeholder.com/1920" alt=""/>
-                        </div>
+                        <ComboSelect 
+                            label="Integrantes"
+                            data={membersList}
+                            selectedItems={selectedMembers}
+                            onSelect={handleChangeMembers}
+                            rounded
+                        />
+
+                        {selectedMembers.map(member=>(
+                            <div className="member-avatar" key={member.id}>
+                                <img src={member.avatar} alt="" />
+                            </div>
+                        ))}
                     </DetailtBox>
 
                     <DetailtBox label="situação">
                         <Select 
-                            data={data}
+                            data={situationList}
                             value={task.situation}
                             style={{
                                 backgroundColor: "#263238",
                                 color: "#FFF",
                                 textTransform: "uppercase"
                             }}
+                            onChange={handleChangeTaskSituation}
                         />
                     </DetailtBox>
 
@@ -157,8 +376,9 @@ const TaskDetails = () => {
                 <div className="task-row-detail">
                     <DetailtBox label="solicitante">
                         <Select 
-                            data={requesters}
-                            value={requester.id}
+                            data={usersList}
+                            value={(task.requester) ? task.requester.id : 0}
+                            onChange={handleChangeTaskRequester}
                         />
                     </DetailtBox>
 
@@ -176,32 +396,36 @@ const TaskDetails = () => {
                 </div>
 
                 <DetailtBox label="etiquetas">
+
+                    <ComboSelect 
+                        label="Etiquetas"
+                        data={tagsList}
+                        selectedItems={selectedTags}
+                        onSelect={handleChangeTags}
+                    />
+
                     <div className="tags-list">
-                        {tags.map(tag=>(
-                            <span key={tag.id} className="tag">
-                                {tag.label}
+                        {selectedTags.map(tag=>(
+                            <span 
+                                key={tag.id} 
+                                className="tag" 
+                                style={{ 
+                                    backgroundColor: tag.background_color, 
+                                    color: tag.foreground_color 
+                                }}
+                            >
+                                {tag.title}
                             </span>
                         ))}
-
-                        {/* <span className="tag">
-                            Etiqueta 2
-                        </span>
-
-                        <span className="tag">
-                            Etiqueta 3
-                        </span>
-
-                        <span className="tag">
-                            oi
-                        </span> */}
-                    </div>
-                    <div className="new-tag-button">
-                        <Button icon="FaPlus" />
                     </div>
                 </DetailtBox>
 
                 <DetailtBox label="descrição">
-                    <textarea name="" id="" cols="30" rows="10" value={task.description}></textarea>
+                    <textarea 
+                        onChange={handleChangeTaskDescription} 
+                        onBlur={handleDescriptionLoseFocus} 
+                        value={task.description}
+                    />
                 </DetailtBox>
 
                 <DetailtBox label="mensagens">

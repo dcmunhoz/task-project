@@ -35,9 +35,34 @@
     flex-direction: column;
 }
 
-.task-details-modal header .task-header-informations h1{
+.task-details-modal header .task-header-informations .task-title{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding: 3px 5px;
+}
+
+.task-details-modal header .task-header-informations .task-title.focused{
+    background-color: #E0E0E0;
+}
+
+.task-details-modal header .task-header-informations .task-title input{
+    display: flex;
+    flex: 1;
+}
+
+.task-details-modal header .task-header-informations .task-title h1{
+   
+}
+
+.task-details-modal header .task-header-informations h1,
+.task-details-modal header .task-header-informations input{
     font-size: 20px;
     font-weight: bold;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
 }
 
 .task-details-modal header .task-header-informations span{
@@ -68,7 +93,7 @@
 
 .task-details-modal .task-members .member-avatar{
     display: inline-block;
-    margin-right: 3px;
+    margin-left: 5px;
 }
 
 .task-details-modal .task-members .member-avatar img{
@@ -91,7 +116,7 @@
     font-size: 14px;
     font-weight: bold;
     background-color: gray;
-    margin-right: 10px;
+    margin-left: 10px;
     padding: 11px 15px;
     box-sizing: border-box;
     border-radius: 5px;
