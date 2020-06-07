@@ -17,4 +17,5 @@ $app->group("/api", function($group){
     $group->get("/available-tags", TagController::class . ":list");
     $group->get('/user/{idUser}', UserController::class . ":show");
     $group->get("/tag/{idTag}", TagController::class . ":show");
+    $group->put("/task/{idTask}/update", TaskController::class . ":update");
 });

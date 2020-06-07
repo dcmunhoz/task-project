@@ -15,6 +15,7 @@ const TaskDetails = () => {
     const usersList = useSelector(state => state.user.usersList);
     const situations = useSelector(state => state.global.situations);
 
+    const [titleFocused, setTitleFocused] = useState(false);
     const [task, setTask] = useState({});
     const [requester, setRequester] = useState({});
     const [situationList, setSituationList] = useState([]);
@@ -119,12 +120,38 @@ const TaskDetails = () => {
         }
     }
 
+    function handleChangeTaskTitle(e){
+
+        setTask({
+            ...task,
+            title: e.target.value
+        });
+
+    }
+
+    async function handleTitleLoseFocus(){
+        await sendUpdateTask();
+        
+    }
+
+    async function sendUpdateTask(){
+        const response = await httpRequest("PUT", `/task/${task.id_task}/update`, {
+            ...task
+        });
+
+        setTitleFocused(false);
+
+        console.log(response);
+    }
+
     return(
         <div className={`task-details-modal-container`} data-close onClick={handleHideTaskDetails}>
             <div className="task-details-modal">
                 <header>
-                    <div className="task-header-informations">
-                        <h1>#{task.id_task} - {task.title}</h1>
+                    <div className={`task-header-informations`}>
+                        <div className={`task-title ${(titleFocused) ? "focused" : ""}`}>
+                            <h1>#{task.id_task} - </h1><input value={task.title} onChange={handleChangeTaskTitle} onFocus={()=>setTitleFocused(true)} onBlur={handleTitleLoseFocus} />
+                        </div>
                         <span>Criado Por { requester.name }&lt;{ requester.email }&gt; em {task.created_date} ás {task.created_time}</span>
                     </div>
                     <div  className="button-close-task-modal">

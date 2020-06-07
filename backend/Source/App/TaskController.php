@@ -372,4 +372,13 @@ class TaskController {
         return $response->withHeader("Content-Type", "application/json");
     }
 
+    public function update(Request $request, Response $response){
+
+        $body = $request->getParsedBody();
+
+        $response->getBody()->write(\json_encode($body));
+        return $response;
+
+    }
+
 }

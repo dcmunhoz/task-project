@@ -28,6 +28,9 @@ const useHttp = () => {
             case "POST":
                 response = await http.post(url, params, defaultConfig);
             break;
+            case "PUT":
+                response = await http.put(url, params, defaultConfig);
+            break;
             case "GET":
                 response = await http.get(url, defaultConfig);
         }
