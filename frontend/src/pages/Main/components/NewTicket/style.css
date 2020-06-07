@@ -84,11 +84,6 @@
     padding: 5px;
 }
 
-.members-combo-select-button,
-.tags-combo-select-button{
-    position: relative;
-}
-
 @keyframes showNTContainer {
     from {
 

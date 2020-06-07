@@ -68,7 +68,7 @@
 
 .task-details-modal .task-members .member-avatar{
     display: inline-block;
-    margin-right: 3px;
+    margin-left: 5px;
 }
 
 .task-details-modal .task-members .member-avatar img{
@@ -91,7 +91,7 @@
     font-size: 14px;
     font-weight: bold;
     background-color: gray;
-    margin-right: 10px;
+    margin-left: 10px;
     padding: 11px 15px;
     box-sizing: border-box;
     border-radius: 5px;

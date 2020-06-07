@@ -13,12 +13,9 @@ import useHttp from './../../../../services/useHttp';
 import './style.css';
 
 const NewTicket = ({showModal, setModal}) =>{
-    const httpRequest = useHttp();
-    const dispatch = useDispatch();
-    
     const { id_user: idUserCreation } = useSelector(state => state.user.authenticatedUser);
     const usersList = useSelector(state => state.user.usersList);
-    const [users, setUsers] = useState([]);
+    
     const [members, setMembers] = useState([]);
     const [tags, setTags] = useState([]);
     const [taskTitle, setTaskTitle] = useState("");
@@ -27,8 +24,9 @@ const NewTicket = ({showModal, setModal}) =>{
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [idRequester, setRequester] = useState(0);
     
-    const [showMembersComboSelect, setShowMembersComboSelect] = useState(false);
-    const [showTagsComboSelect, setShowTagsComboSelect] = useState(false);
+    
+    const dispatch = useDispatch();
+    const httpRequest = useHttp();
 
     useEffect(()=>{
         async function getAvailableMembers(){
@@ -72,10 +70,6 @@ const NewTicket = ({showModal, setModal}) =>{
         }
         getAvailableTags();
     }, []);
-
-    useEffect(()=>{
-        setUsers(usersList);
-    }, [usersList])
 
     function handleCloseNTModal(e){
         if (e.target == e.currentTarget){
@@ -222,43 +216,29 @@ const NewTicket = ({showModal, setModal}) =>{
 
                     <DetailtBox label="Integrantes">
                         
-                        <div className="members-combo-select-button">
-                            <Button 
-                                icon="FaPlus" 
-                                size="sm"
-                                className="rouded-button"
-                                onClick={()=>setShowMembersComboSelect(true)}
-                            />
-                        </div>
+                        <ComboSelect 
+                            label="Integrantes"
+                            data={members}
+                            selectedItems={selectedMembers}
+                            onSelect={handleSetSelectedMember}
+                            rounded
+                        />
 
                         <div className="selected-members-list">
                             {selectedMembers.map(member=>(
                                 <img key={member.id} src={member.avatar} alt={member.name} title={member.name} />
                             ))}
                         </div>
-
-                        {(showMembersComboSelect) ? (
-                            <ComboSelect 
-                                label="Integrantes"
-                                data={members}
-                                selectedItems={selectedMembers}
-                                onSelect={handleSetSelectedMember}
-                                closeComboSelect={setShowMembersComboSelect}
-                            />
-                        ) : null}
                     </DetailtBox>
-
                 </div>
 
                 <DetailtBox label="etiquetas" >
-                    <div className="tags-combo-select-button">
-                        <Button 
-                            icon="FaPlus" 
-                            size="sm"
-                            className="label-button"
-                            onClick={()=>setShowTagsComboSelect(true)}
-                        />
-                    </div>
+                    <ComboSelect 
+                        label="Etiquetas"
+                        data={tags}
+                        selectedItems={selectedTags}
+                        onSelect={handleSetSelectedTags}
+                    />
 
                     <div className="selected-tags-list">
                         {selectedTags.map(tag=>(
@@ -273,16 +253,6 @@ const NewTicket = ({showModal, setModal}) =>{
                             </span>
                         ))}
                     </div>
-
-                    {(showTagsComboSelect) ? (
-                        <ComboSelect 
-                            label="Etiquetas"
-                            data={tags}
-                            selectedItems={selectedTags}
-                            onSelect={handleSetSelectedTags}
-                            closeComboSelect={setShowTagsComboSelect}
-                        />
-                    ) : null}
                 </DetailtBox>
 
                 <DetailtBox label="Descrição" >

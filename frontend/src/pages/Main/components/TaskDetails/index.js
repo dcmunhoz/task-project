@@ -7,22 +7,26 @@ import Select from './../../../../components/Select';
 import Button from './../../../../components/Button';
 import DetailtBox from '../../../../components/DetailBox';
 import useHttp from './../../../../services/useHttp';
+import ComboSelect from './../../../../components/ComboSelect';
 
 import './style.css';
 
 const TaskDetails = () => {
     const usersList = useSelector(state => state.user.usersList);
     const situations = useSelector(state => state.global.situations);
+
+    const [task, setTask] = useState({});
+    const [requester, setRequester] = useState({});
+    const [situationList, setSituationList] = useState([]);
+    const [membersList, setMembersList] = useState([]);
+    const [tagsList, setTagsList] = useState([]);
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [selectedMembers, setSelectedMembers] = useState([]);
+
     const dispatch = useDispatch();
     const location = useLocation();
     const history = useHistory();
     const httpRequest = useHttp();
-    const [task, setTask] = useState({});
-    const [requester, setRequester] = useState({});
-    const [tags, setTags] = useState([]);
-    const [users, setUsers] = useState([]);
-    const [members, setMembers] = useState([]);
-    const [situationList, setSituationList] = useState([]);
 
     useEffect(()=>{
     
@@ -41,11 +45,25 @@ const TaskDetails = () => {
             if (data.erro) {
                 console.log("erro, ", data);
             }
+
+            const tags = data.tags.map(tag => ({
+                id: tag.id_tag,
+                name: tag.title,
+                ...tag
+            }));
+
+            const members = data.members.map(member => ({
+                id: member.id_user,
+                name: member.name,
+                ...member
+            }));
             
+            console.log(data.members)
+
             setTask(data);
             setRequester(data.requester);
-            setTags(data.tags);
-            setMembers(data.members);
+            setSelectedTags(tags);
+            setSelectedMembers(members);
 
         }
 
@@ -54,8 +72,34 @@ const TaskDetails = () => {
     }, []);
 
     useEffect(()=>{
-        setUsers(usersList);
-    }, [usersList]);
+        async function loadAvailableMembers(){
+            const request = await httpRequest("GET", '/available-members');
+
+            if (!request) return false;
+
+            const { data } = request;
+
+            setMembersList(data);
+        }
+
+        loadAvailableMembers();
+    }, []);
+
+    useEffect(()=>{
+        async function loadAvailableTags(){
+            const response = await httpRequest("GET", "/available-tags");
+
+            if (!response) return false;
+
+            const { data } = response;
+
+            const tags = data.map(tag=> ({id: tag.id_tag, name: tag.title, ...tag}))
+
+            setTagsList(tags);
+        }
+
+        loadAvailableTags();
+    }, []);
 
     useEffect(()=>{
         setSituationList(situations);
@@ -65,8 +109,6 @@ const TaskDetails = () => {
        e.preventDefault();
 
         if(e.target.getAttribute('data-close')){
-
-            console.log(location.pathname);
 
             history.replace(location.pathname);
 
@@ -111,7 +153,15 @@ const TaskDetails = () => {
                         label="integrantes"
                         customClass="task-members"
                     >
-                        {members.map(member=>(
+                        <ComboSelect 
+                            label="Integrantes"
+                            data={membersList}
+                            selectedItems={selectedMembers}
+                            onSelect={()=>{}}
+                            rounded
+                        />
+
+                        {selectedMembers.map(member=>(
                             <div className="member-avatar" key={member.id_user}>
                                 <img src={member.avatar} alt="" />
                             </div>
@@ -162,8 +212,16 @@ const TaskDetails = () => {
                 </div>
 
                 <DetailtBox label="etiquetas">
+
+                    <ComboSelect 
+                        label="Etiquetas"
+                        data={tagsList}
+                        selectedItems={selectedTags}
+                        onSelect={()=>{}}
+                    />
+
                     <div className="tags-list">
-                        {tags.map(tag=>(
+                        {selectedTags.map(tag=>(
                             <span 
                                 key={tag.id_tag} 
                                 className="tag" 
@@ -175,21 +233,6 @@ const TaskDetails = () => {
                                 {tag.title}
                             </span>
                         ))}
-
-                        {/* <span className="tag">
-                            Etiqueta 2
-                        </span>
-
-                        <span className="tag">
-                            Etiqueta 3
-                        </span>
-
-                        <span className="tag">
-                            oi
-                        </span> */}
-                    </div>
-                    <div className="new-tag-button">
-                        <Button icon="FaPlus" />
                     </div>
                 </DetailtBox>
 
