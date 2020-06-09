@@ -12,10 +12,12 @@ import ComboSelect from './../../../../components/ComboSelect';
 import './style.css';
 
 const TaskDetails = () => {
+    const authUser = useSelector(state => state.user.authenticatedUser);
     const usersList = useSelector(state => state.user.usersList);
     const situations = useSelector(state => state.global.situations);
 
     const [titleFocused, setTitleFocused] = useState(false);
+    const [newMessageFocused, setNewMessageFocused] = useState(false);
     const [task, setTask] = useState({});
     const [requester, setRequester] = useState({});
     const [situationList, setSituationList] = useState([]);
@@ -23,6 +25,7 @@ const TaskDetails = () => {
     const [tagsList, setTagsList] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedMembers, setSelectedMembers] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
 
     const dispatch = useDispatch();
     const location = useLocation();
@@ -30,41 +33,6 @@ const TaskDetails = () => {
     const httpRequest = useHttp();
 
     useEffect(()=>{
-    
-        async function getTaskDetails(){
-
-            const params = new URLSearchParams(location.search);
-        
-            const task_id = params.get('task');
-
-            const response = await httpRequest("GET", '/task/' + task_id);
-
-            if(!response) return false;
-
-            const { data } = response;
-
-            if (data.erro) {
-                console.log("erro, ", data);
-            }
-
-            const tags = data.tags.map(tag => ({
-                id: tag.id_tag,
-                name: tag.title,
-                ...tag
-            }));
-
-            const members = data.members.map(member => ({
-                id: member.id_user,
-                name: member.name,
-                avatar: member.avatar
-            }));
-            
-            setTask(data);
-            setRequester(data.requester);
-            setSelectedTags(tags);
-            setSelectedMembers(members);
-
-        }
 
         getTaskDetails();
 
@@ -281,6 +249,84 @@ const TaskDetails = () => {
         });
     }
 
+    /** ==== MESSAGES ==== */
+    function handleChangeNewMessageValue(e){
+
+        setNewMessage(e.target.value);
+
+    }
+
+    function handleNewMessageCancel(){
+        setNewMessage("");
+        setNewMessageFocused(false);
+    }
+
+    async function handleSendNewMessage(){
+
+        const body = {
+            id_task: task.id_task,
+            id_user: authUser.id_user,
+            message: newMessage
+        };
+
+        const response = await httpRequest("POST", "/message/new", body);
+
+        if (!response) return false; 
+
+        const { data } = response;
+
+        if (data.error) { 
+            dispatch({
+                type: "SHOW_MODAL_MESSAGE",
+                payload: {
+                    title: "Ooooops",
+                    message: data.error
+                }
+            });
+            return false;
+        }
+
+        handleNewMessageCancel();
+        getTaskDetails();
+
+    }
+
+
+    async function getTaskDetails(){
+
+        const params = new URLSearchParams(location.search);
+    
+        const task_id = params.get('task');
+
+        const response = await httpRequest("GET", '/task/' + task_id);
+
+        if(!response) return false;
+
+        const { data } = response;
+
+        if (data.erro) {
+            console.log("erro, ", data);
+        }
+
+        const tags = data.tags.map(tag => ({
+            id: tag.id_tag,
+            name: tag.title,
+            ...tag
+        }));
+
+        const members = data.members.map(member => ({
+            id: member.id_user,
+            name: member.name,
+            avatar: member.avatar
+        }));
+
+        data.messages.sort((a, b) => b.id_message - a.id_message);
+
+        setTask(data);
+        setRequester(data.requester);
+        setSelectedTags(tags);
+        setSelectedMembers(members);
+    }
 
     async function sendUpdateTask(newTask){
         
@@ -429,7 +475,58 @@ const TaskDetails = () => {
                 </DetailtBox>
 
                 <DetailtBox label="mensagens">
-                    {/* <textarea name="" id="" cols="30" rows="10" value="mensagem"></textarea> */}
+                    <div className="message-container">
+                        <div className={`new-message-box ${(newMessageFocused) ? "focused" : ""}`}>
+                            <textarea 
+                                className="new-message" 
+                                placeholder="Digite sua mensagem aqui"
+                                onFocus={()=>setNewMessageFocused(true)} 
+                                value={newMessage}
+                                onChange={handleChangeNewMessageValue}
+                            />
+                            <div className="new-message-footer">
+                                <Button
+                                    color="green"
+                                    icon="FaPaperPlane"
+                                    size="sm"
+                                    onClick={handleSendNewMessage}
+                                >
+                                    Enviar
+                                </Button>
+                                <a
+                                    onClick={handleNewMessageCancel}
+                                >Cancelar</a>
+                            </div>
+                        </div>
+
+                        <div className="messages-list">
+                            <ul>
+                                {(task.messages) ? (task.messages.map(message=>(
+                                    <li key={message.id_message}>
+                                        <div className="message-body-container">
+                                            <div className="user-avatar">
+                                                <img src={message.avatar}  alt="Avatar" />
+                                            </div>
+                                            <div className="message-body">
+                                                <header>    
+                                                    {message.user} - {message.creation}
+                                                </header>
+                                                <div>
+                                                    <div className="message">
+                                                        {message.message}
+                                                    </div>
+                                                </div>
+                                                <footer>
+                                                    <a className="edit-button" href="">Editar</a>
+                                                    <a className="delete-button" href="">Excluir</a>
+                                                </footer>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))) : null}
+                            </ul>
+                        </div>
+                    </div>
                 </DetailtBox>
             </div>
         </div>

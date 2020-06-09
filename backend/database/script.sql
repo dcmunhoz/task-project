@@ -75,3 +75,15 @@ CREATE TABLE taskxtags(
     FOREIGN KEY (id_tag) REFERENCES tags(id_tag)
 ) CHARACTER SET utf8;
 
+CREATE TABLE messages(
+	id_message INT NOT NULL AUTO_INCREMENT,
+    id_task INT NOT NULL,
+    id_user INT NOT NULL,
+    conclusion BOOL DEFAULT FALSE,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW() ON UPDATE NOW(),
+    CONSTRAINT pk_messages PRIMARY KEY(id_message),
+    CONSTRAINT fk_task FOREIGN KEY (id_task) REFERENCES tasks(id_task),
+    CONSTRAINT fk_user FOREIGN KEY (id_user) REFERENCES users(id_user)
+) CHARACTER SET utf8;

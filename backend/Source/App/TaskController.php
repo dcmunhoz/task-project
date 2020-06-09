@@ -366,7 +366,30 @@ class TaskController {
         }
 
         $result['members'] = $members;
-        $result['messages'] = [];
+
+
+        $taskxmessages = $task->raw("SELECT * FROM messages WHERE id_task = :id_task", [
+            ":id_task" => $task->id_task
+        ]);
+
+        
+        $result['messages'] = \array_map(function($message){
+
+            $user = new User();
+            $user->findById((Int) $message->id_user);
+
+            $createdAt = new \DateTime($message->created_at);
+
+
+            $result = new \stdClass();
+            $result->id_message = $message->id_message;
+            $result->message = $message->message;
+            $result->user = $user->getShortName();
+            $result->creation = $createdAt->format("d/m/Y H:i");
+            $result->avatar = $user->avatar;
+
+            return $result;
+        }, $taskxmessages);
 
         $response->getBody()->write(\json_encode($result));
         return $response->withHeader("Content-Type", "application/json");
@@ -405,6 +428,57 @@ class TaskController {
         $response->getBody()->write(\json_encode($task->getData()));
         return $response;
 
+    }
+
+    public function addNewMessage(Request $request, Response $response){
+        $body = $request->getParsedBody();
+
+        $idUser = \filter_var($body['id_user'] ?? null, \FILTER_SANITIZE_STRING);
+        $idTask = \filter_var($body['id_task'] ?? null, \FILTER_SANITIZE_STRING);
+        $message = \filter_var($body['message'] ?? null, \FILTER_SANITIZE_STRING);
+        $conclusion = $body['conclusion'] ?? null;
+
+        if (!$message){
+            $response->getBody()->write(\json_encode([
+                "error" => "Mensagem não pode estar em branco"
+            ]));
+            return $response;
+        }
+
+        $task = new Task();
+        $task->findById((Int) $idTask);
+
+        if ($task->fail) {
+            $response->getBody()->write(\json_encode([
+                "error" => "Tarefa não encontrada"
+            ]));
+            return $response;
+        }
+
+        $result = $task
+        ->raw("INSERT INTO messages (id_task, id_user, message, conclusion) VALUES(:id_task, :id_user, :message, :conclusion)", [
+            ":id_task" => $idTask,
+            ":id_user" => $idUser,
+            ":message" => $message,
+            ":conclusion" => $conclusion
+        ]);
+
+        if (!$result) {
+            if ($task->fail) {
+                $response->getBody()->write(\json_encode([
+                    "error" => $task->fail,
+                    "type" => "sys"
+                ]));
+                return $response;
+            }
+
+            $response->getBody()->write(\json_encode([
+                "error" => "Não foi possivel inserir mensagem"
+            ]));
+            return $response;
+        }
+
+        return $response;
     }
 
 }
