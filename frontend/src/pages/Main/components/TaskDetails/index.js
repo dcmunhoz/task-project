@@ -26,7 +26,7 @@ const TaskDetails = () => {
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [newMessage, setNewMessage] = useState("");
-    const [showEditMessage, setShowEditMessage] = useState(false);
+    const [newEditedMessage, setNewEditedMessage] = useState("");
     const [editMessage, setEditMessage] = useState(0);
 
     const messageRef = useRef(null);
@@ -296,8 +296,86 @@ const TaskDetails = () => {
     }
 
     function handleSetEditMessage(e){
-        const messageId = e.currentTarget.dataset.id_message;
-        setEditMessage(messageId);        
+        const messages = task.messages;
+        const { id_message } = e.currentTarget.dataset;
+
+        const messageIndex = messages.map((message)=> message.id_message).indexOf(id_message);       
+
+        setNewEditedMessage(messages[messageIndex].message)
+
+        setEditMessage(id_message);        
+    }
+
+    function handleChangeMessage(e){
+        setNewEditedMessage(e.target.value);
+        // const messages = task.messages;
+        // const { id_message } = e.currentTarget.dataset;
+
+        // messages[selectedMessage].message = e.target.value;
+
+        // setTask({
+        //     ...task,
+        //     messages: [
+        //         ...messages
+        //     ]
+        // })
+
+    }
+
+    async function handleSendUpdateMessage(e){  
+        const messages = task.messages;
+        const { id_message } = e.currentTarget.dataset;
+
+        const messageIndex = task.messages.map(message=> message.id_message).indexOf(id_message);
+        messages[messageIndex].message = newEditedMessage;
+
+        const body = {
+            id_message,
+            message: newEditedMessage
+        }
+
+        const response = await httpRequest("PUT", "/message/update", body);
+
+        if (!response) return false;
+        
+        const { data } = response;
+        
+        setTask({
+            ...task,
+            messages: [
+                ...messages
+            ]
+        });
+
+        setEditMessage(0);
+
+    }
+
+    async function handleSendDeleteMessage(e){
+
+        if (window.confirm("Deseja eliminar esta mensagem?")) {
+            const { id_message } = e.currentTarget.dataset;
+            const response = httpRequest("DELETE", `/message/${id_message}/delete`);
+    
+            if (!response) return false;
+
+            const messages = task.messages;
+            const newMessage = messages.filter(message => message.id_message !== id_message);
+
+            setTask({
+                ...task,
+                messages: [
+                    ...newMessage
+                ]
+            })
+
+        }
+
+
+    }
+
+    function shouldEnableEditMessage(messageID, currentMessageMap){
+        return messageID === currentMessageMap;
     }
 
     async function getTaskDetails(){
@@ -351,11 +429,6 @@ const TaskDetails = () => {
 
         setTask(newTask);
         
-    }
-
-
-    function shouldEnableEditMessage(messageID, currentMessageMap){
-        return messageID === currentMessageMap;
     }
 
     return(
@@ -526,7 +599,7 @@ const TaskDetails = () => {
                                                 </header>
                                                 <div>
                                                     {(shouldEnableEditMessage(editMessage, message.id_message)) ? (
-                                                        <textarea value={message.message}>  </textarea>
+                                                        <textarea data-id_message={message.id_message} value={newEditedMessage} onChange={handleChangeMessage}>  </textarea>
                                                     ) : (
                                                         <div className="message">
                                                             {message.message}
@@ -537,7 +610,10 @@ const TaskDetails = () => {
                                                     {(shouldEnableEditMessage(editMessage, message.id_message)) ? (
                                                         <>  
                                                             <Button
-                                                            
+                                                                onClick={handleSendUpdateMessage}
+                                                                data-id_message={message.id_message}
+                                                                size="sm"
+                                                                color="yellow"
                                                             >
                                                                 Salvar
                                                             </Button>
@@ -549,7 +625,7 @@ const TaskDetails = () => {
                                                     ) : (
                                                         <>
                                                             <a className="edit-button" data-id_message={message.id_message} onClick={handleSetEditMessage}>Editar</a>
-                                                            <a className="delete-button" href="">Excluir</a>
+                                                            <a className="delete-button" data-id_message={message.id_message} onClick={handleSendDeleteMessage}>Excluir</a>
                                                         </>
                                                     )}
                                                 </footer>

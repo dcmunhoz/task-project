@@ -23,4 +23,6 @@ $app->group("/api", function($group){
     $group->delete("/task/{idTask}/tag/{idTag}/remove", TagController::class . ":removeTag");
     $group->post("/task/{idTask}/tag/{idTag}/add", TagController::class . ":addTag");
     $group->post("/message/new", TaskController::class . ":addNewMessage");
+    $group->put("/message/update", TaskController::class . ":updateMessage");
+    $group->delete("/message/{id_message}/delete", TaskController::class . ":deleteMessage");
 });

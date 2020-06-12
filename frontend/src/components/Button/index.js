@@ -7,6 +7,7 @@ const Button = (props) =>{
 
     return(
         <button 
+            {...props}
             className={`btn ${(props.color) ? 'btn_' + props.color : ''} ${(props.size) ? 'btn_' + props.size : ''} ${props.className}  `} 
             onClick={props.onClick} 
         > 

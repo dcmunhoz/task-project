@@ -222,12 +222,21 @@
     
 }
 
+.task-details-modal .message-body-container .message-body footer{
+    
+    padding-top: 3px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
 .task-details-modal .message-body-container .message-body footer a {
     font-weight: bold;
     margin-right: 5px;
     font-size: 14px;
     color: var(--text-dark);
     transition: 150ms;
+    cursor: pointer;
 }
 
 .task-details-modal .message-body-container .message-body footer a.edit-button:hover {

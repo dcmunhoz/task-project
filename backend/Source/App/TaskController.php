@@ -9,6 +9,7 @@ use Source\Models\Task;
 use Source\Models\Tag;
 use Source\Models\Situation;
 use Source\Models\User;
+use Source\Models\Message;
 
 class TaskController {
 
@@ -435,50 +436,79 @@ class TaskController {
 
         $idUser = \filter_var($body['id_user'] ?? null, \FILTER_SANITIZE_STRING);
         $idTask = \filter_var($body['id_task'] ?? null, \FILTER_SANITIZE_STRING);
-        $message = \filter_var($body['message'] ?? null, \FILTER_SANITIZE_STRING);
+        $messageContent = \filter_var($body['message'] ?? null, \FILTER_SANITIZE_STRING);
         $conclusion = $body['conclusion'] ?? null;
 
-        if (!$message){
-            $response->getBody()->write(\json_encode([
-                "error" => "Mensagem não pode estar em branco"
-            ]));
-            return $response;
-        }
+        $message = new Message();
+        $message->id_user = $idUser;
+        $message->id_task = $idTask;
+        $message->message = $messageContent;
+        $message->conclusion = $conclusion;
 
-        $task = new Task();
-        $task->findById((Int) $idTask);
-
-        if ($task->fail) {
-            $response->getBody()->write(\json_encode([
-                "error" => "Tarefa não encontrada"
-            ]));
-            return $response;
-        }
-
-        $result = $task
-        ->raw("INSERT INTO messages (id_task, id_user, message, conclusion) VALUES(:id_task, :id_user, :message, :conclusion)", [
-            ":id_task" => $idTask,
-            ":id_user" => $idUser,
-            ":message" => $message,
-            ":conclusion" => $conclusion
-        ]);
-
-        if (!$result) {
-            if ($task->fail) {
+        if (!$message->save()) {
+            if ($message->fail) {
                 $response->getBody()->write(\json_encode([
-                    "error" => $task->fail,
+                    "error" => $message->fail,
                     "type" => "sys"
                 ]));
+
                 return $response;
             }
 
             $response->getBody()->write(\json_encode([
-                "error" => "Não foi possivel inserir mensagem"
+                "error" => "Houve um erro ao inserir a mensagem"
             ]));
+
             return $response;
         }
 
         return $response;
+    }
+
+    public function updateMessage(Request $request, Response $response){
+
+        $body = $request->getParsedBody();
+        $idMessage = $body["id_message"] ?? null;
+        $messageContent = $body['message'] ?? null;
+
+        $message = new Message();
+
+        $message->findById((Int) $idMessage);
+        $message->message = $messageContent;
+
+        if (!$message->save()) {
+            if ($message->fail) {
+                $response->getBody()->write(\json_encode([
+                    "error" => $message->fail,
+                    "type" => "sys"
+                ]));
+
+                return $response;
+            }
+
+            $response->getBody()->write(\json_encode([
+                "error" => "Houve um erro ao inserir a mensagem"
+            ]));
+
+            return $response;
+        }
+                
+        $response->getBody()->write(\json_encode($message->getData()));
+        return $response;
+    }
+
+    public function deleteMessage(Request $request, Response $response, $args){
+
+        
+        $idMessage = $args['id_message'] ?? null;
+
+        $message = new Message();
+        $message->findById((Int) $idMessage);
+        $message->destroy();
+        
+        return $response;
+        
+
     }
 
 }
