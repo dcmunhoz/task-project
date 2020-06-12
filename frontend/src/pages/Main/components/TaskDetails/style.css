@@ -21,6 +21,7 @@
     padding: 20px 40px;
     border-radius: 5px;
     animation: bringModalTaskDown 150ms ease forwards;
+    margin-bottom: 50px;
 }   
 
 .task-details-modal header {

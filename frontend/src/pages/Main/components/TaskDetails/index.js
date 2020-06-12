@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -26,6 +26,10 @@ const TaskDetails = () => {
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [newMessage, setNewMessage] = useState("");
+    const [showEditMessage, setShowEditMessage] = useState(false);
+    const [editMessage, setEditMessage] = useState(0);
+
+    const messageRef = useRef(null);
 
     const dispatch = useDispatch();
     const location = useLocation();
@@ -291,6 +295,10 @@ const TaskDetails = () => {
 
     }
 
+    function handleSetEditMessage(e){
+        const messageId = e.currentTarget.dataset.id_message;
+        setEditMessage(messageId);        
+    }
 
     async function getTaskDetails(){
 
@@ -343,6 +351,11 @@ const TaskDetails = () => {
 
         setTask(newTask);
         
+    }
+
+
+    function shouldEnableEditMessage(messageID, currentMessageMap){
+        return messageID === currentMessageMap;
     }
 
     return(
@@ -502,23 +515,43 @@ const TaskDetails = () => {
                         <div className="messages-list">
                             <ul>
                                 {(task.messages) ? (task.messages.map(message=>(
-                                    <li key={message.id_message}>
+                                    <li key={message.id_message} data-id={message.id_message} >
                                         <div className="message-body-container">
                                             <div className="user-avatar">
                                                 <img src={message.avatar}  alt="Avatar" />
                                             </div>
                                             <div className="message-body">
                                                 <header>    
-                                                    {message.user} - {message.creation}
+                                                    {message.user} - {message.creation} - {editMessage} - {message.id_message}
                                                 </header>
                                                 <div>
-                                                    <div className="message">
-                                                        {message.message}
-                                                    </div>
+                                                    {(shouldEnableEditMessage(editMessage, message.id_message)) ? (
+                                                        <textarea value={message.message}>  </textarea>
+                                                    ) : (
+                                                        <div className="message">
+                                                            {message.message}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <footer>
-                                                    <a className="edit-button" href="">Editar</a>
-                                                    <a className="delete-button" href="">Excluir</a>
+                                                    {(shouldEnableEditMessage(editMessage, message.id_message)) ? (
+                                                        <>  
+                                                            <Button
+                                                            
+                                                            >
+                                                                Salvar
+                                                            </Button>
+
+                                                            <a className="delete-button" onClick={()=>setEditMessage(0)}>Cancelar</a>
+
+
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <a className="edit-button" data-id_message={message.id_message} onClick={handleSetEditMessage}>Editar</a>
+                                                            <a className="delete-button" href="">Excluir</a>
+                                                        </>
+                                                    )}
                                                 </footer>
                                             </div>
                                         </div>
