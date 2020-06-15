@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -12,10 +12,12 @@ import ComboSelect from './../../../../components/ComboSelect';
 import './style.css';
 
 const TaskDetails = () => {
+    const authUser = useSelector(state => state.user.authenticatedUser);
     const usersList = useSelector(state => state.user.usersList);
     const situations = useSelector(state => state.global.situations);
 
     const [titleFocused, setTitleFocused] = useState(false);
+    const [newMessageFocused, setNewMessageFocused] = useState(false);
     const [task, setTask] = useState({});
     const [requester, setRequester] = useState({});
     const [situationList, setSituationList] = useState([]);
@@ -23,6 +25,11 @@ const TaskDetails = () => {
     const [tagsList, setTagsList] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedMembers, setSelectedMembers] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
+    const [newEditedMessage, setNewEditedMessage] = useState("");
+    const [editMessage, setEditMessage] = useState(0);
+
+    const messageRef = useRef(null);
 
     const dispatch = useDispatch();
     const location = useLocation();
@@ -30,41 +37,6 @@ const TaskDetails = () => {
     const httpRequest = useHttp();
 
     useEffect(()=>{
-    
-        async function getTaskDetails(){
-
-            const params = new URLSearchParams(location.search);
-        
-            const task_id = params.get('task');
-
-            const response = await httpRequest("GET", '/task/' + task_id);
-
-            if(!response) return false;
-
-            const { data } = response;
-
-            if (data.erro) {
-                console.log("erro, ", data);
-            }
-
-            const tags = data.tags.map(tag => ({
-                id: tag.id_tag,
-                name: tag.title,
-                ...tag
-            }));
-
-            const members = data.members.map(member => ({
-                id: member.id_user,
-                name: member.name,
-                avatar: member.avatar
-            }));
-            
-            setTask(data);
-            setRequester(data.requester);
-            setSelectedTags(tags);
-            setSelectedMembers(members);
-
-        }
 
         getTaskDetails();
 
@@ -281,6 +253,166 @@ const TaskDetails = () => {
         });
     }
 
+    /** ==== MESSAGES ==== */
+    function handleChangeNewMessageValue(e){
+
+        setNewMessage(e.target.value);
+
+    }
+
+    function handleNewMessageCancel(){
+        setNewMessage("");
+        setNewMessageFocused(false);
+    }
+
+    async function handleSendNewMessage(){
+
+        const body = {
+            id_task: task.id_task,
+            id_user: authUser.id_user,
+            message: newMessage
+        };
+
+        const response = await httpRequest("POST", "/message/new", body);
+
+        if (!response) return false; 
+
+        const { data } = response;
+
+        if (data.error) { 
+            dispatch({
+                type: "SHOW_MODAL_MESSAGE",
+                payload: {
+                    title: "Ooooops",
+                    message: data.error
+                }
+            });
+            return false;
+        }
+
+        handleNewMessageCancel();
+        getTaskDetails();
+
+    }
+
+    function handleSetEditMessage(e){
+        const messages = task.messages;
+        const { id_message } = e.currentTarget.dataset;
+
+        const messageIndex = messages.map((message)=> message.id_message).indexOf(id_message);       
+
+        setNewEditedMessage(messages[messageIndex].message)
+
+        setEditMessage(id_message);        
+    }
+
+    function handleChangeMessage(e){
+        setNewEditedMessage(e.target.value);
+        // const messages = task.messages;
+        // const { id_message } = e.currentTarget.dataset;
+
+        // messages[selectedMessage].message = e.target.value;
+
+        // setTask({
+        //     ...task,
+        //     messages: [
+        //         ...messages
+        //     ]
+        // })
+
+    }
+
+    async function handleSendUpdateMessage(e){  
+        const messages = task.messages;
+        const { id_message } = e.currentTarget.dataset;
+
+        const messageIndex = task.messages.map(message=> message.id_message).indexOf(id_message);
+        messages[messageIndex].message = newEditedMessage;
+
+        const body = {
+            id_message,
+            message: newEditedMessage
+        }
+
+        const response = await httpRequest("PUT", "/message/update", body);
+
+        if (!response) return false;
+        
+        const { data } = response;
+        
+        setTask({
+            ...task,
+            messages: [
+                ...messages
+            ]
+        });
+
+        setEditMessage(0);
+
+    }
+
+    async function handleSendDeleteMessage(e){
+
+        if (window.confirm("Deseja eliminar esta mensagem?")) {
+            const { id_message } = e.currentTarget.dataset;
+            const response = httpRequest("DELETE", `/message/${id_message}/delete`);
+    
+            if (!response) return false;
+
+            const messages = task.messages;
+            const newMessage = messages.filter(message => message.id_message !== id_message);
+
+            setTask({
+                ...task,
+                messages: [
+                    ...newMessage
+                ]
+            })
+
+        }
+
+
+    }
+
+    function shouldEnableEditMessage(messageID, currentMessageMap){
+        return messageID === currentMessageMap;
+    }
+
+    async function getTaskDetails(){
+
+        const params = new URLSearchParams(location.search);
+    
+        const task_id = params.get('task');
+
+        const response = await httpRequest("GET", '/task/' + task_id);
+
+        if(!response) return false;
+
+        const { data } = response;
+
+        if (data.erro) {
+            console.log("erro, ", data);
+        }
+
+        const tags = data.tags.map(tag => ({
+            id: tag.id_tag,
+            name: tag.title,
+            ...tag
+        }));
+
+        const members = data.members.map(member => ({
+            id: member.id_user,
+            name: member.name,
+            avatar: member.avatar
+        }));
+
+        data.messages.sort((a, b) => b.id_message - a.id_message);
+
+        setTask(data);
+        setRequester(data.requester);
+        setSelectedTags(tags);
+        setSelectedMembers(members);
+    }
 
     async function sendUpdateTask(newTask){
         
@@ -429,7 +561,81 @@ const TaskDetails = () => {
                 </DetailtBox>
 
                 <DetailtBox label="mensagens">
-                    {/* <textarea name="" id="" cols="30" rows="10" value="mensagem"></textarea> */}
+                    <div className="message-container">
+                        <div className={`new-message-box ${(newMessageFocused) ? "focused" : ""}`}>
+                            <textarea 
+                                className="new-message" 
+                                placeholder="Digite sua mensagem aqui"
+                                onFocus={()=>setNewMessageFocused(true)} 
+                                value={newMessage}
+                                onChange={handleChangeNewMessageValue}
+                            />
+                            <div className="new-message-footer">
+                                <Button
+                                    color="green"
+                                    icon="FaPaperPlane"
+                                    size="sm"
+                                    onClick={handleSendNewMessage}
+                                >
+                                    Enviar
+                                </Button>
+                                <a
+                                    onClick={handleNewMessageCancel}
+                                >Cancelar</a>
+                            </div>
+                        </div>
+
+                        <div className="messages-list">
+                            <ul>
+                                {(task.messages) ? (task.messages.map(message=>(
+                                    <li key={message.id_message} data-id={message.id_message} >
+                                        <div className="message-body-container">
+                                            <div className="user-avatar">
+                                                <img src={message.avatar}  alt="Avatar" />
+                                            </div>
+                                            <div className="message-body">
+                                                <header>    
+                                                    {message.user} - {message.creation} - {editMessage} - {message.id_message}
+                                                </header>
+                                                <div>
+                                                    {(shouldEnableEditMessage(editMessage, message.id_message)) ? (
+                                                        <textarea data-id_message={message.id_message} value={newEditedMessage} onChange={handleChangeMessage}>  </textarea>
+                                                    ) : (
+                                                        <div className="message">
+                                                            {message.message}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <footer>
+                                                    {(shouldEnableEditMessage(editMessage, message.id_message)) ? (
+                                                        <>  
+                                                            <Button
+                                                                onClick={handleSendUpdateMessage}
+                                                                data-id_message={message.id_message}
+                                                                size="sm"
+                                                                color="yellow"
+                                                            >
+                                                                Salvar
+                                                            </Button>
+
+                                                            <a className="delete-button" onClick={()=>setEditMessage(0)}>Cancelar</a>
+
+
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <a className="edit-button" data-id_message={message.id_message} onClick={handleSetEditMessage}>Editar</a>
+                                                            <a className="delete-button" data-id_message={message.id_message} onClick={handleSendDeleteMessage}>Excluir</a>
+                                                        </>
+                                                    )}
+                                                </footer>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))) : null}
+                            </ul>
+                        </div>
+                    </div>
                 </DetailtBox>
             </div>
         </div>

@@ -22,10 +22,18 @@ const Login = () => {
 
     async function handleLogin(){
 
+        dispatch({
+            type: "SHOW_LOADING_SCREEN"
+        })
+
         let response = await httpRequest("POST", "/login", {
             username,
             password
-        });          
+        });
+        
+        dispatch({
+            type: "HIDE_LOADING_SCREEN"
+        })
         
         if (!response) return false;
 
@@ -44,7 +52,11 @@ const Login = () => {
 
         await auth.authenticate(data);
 
+        
+
         history.replace("/");
+
+        
 
     }
 

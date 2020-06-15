@@ -21,6 +21,7 @@
     padding: 20px 40px;
     border-radius: 5px;
     animation: bringModalTaskDown 150ms ease forwards;
+    margin-bottom: 50px;
 }   
 
 .task-details-modal header {
@@ -122,6 +123,128 @@
     border-radius: 5px;
     min-width: 100px;
     text-transform: uppercase;
+}
+
+.task-details-modal .message-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.task-details-modal .new-message-box{
+    display: flex;
+    flex-direction: column;
+}
+
+.task-details-modal .new-message-box .new-message{
+    height: 42px;
+    margin-bottom: 5px;
+    transition: 300ms;
+}
+
+.task-details-modal .new-message-box.focused .new-message{
+    height: 80px;
+    background-color: #FFF;
+    /* border: 2px solid #313131; */
+}
+
+.task-details-modal .new-message-box .new-message-footer{
+    display: flex;
+    opacity: 0;
+    flex-direction: row;
+    align-items: flex-start;
+    transition: 300ms;
+    height: 0;
+    overflow: hidden;
+}
+
+.task-details-modal .new-message-box.focused .new-message-footer{
+    display: flex;
+    opacity: 1;
+    height: 50px;
+}
+
+.task-details-modal .new-message-box .new-message-footer a{
+    color: var(--text-dark);
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.task-details-modal .messages-list{
+    margin-top: 20px;
+    
+}
+
+.task-details-modal .messages-list ul li{
+    list-style: none;
+    margin-top: 10px;
+    
+}
+
+.task-details-modal .message-body-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.task-details-modal .message-body-container .user-avatar{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 10px;
+    margin-right: 10px;    
+}
+
+.task-details-modal .message-body-container .user-avatar img {
+    width: 50px;
+    border-radius: 100px;
+}
+
+.task-details-modal .message-body-container .message-body {
+    width: 100%;
+}
+
+.task-details-modal .message-body-container .message-body header {
+
+    font-size: 12px;
+    color: #b8b8b8;
+}
+
+.task-details-modal .message-body-container .message-body div .message {
+    white-space: pre-line;
+    background-color: #e9e9e9;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.task-details-modal .message-body-container .message-body div textarea{
+    
+}
+
+.task-details-modal .message-body-container .message-body footer{
+    
+    padding-top: 3px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.task-details-modal .message-body-container .message-body footer a {
+    font-weight: bold;
+    margin-right: 5px;
+    font-size: 14px;
+    color: var(--text-dark);
+    transition: 150ms;
+    cursor: pointer;
+}
+
+.task-details-modal .message-body-container .message-body footer a.edit-button:hover {
+    color: var(--text-blue);
+}
+
+.task-details-modal .message-body-container .message-body footer a.delete-button:hover {
+    color: var(--text-red);
 }
 
 @keyframes showTaskContainer{

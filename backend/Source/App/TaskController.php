@@ -9,6 +9,7 @@ use Source\Models\Task;
 use Source\Models\Tag;
 use Source\Models\Situation;
 use Source\Models\User;
+use Source\Models\Message;
 
 class TaskController {
 
@@ -366,7 +367,30 @@ class TaskController {
         }
 
         $result['members'] = $members;
-        $result['messages'] = [];
+
+
+        $taskxmessages = $task->raw("SELECT * FROM messages WHERE id_task = :id_task", [
+            ":id_task" => $task->id_task
+        ]);
+
+        
+        $result['messages'] = \array_map(function($message){
+
+            $user = new User();
+            $user->findById((Int) $message->id_user);
+
+            $createdAt = new \DateTime($message->created_at);
+
+
+            $result = new \stdClass();
+            $result->id_message = $message->id_message;
+            $result->message = $message->message;
+            $result->user = $user->getShortName();
+            $result->creation = $createdAt->format("d/m/Y H:i");
+            $result->avatar = $user->avatar;
+
+            return $result;
+        }, $taskxmessages);
 
         $response->getBody()->write(\json_encode($result));
         return $response->withHeader("Content-Type", "application/json");
@@ -404,6 +428,86 @@ class TaskController {
 
         $response->getBody()->write(\json_encode($task->getData()));
         return $response;
+
+    }
+
+    public function addNewMessage(Request $request, Response $response){
+        $body = $request->getParsedBody();
+
+        $idUser = \filter_var($body['id_user'] ?? null, \FILTER_SANITIZE_STRING);
+        $idTask = \filter_var($body['id_task'] ?? null, \FILTER_SANITIZE_STRING);
+        $messageContent = \filter_var($body['message'] ?? null, \FILTER_SANITIZE_STRING);
+        $conclusion = $body['conclusion'] ?? null;
+
+        $message = new Message();
+        $message->id_user = $idUser;
+        $message->id_task = $idTask;
+        $message->message = $messageContent;
+        $message->conclusion = $conclusion;
+
+        if (!$message->save()) {
+            if ($message->fail) {
+                $response->getBody()->write(\json_encode([
+                    "error" => $message->fail,
+                    "type" => "sys"
+                ]));
+
+                return $response;
+            }
+
+            $response->getBody()->write(\json_encode([
+                "error" => "Houve um erro ao inserir a mensagem"
+            ]));
+
+            return $response;
+        }
+
+        return $response;
+    }
+
+    public function updateMessage(Request $request, Response $response){
+
+        $body = $request->getParsedBody();
+        $idMessage = $body["id_message"] ?? null;
+        $messageContent = $body['message'] ?? null;
+
+        $message = new Message();
+
+        $message->findById((Int) $idMessage);
+        $message->message = $messageContent;
+
+        if (!$message->save()) {
+            if ($message->fail) {
+                $response->getBody()->write(\json_encode([
+                    "error" => $message->fail,
+                    "type" => "sys"
+                ]));
+
+                return $response;
+            }
+
+            $response->getBody()->write(\json_encode([
+                "error" => "Houve um erro ao inserir a mensagem"
+            ]));
+
+            return $response;
+        }
+                
+        $response->getBody()->write(\json_encode($message->getData()));
+        return $response;
+    }
+
+    public function deleteMessage(Request $request, Response $response, $args){
+
+        
+        $idMessage = $args['id_message'] ?? null;
+
+        $message = new Message();
+        $message->findById((Int) $idMessage);
+        $message->destroy();
+        
+        return $response;
+        
 
     }
 
