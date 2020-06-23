@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { HashRouter as Router, Switch, useHistory  } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, useHistory  } from 'react-router-dom';
 
 import PrivateRoute from './../../components/PrivateRoute';
 
@@ -106,7 +106,7 @@ export default function Main(){
     useEffect(()=>{
         setTaskDetail(show_modal);
     }, [show_modal]);
-    
+
     function handleShowNewTicketModal(){
         setModal(true);
     }

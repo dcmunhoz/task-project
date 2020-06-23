@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Icon from './../../../../components/Icon';
 
@@ -7,12 +7,15 @@ import Icon from './../../../../components/Icon';
 import './style.css'
 
 const Sidebar = ({screens}) => {
+    const { fullname } = useSelector(store => store.user.authenticatedUser);
+
     const [closed, setClosed] = useState(true);
     const [userName, setUserName] = useState("");
     const [toggleIcon, setToggle] = useState('FaAngleDoubleLeft');
     const [activeScreen, setActiveScreen] = useState('');
+    
     const history = useHistory();
-    const { fullname } = useSelector(store => store.user.authenticatedUser);
+    const location = useLocation();
 
     useEffect(()=>{
         screens.forEach((screen)=>{
@@ -23,6 +26,16 @@ const Sidebar = ({screens}) => {
             }
         });
     }, [])
+
+    useEffect(()=>{
+        if (location.pathname !== "/") {
+            const reloadScreen = screens.find(search=>search.path === location.pathname);
+            if (reloadScreen){
+                setActiveScreen(reloadScreen.title);
+                history.push(location.pathname)
+            }
+        }
+    },[]);
 
     useEffect(()=>{
 
