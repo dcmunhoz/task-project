@@ -16,6 +16,7 @@ const TaskDetails = () => {
     const authUser = useSelector(state => state.user.authenticatedUser);
     const usersList = useSelector(state => state.user.usersList);
     const situations = useSelector(state => state.global.situations);
+    const { shuldLoadTasks } = useSelector(state => state.global);
 
     const [titleFocused, setTitleFocused] = useState(false);
     const [newMessageFocused, setNewMessageFocused] = useState(false);
@@ -95,6 +96,20 @@ const TaskDetails = () => {
 
 
     }, [selectedMembers, task.situation]);
+
+    useEffect(()=>{
+
+        if (shuldLoadTasks) {
+            getTaskDetails();
+
+            dispatch({
+                type: "LOAD_TASKS",
+                payload: false
+            });
+
+        }
+
+    }, [shuldLoadTasks]);
 
     function handleHideTaskDetails(e){
        e.preventDefault();
@@ -475,7 +490,7 @@ const TaskDetails = () => {
                 <div className="task-row-detail"> 
                     <DetailtBox label="atividade" customClass="action-buttons">
                         <div className="action-buttons-inner-container">
-                            {(showAction) ? ( <ActionButton action={showAction} /> ) : console.log("oi") }
+                            {(showAction) ? ( <ActionButton action={showAction} task_id={task.id_task} /> ) : null }
 
                             {/* <div className="task-duration-timer">
                                 <span>00:00</span>
@@ -504,6 +519,7 @@ const TaskDetails = () => {
                     </DetailtBox>
 
                     <DetailtBox label="situação">
+                        <ActionButton action="done" task_id={task.id_task} />
                         <Select 
                             data={situationList}
                             value={task.situation}

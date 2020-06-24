@@ -63,9 +63,9 @@ CREATE TABLE taskxmembers(
     id_user INT NOT NULL,
     CONSTRAINT pk_taskxmember PRIMARY KEY(id_taskxmember),
     CONSTRAINT fk_task_taskxmember FOREIGN KEY (id_task) REFERENCES tasks(id_task),
-    CONSTRAINT fk_user_taskxmember FOREIGN KEY (id_user) REFERENCES users(id_user) 
+    CONSTRAINT fk_user_taskxmember FOREIGN KEY (id_user) REFERENCES users(id_user) ,
+    UNIQUE idx_taskxmember (id_task, id_user)
 ) CHARACTER SET utf8;
-
 CREATE TABLE taskxtags(
 	id_taskxtags INT NOT NULL AUTO_INCREMENT,
     id_task INT NOT NULL,

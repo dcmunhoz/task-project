@@ -73,6 +73,10 @@ const Tasks = () => {
 
     function handleShowTaskDetail(e){
 
+        if(e.target.dataset.action){
+            return;
+        }
+
         const { id: task_id } = e.currentTarget;
         history.replace(`?task=${task_id}`);
         
@@ -84,13 +88,13 @@ const Tasks = () => {
 
     function showActionButon(task){
         const alreadyAssigned = task.members.find(member=>member.id_user == authenticatedUser.id_user);
-        console.log(task)
+        
         if (!alreadyAssigned) {
-            return <ActionButton action="assign" />
+            return <ActionButton task_id={task.id_task} action="assign" />
         } else if (task.id_situation == 1) {
-            return <ActionButton action="play" />
+            return <ActionButton task_id={task.id_task} action="play" />
         } else if (task.id_situation == 2) {
-            return <ActionButton action="pause" />
+            return <ActionButton task_id={task.id_task} action="pause" />
         }
     }
 

@@ -33,6 +33,10 @@ const Cards = () => {
 
     function handleShowTaskDetail(e){
 
+        if (e.target.dataset.action) {
+            return;
+        }
+
         const { id: task_id } = e.currentTarget;
         history.replace(`?task=${task_id}`);
         
