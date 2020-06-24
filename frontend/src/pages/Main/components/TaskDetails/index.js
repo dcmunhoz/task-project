@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ import Button from './../../../../components/Button';
 import DetailtBox from '../../../../components/DetailBox';
 import useHttp from './../../../../services/useHttp';
 import ComboSelect from './../../../../components/ComboSelect';
+import ActionButton from './../../../../components/ActionButton';
 
 import './style.css';
 
@@ -28,6 +29,7 @@ const TaskDetails = () => {
     const [newMessage, setNewMessage] = useState("");
     const [newEditedMessage, setNewEditedMessage] = useState("");
     const [editMessage, setEditMessage] = useState(0);
+    const [showAction, setShowAction] = useState("");
 
     const messageRef = useRef(null);
 
@@ -76,6 +78,24 @@ const TaskDetails = () => {
         setSituationList(situations);
     }, [situations]);
 
+    useEffect(()=>{
+        if (selectedMembers){
+            const alreadyAssigned = selectedMembers.find(member=>member.id ==  authUser.id_user);
+
+            // console.log(!alreadyAssigned)
+
+            if (!alreadyAssigned){
+                setShowAction("assign");
+            }else if ( task.situation === "1" ) {
+                setShowAction("play");
+            }else if ( task.situation === "2" ) {
+                setShowAction("pause");
+            }
+        }
+
+
+    }, [selectedMembers, task.situation]);
+
     function handleHideTaskDetails(e){
        e.preventDefault();
 
@@ -108,6 +128,9 @@ const TaskDetails = () => {
         setTitleFocused(false);
         
     }
+
+    /** ==== ACTION BUTTONS ==== */
+
 
     /** ==== SITUATION ==== */
     function handleChangeTaskSituation(e){
@@ -450,18 +473,16 @@ const TaskDetails = () => {
                     </div>
                 </header>
                 <div className="task-row-detail"> 
-                    {/* <DetailtBox label="atividade" >
-                        <a href="">
-                            <Icon 
-                                iconName="FaPlayCircle"
-                            />
-                        </a>
-                        <a href="">
-                            <Icon 
-                                iconName="FaCheckCircle"
-                            />
-                        </a>
-                    </DetailtBox> */}
+                    <DetailtBox label="atividade" customClass="action-buttons">
+                        <div className="action-buttons-inner-container">
+                            {(showAction) ? ( <ActionButton action={showAction} /> ) : console.log("oi") }
+
+                            {/* <div className="task-duration-timer">
+                                <span>00:00</span>
+                            </div>  */}
+                        </div>
+                        
+                    </DetailtBox>
 
                     <DetailtBox 
                         label="integrantes"

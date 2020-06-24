@@ -1,0 +1,30 @@
+.action-button{
+    font-size: 24px;
+}
+
+.action-button.play a .icon path{
+    color: var(--btn-blue) !important;
+    transition: 150ms;
+}
+
+.action-button.play a:hover .icon path{
+    color: var(--btn-blue-h) !important;
+}
+
+.action-button.pause a .icon path{
+    color: var(--btn-red) !important;
+    transition: 150ms;
+}
+
+.action-button.pause a:hover .icon path{
+    color: var(--btn-red-h) !important;
+}
+
+.action-button.assign a .icon path{
+    color: var(--btn-green) !important;
+    transition: 150ms;
+}
+
+.action-button.assign a:hover .icon path{
+    color: var(--btn-green-h) !important;
+}

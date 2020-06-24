@@ -5,14 +5,18 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Content from './../../components/Content';
 import useHttp from './../../services/useHttp';
 import Icon from './../../components/Icon';
+import ActionButton from './../../components/ActionButton';
 
 import './style.css';
 
 const Tasks = () => {
     const { shuldLoadTasks } = useSelector(store => store.global);
+    const { authenticatedUser } = useSelector(store => store.user);
+
+    const [taskList, setTaskList] = useState([]);
+
     const httpRequest = useHttp();
     const dispatch = useDispatch();
-    const [taskList, setTaskList] = useState([]);
     const history = useHistory();
 
     useEffect(()=>{
@@ -39,6 +43,10 @@ const Tasks = () => {
         return () => mounted = false;        
 
     }, [shuldLoadTasks]);
+
+    useEffect(()=>{
+        
+    }, []);
 
     async function loadTasks(){
 
@@ -74,6 +82,18 @@ const Tasks = () => {
         })
     }
 
+    function showActionButon(task){
+        const alreadyAssigned = task.members.find(member=>member.id_user == authenticatedUser.id_user);
+        console.log(task)
+        if (!alreadyAssigned) {
+            return <ActionButton action="assign" />
+        } else if (task.id_situation == 1) {
+            return <ActionButton action="play" />
+        } else if (task.id_situation == 2) {
+            return <ActionButton action="pause" />
+        }
+    }
+
     return(
         <Content
             sidebarFiltersComponent={()=>(
@@ -90,7 +110,7 @@ const Tasks = () => {
                             <li key={task.id_task} >
                                 <div className="task-box" id={task.id_task} onClick={handleShowTaskDetail}>
                                     <div className="action-icon">
-                                        <Icon iconName="FaArrowCircleDown" />
+                                        {showActionButon(task)}
                                     </div>
                                     <div className="principal-informations">
                                         <div className="principal-header-informations">
