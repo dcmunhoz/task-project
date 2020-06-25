@@ -469,6 +469,16 @@ const TaskDetails = () => {
         
     }
 
+    function showConclusionActionButton(){
+
+        const conclusionSituation = situations.find(situation=> situation.conclusion == true);
+
+        if (task.situation != conclusionSituation.id) {
+            return <ActionButton action="done" task={task} />;
+        }
+
+    }
+
     return(
         <div className={`task-details-modal-container`} data-close onClick={handleHideTaskDetails}>
             <div className="task-details-modal">
@@ -490,7 +500,7 @@ const TaskDetails = () => {
                 <div className="task-row-detail"> 
                     <DetailtBox label="atividade" customClass="action-buttons">
                         <div className="action-buttons-inner-container">
-                            {(showAction) ? ( <ActionButton action={showAction} task_id={task.id_task} /> ) : null }
+                            {(showAction) ? ( <ActionButton action={showAction} task={task} /> ) : null }
 
                             {/* <div className="task-duration-timer">
                                 <span>00:00</span>
@@ -519,7 +529,6 @@ const TaskDetails = () => {
                     </DetailtBox>
 
                     <DetailtBox label="situação">
-                        <ActionButton action="done" task_id={task.id_task} />
                         <Select 
                             data={situationList}
                             value={task.situation}
@@ -530,6 +539,8 @@ const TaskDetails = () => {
                             }}
                             onChange={handleChangeTaskSituation}
                         />
+
+                        {showConclusionActionButton()}
                     </DetailtBox>
 
                     <DetailtBox 
@@ -632,7 +643,7 @@ const TaskDetails = () => {
                                             </div>
                                             <div className="message-body">
                                                 <header>    
-                                                    {message.user} - {message.creation} - {editMessage} - {message.id_message}
+                                                    {message.user} - {message.creation}
                                                 </header>
                                                 <div>
                                                     {(shouldEnableEditMessage(editMessage, message.id_message)) ? (

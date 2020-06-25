@@ -6,8 +6,9 @@ import useHttp from './../../services/useHttp';
 
 import './style.css';
 
-const ActionButton = ({action, task_id}) => {
+const ActionButton = ({action, task}) => {
     const authUser = useSelector(store=> store.user.authenticatedUser);
+    const situations = useSelector(store => store.global.situations);
 
     const [icon, setIcon] = useState("");
 
@@ -46,7 +47,7 @@ const ActionButton = ({action, task_id}) => {
                 console.log("PARA TUDO")
             break;
             case "done":
-                console.log("Fim")
+                setTaskDone();
             break;
         }
 
@@ -55,17 +56,34 @@ const ActionButton = ({action, task_id}) => {
     
     async function assignTask(){
 
-        const response = await httpRequest("POST", `/task/${task_id}/member/${authUser.id_user}/add`);
+        const response = await httpRequest("POST", `/task/${task.id_task}/member/${authUser.id_user}/add`);
 
         if (!response) return;
-
-        const { data } = response;
 
         dispatch({
             type: "LOAD_TASKS",
             payload: true
         })
-        
+
+    }
+
+    async function setTaskDone(){
+
+        const conclusionSituation = situations.find(situation => situation.conclusion == true);
+
+        const newTask = {
+            ...task,
+            situation: conclusionSituation.id
+        }
+
+        const response = await httpRequest("PUT", `/task/${newTask.id_task}/update`, newTask);
+
+        if (!response) return;
+
+        dispatch({
+            type: "LOAD_TASKS",
+            payload: true
+        });
 
     }
 

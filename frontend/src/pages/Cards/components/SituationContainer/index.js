@@ -66,11 +66,11 @@ const SituationContainer = ({ id, title, showDetail }) => {
         const alreadyAssigned = card.members.find(member=>member.id_user == authUser.id_user);
         
         if (!alreadyAssigned) {
-            return <ActionButton action={"assign"} task_id={card.id_task} />
+            return <ActionButton action={"assign"} task={card} />
         } else if (card.id_situation == 1) {
-            return <ActionButton action="play" task_id={card.id_task} />
+            return <ActionButton action="play" task={card} />
         } else if (card.id_situation == 2) {
-            return <ActionButton action="pause" task_id={card.id_task} />
+            return <ActionButton action="pause" task={card} />
         }
 
     }

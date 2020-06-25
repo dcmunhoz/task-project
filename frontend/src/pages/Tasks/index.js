@@ -90,11 +90,11 @@ const Tasks = () => {
         const alreadyAssigned = task.members.find(member=>member.id_user == authenticatedUser.id_user);
         
         if (!alreadyAssigned) {
-            return <ActionButton task_id={task.id_task} action="assign" />
+            return <ActionButton task={task} action="assign" />
         } else if (task.id_situation == 1) {
-            return <ActionButton task_id={task.id_task} action="play" />
+            return <ActionButton task={task} action="play" />
         } else if (task.id_situation == 2) {
-            return <ActionButton task_id={task.id_task} action="pause" />
+            return <ActionButton task={task} action="pause" />
         }
     }
 
