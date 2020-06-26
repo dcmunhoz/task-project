@@ -12,6 +12,7 @@
 .sidebar-filters{
     background-color: #F9F7F7;
     min-width: 200px;
+    max-width: 200px;
     position: relative;
 }
 

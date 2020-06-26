@@ -6,6 +6,7 @@ import Content from './../../components/Content';
 import useHttp from './../../services/useHttp';
 import Icon from './../../components/Icon';
 import ActionButton from './../../components/ActionButton';
+import Sidebar from './Sidebar';
 
 import './style.css';
 
@@ -100,9 +101,7 @@ const Tasks = () => {
 
     return(
         <Content
-            sidebarFiltersComponent={()=>(
-                <h1>Side</h1>
-            )}
+            sidebarFiltersComponent={Sidebar}
         >
             <div className="task-list-content">
                 <header>

@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import SituationContainer from './components/SituationContainer';
 import Content from './../../components/Content';
+import Sidebar from './components/Sidebar'
 import useHttp from './../../services/useHttp';
 
 import './style.css';
@@ -48,9 +49,7 @@ const Cards = () => {
 
     return(
         <Content 
-            sidebarFiltersComponent={()=>(
-                <h1>Side</h1>
-            )}
+            sidebarFiltersComponent={Sidebar}
         >
             <div className="cards-container">
                 {situations.map((situation)=>(
