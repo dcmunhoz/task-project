@@ -11,14 +11,17 @@ import Sidebar from './Sidebar';
 import './style.css';
 
 const Tasks = () => {
-    const { shuldLoadTasks } = useSelector(store => store.global);
+    const { shuldLoadTasks, shuldFilterTasks } = useSelector(store => store.global);
     const { authenticatedUser } = useSelector(store => store.user);
 
     const [taskList, setTaskList] = useState([]);
+    const [filteredTaskList, setFilteredTaskList] = useState([]);
+    const [pageName, setPageName] = useState(null);
 
     const httpRequest = useHttp();
     const dispatch = useDispatch();
     const history = useHistory();
+    const location = useLocation();
 
     useEffect(()=>{
         loadTasks();
@@ -46,6 +49,39 @@ const Tasks = () => {
     }, [shuldLoadTasks]);
 
     useEffect(()=>{
+
+        if (shuldFilterTasks) {
+
+            const params = new URLSearchParams(location.search);
+
+            const filter = params.get("filters").split(":")[1];
+
+            if (filter === "mine") {
+                setPageName("Minhas Tarefas")
+
+                var newTaskList = taskList.filter(task => {
+                    const userIsMember = task.members.find(member=>{
+                        return (member.id_user == authenticatedUser.id_user) ? true : false;
+                    });
+    
+                    return (userIsMember) ? true : false;
+                });
+            } else { 
+                var newTaskList = [...taskList];
+            }
+
+            setFilteredTaskList(newTaskList);
+
+            dispatch({
+                type:"FILTER_TASKS",
+                payload: false
+            });
+
+        }
+
+    }, [shuldFilterTasks]);
+
+    useEffect(()=>{
         
     }, []);
 
@@ -69,6 +105,7 @@ const Tasks = () => {
         data.sort((a,b) => b.id_task - a.id_task);
 
         setTaskList(data);
+        setFilteredTaskList(data);
 
     }
 
@@ -105,11 +142,11 @@ const Tasks = () => {
         >
             <div className="task-list-content">
                 <header>
-                    <h1>Titulo Pagina Tarefa</h1>
+                    <h1>{pageName ?? "Tarefas"}</h1>
                 </header>
                 <div className="task-list">
                     <ul>
-                        {taskList.map(task=>(
+                        {filteredTaskList.map(task=>(
                             <li key={task.id_task} >
                                 <div className="task-box" id={task.id_task} onClick={handleShowTaskDetail}>
                                     <div className="action-icon">

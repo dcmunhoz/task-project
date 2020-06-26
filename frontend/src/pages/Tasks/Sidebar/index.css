@@ -38,6 +38,7 @@
     color: var(--text-dark);
     padding: 5px 0;
     transition: 1s;
+    cursor: pointer;
 }
 
 .sidebar-filters-inner .user-tasks-filters ul li a:hover{
