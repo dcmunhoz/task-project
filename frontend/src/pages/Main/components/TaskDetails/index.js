@@ -9,6 +9,7 @@ import DetailtBox from '../../../../components/DetailBox';
 import useHttp from './../../../../services/useHttp';
 import ComboSelect from './../../../../components/ComboSelect';
 import ActionButton from './../../../../components/ActionButton';
+import DateInput from './../../../../components/DateInput';
 
 import './style.css';
 
@@ -169,6 +170,11 @@ const TaskDetails = () => {
 
         sendUpdateTask(newTask);
     } 
+
+    /** ==== ESTIMATED ==== */
+    function handleChangeEstimateStart(e){
+        console.log(e)
+    }
 
     /** ==== DESCRIPTION ==== */
     function handleChangeTaskDescription(e){
@@ -547,9 +553,15 @@ const TaskDetails = () => {
                         label="Inicio Desejado"
                         customClass="estimated-start"
                     >
-                        <span className="date-field">
-                            { (task.estimated) ? task.estimated : '-' }
-                        </span>
+
+                        <DateInput 
+
+                        />
+
+                        {/* <span className="date-field">
+                            
+                      
+                        </span> */}
                     </DetailtBox>
                 </div>
 
