@@ -172,8 +172,15 @@ const TaskDetails = () => {
     } 
 
     /** ==== ESTIMATED ==== */
-    function handleChangeEstimateStart(e){
-        console.log(e)
+    async function handleChangeEstimateStart(e){
+
+        const newTask = {
+            ...task,
+            estimated: e.toLocaleDateString()
+        }
+
+        sendUpdateTask(newTask);
+        
     }
 
     /** ==== DESCRIPTION ==== */
@@ -471,7 +478,7 @@ const TaskDetails = () => {
             payload: true
         });
 
-        setTask(newTask);
+        // setTask(newTask);
         
     }
 
@@ -555,7 +562,8 @@ const TaskDetails = () => {
                     >
 
                         <DateInput 
-
+                            value={task.estimated}
+                            onChange={handleChangeEstimateStart}
                         />
 
                         {/* <span className="date-field">

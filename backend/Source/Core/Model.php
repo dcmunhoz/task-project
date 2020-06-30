@@ -230,7 +230,7 @@ abstract class Model{
 
         }catch(\Exception $e){
             Connect::getInstance()->rollBack();
-            $this->fail = $e->getMessage() . " \n \n [QUERY]: $query";
+            $this->fail = $e->getMessage();
             return false;
         }
     }
