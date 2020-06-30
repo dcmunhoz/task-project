@@ -66,6 +66,84 @@ const Tasks = () => {
     
                     return (userIsMember) ? true : false;
                 });
+            } else if (filter === "today") {
+
+                setPageName("Tarefas para Hoje");
+
+                const date = new Date();
+                const today = date.toLocaleDateString();
+                
+                var newTaskList = taskList.filter(task => {
+                    const userIsMember = task.members.find(member=>{
+                        return (member.id_user == authenticatedUser.id_user) ? true : false;
+                    });
+    
+                    return (userIsMember) ? true : false;
+                }).filter(task=>task.estimated_start == today);
+
+                
+
+
+            } else if (filter === "nexts") {
+
+                setPageName("Próximos 7 dias");
+              
+                var newTaskList = taskList.filter(task => {
+                    const userIsMember = task.members.find(member=>{
+                        return (member.id_user == authenticatedUser.id_user) ? true : false;
+                    });
+    
+                    return (userIsMember) ? true : false;
+                }).filter(task=>{
+                    if (task.estimated_start) {
+                        let estimated = task.estimated_start;
+                        const filtered = `${estimated.split('/')[1]}/${estimated.split('/')[0]}/${estimated.split('/')[2]}`;
+                        
+                        estimated = new Date(filtered);
+
+                        const date = new Date();
+                        date.setMinutes(0);
+                        date.setMilliseconds(0);
+                        date.setSeconds(0);
+                        date.setHours(0);
+
+                        if (estimated >= date && estimated <= date.setDate(date.getDate()+7) ) {
+                            return true;
+                        }
+
+
+                    }
+                });
+
+
+            } else if (filter === "new") {
+                setPageName("Novas Tarefas");
+
+                const date = new Date();
+                const today = date.toLocaleDateString();
+                
+                var newTaskList = taskList.filter(task=>{
+                    
+                    let created = task.created_at;
+                    created = created.split(" ")[0];
+                    created = `${created.split("-")[1]}/${created.split("-")[2]}/${created.split("-")[0]}`;
+                    created = new Date(created);
+
+                    const date = new Date();
+                    if (created.toLocaleDateString() == date.toLocaleDateString()) {
+                        return true;
+                    }
+                    
+                });
+
+
+            } else if (filter === "all") {
+                setPageName("Tarefas");
+                var newTaskList = [...taskList];
+            } else if (filter === "no-members") {
+                setPageName("Tarefas sem membros");
+                const arr = [];
+                var newTaskList = taskList.filter(task=>task.members.length == 0);
             } else { 
                 var newTaskList = [...taskList];
             }
@@ -80,10 +158,6 @@ const Tasks = () => {
         }
 
     }, [shuldFilterTasks]);
-
-    useEffect(()=>{
-        
-    }, []);
 
     async function loadTasks(){
 
@@ -103,7 +177,7 @@ const Tasks = () => {
         }
 
         data.sort((a,b) => b.id_task - a.id_task);
-
+        
         setTaskList(data);
         setFilteredTaskList(data);
 

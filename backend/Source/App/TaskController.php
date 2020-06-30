@@ -115,6 +115,11 @@ class TaskController {
             $row->creation_date = $createdAt->format("d/m/Y");
             $row->creation_time = $createdAt->format("H:i");
 
+            if ($row->estimated_start){
+                $estimated = new \DateTime($row->estimated_start);
+                $row->estimated_start = $estimated->format("d/m/Y");
+            }
+
             $task = new Task();
             $taskxtags = $task
                 ->find(

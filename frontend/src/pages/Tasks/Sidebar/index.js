@@ -64,15 +64,15 @@ const Sidebar = () => {
             <section className="user-tasks-filters">
                 <ul>
                     <li>
-                        <a href=""> Novas tarefas <span className="filter-item-task-counter">5</span> </a>
+                        <a onClick={()=>setFilters("filter:new")}> Novas tarefas <span className="filter-item-task-counter">5</span> </a>
                     </li>
 
                     <li>
-                        <a href=""> Todas tarefas <span className="filter-item-task-counter">89</span> </a>
+                        <a onClick={()=>setFilters("filter:all")}> Todas tarefas <span className="filter-item-task-counter">89</span> </a>
                     </li>
 
                     <li>
-                        <a href=""> Sem integrantes <span className="filter-item-task-counter">10</span> </a>
+                        <a onClick={()=>setFilters("filter:no-members")}> Sem integrantes <span className="filter-item-task-counter">10</span> </a>
                     </li>
                 </ul>
             </section>
