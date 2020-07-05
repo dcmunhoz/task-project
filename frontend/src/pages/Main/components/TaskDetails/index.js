@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -8,6 +8,8 @@ import Button from './../../../../components/Button';
 import DetailtBox from '../../../../components/DetailBox';
 import useHttp from './../../../../services/useHttp';
 import ComboSelect from './../../../../components/ComboSelect';
+import ActionButton from './../../../../components/ActionButton';
+import DateInput from './../../../../components/DateInput';
 
 import './style.css';
 
@@ -15,6 +17,7 @@ const TaskDetails = () => {
     const authUser = useSelector(state => state.user.authenticatedUser);
     const usersList = useSelector(state => state.user.usersList);
     const situations = useSelector(state => state.global.situations);
+    const { shuldLoadTasks } = useSelector(state => state.global);
 
     const [titleFocused, setTitleFocused] = useState(false);
     const [newMessageFocused, setNewMessageFocused] = useState(false);
@@ -28,6 +31,7 @@ const TaskDetails = () => {
     const [newMessage, setNewMessage] = useState("");
     const [newEditedMessage, setNewEditedMessage] = useState("");
     const [editMessage, setEditMessage] = useState(0);
+    const [showAction, setShowAction] = useState("");
 
     const messageRef = useRef(null);
 
@@ -76,6 +80,38 @@ const TaskDetails = () => {
         setSituationList(situations);
     }, [situations]);
 
+    useEffect(()=>{
+        if (selectedMembers){
+            const alreadyAssigned = selectedMembers.find(member=>member.id ==  authUser.id_user);
+
+            // console.log(!alreadyAssigned)
+
+            if (!alreadyAssigned){
+                setShowAction("assign");
+            }else if ( task.situation === "1" ) {
+                setShowAction("play");
+            }else if ( task.situation === "2" ) {
+                setShowAction("pause");
+            }
+        }
+
+
+    }, [selectedMembers, task.situation]);
+
+    useEffect(()=>{
+
+        if (shuldLoadTasks) {
+            getTaskDetails();
+
+            dispatch({
+                type: "LOAD_TASKS",
+                payload: false
+            });
+
+        }
+
+    }, [shuldLoadTasks]);
+
     function handleHideTaskDetails(e){
        e.preventDefault();
 
@@ -109,6 +145,9 @@ const TaskDetails = () => {
         
     }
 
+    /** ==== ACTION BUTTONS ==== */
+
+
     /** ==== SITUATION ==== */
     function handleChangeTaskSituation(e){
 
@@ -131,6 +170,18 @@ const TaskDetails = () => {
 
         sendUpdateTask(newTask);
     } 
+
+    /** ==== ESTIMATED ==== */
+    async function handleChangeEstimateStart(e){
+
+        const newTask = {
+            ...task,
+            estimated: e.toLocaleDateString()
+        }
+
+        sendUpdateTask(newTask);
+        
+    }
 
     /** ==== DESCRIPTION ==== */
     function handleChangeTaskDescription(e){
@@ -427,8 +478,18 @@ const TaskDetails = () => {
             payload: true
         });
 
-        setTask(newTask);
+        // setTask(newTask);
         
+    }
+
+    function showConclusionActionButton(){
+
+        const conclusionSituation = situations.find(situation=> situation.conclusion == true);
+
+        if (task.situation != conclusionSituation.id) {
+            return <ActionButton action="done" task={task} />;
+        }
+
     }
 
     return(
@@ -450,18 +511,16 @@ const TaskDetails = () => {
                     </div>
                 </header>
                 <div className="task-row-detail"> 
-                    {/* <DetailtBox label="atividade" >
-                        <a href="">
-                            <Icon 
-                                iconName="FaPlayCircle"
-                            />
-                        </a>
-                        <a href="">
-                            <Icon 
-                                iconName="FaCheckCircle"
-                            />
-                        </a>
-                    </DetailtBox> */}
+                    <DetailtBox label="atividade" customClass="action-buttons">
+                        <div className="action-buttons-inner-container">
+                            {(showAction) ? ( <ActionButton action={showAction} task={task} /> ) : null }
+
+                            {/* <div className="task-duration-timer">
+                                <span>00:00</span>
+                            </div>  */}
+                        </div>
+                        
+                    </DetailtBox>
 
                     <DetailtBox 
                         label="integrantes"
@@ -493,15 +552,24 @@ const TaskDetails = () => {
                             }}
                             onChange={handleChangeTaskSituation}
                         />
+
+                        {showConclusionActionButton()}
                     </DetailtBox>
 
                     <DetailtBox 
                         label="Inicio Desejado"
                         customClass="estimated-start"
                     >
-                        <span className="date-field">
-                            { (task.estimated) ? task.estimated : '-' }
-                        </span>
+
+                        <DateInput 
+                            value={task.estimated}
+                            onChange={handleChangeEstimateStart}
+                        />
+
+                        {/* <span className="date-field">
+                            
+                      
+                        </span> */}
                     </DetailtBox>
                 </div>
 
@@ -595,7 +663,7 @@ const TaskDetails = () => {
                                             </div>
                                             <div className="message-body">
                                                 <header>    
-                                                    {message.user} - {message.creation} - {editMessage} - {message.id_message}
+                                                    {message.user} - {message.creation}
                                                 </header>
                                                 <div>
                                                     {(shouldEnableEditMessage(editMessage, message.id_message)) ? (

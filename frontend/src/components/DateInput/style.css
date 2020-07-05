@@ -1,0 +1,22 @@
+.date-input{
+    background-color: #E0E0E0;
+    padding: 0 0;
+    border-radius: 3px;
+    padding: 6px 10px;
+}
+
+.date-input .icon{
+    margin-right: 10px;
+}
+
+.date-input .icon path{
+    color: #7c7c7c;
+}
+
+.date-input .custom-date-picker{
+    
+    border: none;
+    font-weight: bold;
+    color: var(--text-dark);
+    background-color: rgb(0, 0, 0, 0);
+}

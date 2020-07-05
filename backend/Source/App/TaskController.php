@@ -115,6 +115,11 @@ class TaskController {
             $row->creation_date = $createdAt->format("d/m/Y");
             $row->creation_time = $createdAt->format("H:i");
 
+            if ($row->estimated_start){
+                $estimated = new \DateTime($row->estimated_start);
+                $row->estimated_start = $estimated->format("d/m/Y");
+            }
+
             $task = new Task();
             $taskxtags = $task
                 ->find(
@@ -406,13 +411,17 @@ class TaskController {
         $task->id_situation = $body['situation'];
         $task->description = $body['description'];
         $task->id_requester = $body['requester']['id'];
-        $task->estimated_start = $body['estimated'];
+
+        $date = new \DateTime();
+        $year = (Int) explode("/", $body['estimated'])[2];
+        $month = (Int) explode("/", $body['estimated'])[1];
+        $day = (Int) explode("/", $body['estimated'])[0];
+        $date->setDate($year, $month, $day);
+
+        $task->estimated_start = $date->format("Y-m-d");
 
         if (!$task->save()){
-            $response->getBody()->write(\json_encode([
-                "error" => "Houve um erro ao tentar salvar"
-            ]));
-
+        
             if ($task->fail) {
 
                 $response->getBody()->write(\json_encode([
@@ -420,7 +429,13 @@ class TaskController {
                     "type" => "sys"
                 ]));
 
+                return $response;
+
             }
+
+            $response->getBody()->write(\json_encode([
+                "error" => "Houve um erro ao tentar salvar"
+            ]));
 
             return $response;
 

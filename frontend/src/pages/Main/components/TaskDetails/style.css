@@ -92,6 +92,17 @@
     flex-direction: row;
 }
 
+.task-details-modal .action-buttons {
+    min-width: 80px;
+}
+
+.task-details-modal .action-buttons .action-buttons-inner-container{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .task-details-modal .task-members .member-avatar{
     display: inline-block;
     margin-left: 5px;

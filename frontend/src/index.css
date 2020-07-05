@@ -52,6 +52,11 @@ a:hover{
     color: var(--link-h);
 }
 
+.icon,
+.icon path{
+    pointer-events: none;
+}
+
 .icon{
     position: relative;
     left: 3px;

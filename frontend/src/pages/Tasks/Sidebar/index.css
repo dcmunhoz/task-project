@@ -1,0 +1,64 @@
+.sidebar-filters-inner{
+    
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 5px 10px;
+}
+
+.sidebar-filters-inner .sidebar-header span{
+    font-size: 12px;
+    color: #717171;
+}
+
+.sidebar-filters-inner .sidebar-separator{
+    margin: 10px 0;
+    background-color: #B6B6B6;
+    content: " ";
+    width: 100%;
+    height: 2px;
+    border-radius: 100px;
+}
+
+.sidebar-filters-inner .user-tasks-filters h1{
+    font-weight: 400;
+    text-align: center;
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.sidebar-filters-inner .user-tasks-filters ul li {
+    list-style: none;
+}
+
+.sidebar-filters-inner .user-tasks-filters ul li a{
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between ;
+    color: var(--text-dark);
+    padding: 5px 0;
+    transition: 1s;
+    cursor: pointer;
+}
+
+.sidebar-filters-inner .user-tasks-filters ul li a:hover{
+    text-decoration: underline;
+}
+
+.sidebar-filters-inner .user-tasks-filters .tags-filter li a{
+
+    justify-content: flex-start;
+    
+}
+
+.sidebar-filters-inner .user-tasks-filters .tags-filter li a span{
+    display: inline-block;
+    content: " ";
+    background-color: gray;
+    min-width: 10px;
+    max-height: 10px;
+    border-radius: 100%;
+    margin-right: 5px;
+    margin-top: 5px;
+    
+}

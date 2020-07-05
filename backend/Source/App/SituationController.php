@@ -19,6 +19,7 @@ class SituationController {
             $newArr = new \stdClass();
             $newArr->id = $arr->id_situation;
             $newArr->label = $arr->situation;
+            $newArr->conclusion = $arr->concluded;
             return $newArr;
 
         }, $result);

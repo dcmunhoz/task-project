@@ -4,11 +4,14 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import useHttp from './../../../../services/useHttp';
 import Icon from './../../../../components/Icon';
+import ActionButton from './../../../../components/ActionButton';
 
 import './style.css';
 
 const SituationContainer = ({ id, title, showDetail }) => {
     const { shuldLoadTasks } = useSelector(state => state.global);
+    const authUser = useSelector(store => store.user.authenticatedUser)
+
     const http = useHttp();
     const [cards, setCards] = useState([]);
     const dispatch = useDispatch();
@@ -57,6 +60,21 @@ const SituationContainer = ({ id, title, showDetail }) => {
         
     }
 
+    function showCardActions(card){
+
+        
+        const alreadyAssigned = card.members.find(member=>member.id_user == authUser.id_user);
+        
+        if (!alreadyAssigned) {
+            return <ActionButton action={"assign"} task={card} />
+        } else if (card.id_situation == 1) {
+            return <ActionButton action="play" task={card} />
+        } else if (card.id_situation == 2) {
+            return <ActionButton action="pause" task={card} />
+        }
+
+    }
+
     return(
         <div className="situation-container">
             <div className="situation-title">
@@ -93,6 +111,7 @@ const SituationContainer = ({ id, title, showDetail }) => {
 
                                 <div className="card-footer">
                                     <div className="card-action">
+                                        {showCardActions(card)}
                                         {/* <Icon iconName="FaPlayCircle" />
                                         <span>
                                             00:00

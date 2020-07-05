@@ -5,15 +5,23 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Content from './../../components/Content';
 import useHttp from './../../services/useHttp';
 import Icon from './../../components/Icon';
+import ActionButton from './../../components/ActionButton';
+import Sidebar from './Sidebar';
 
 import './style.css';
 
 const Tasks = () => {
-    const { shuldLoadTasks } = useSelector(store => store.global);
+    const { shuldLoadTasks, shuldFilterTasks } = useSelector(store => store.global);
+    const { authenticatedUser } = useSelector(store => store.user);
+
+    const [taskList, setTaskList] = useState([]);
+    const [filteredTaskList, setFilteredTaskList] = useState([]);
+    const [pageName, setPageName] = useState(null);
+
     const httpRequest = useHttp();
     const dispatch = useDispatch();
-    const [taskList, setTaskList] = useState([]);
     const history = useHistory();
+    const location = useLocation();
 
     useEffect(()=>{
         loadTasks();
@@ -40,6 +48,117 @@ const Tasks = () => {
 
     }, [shuldLoadTasks]);
 
+    useEffect(()=>{
+
+        if (shuldFilterTasks) {
+
+            const params = new URLSearchParams(location.search);
+
+            const filter = params.get("filters").split(":")[1];
+
+            if (filter === "mine") {
+                setPageName("Minhas Tarefas")
+
+                var newTaskList = taskList.filter(task => {
+                    const userIsMember = task.members.find(member=>{
+                        return (member.id_user == authenticatedUser.id_user) ? true : false;
+                    });
+    
+                    return (userIsMember) ? true : false;
+                });
+            } else if (filter === "today") {
+
+                setPageName("Tarefas para Hoje");
+
+                const date = new Date();
+                const today = date.toLocaleDateString();
+                
+                var newTaskList = taskList.filter(task => {
+                    const userIsMember = task.members.find(member=>{
+                        return (member.id_user == authenticatedUser.id_user) ? true : false;
+                    });
+    
+                    return (userIsMember) ? true : false;
+                }).filter(task=>task.estimated_start == today);
+
+                
+
+
+            } else if (filter === "nexts") {
+
+                setPageName("Próximos 7 dias");
+              
+                var newTaskList = taskList.filter(task => {
+                    const userIsMember = task.members.find(member=>{
+                        return (member.id_user == authenticatedUser.id_user) ? true : false;
+                    });
+    
+                    return (userIsMember) ? true : false;
+                }).filter(task=>{
+                    if (task.estimated_start) {
+                        let estimated = task.estimated_start;
+                        const filtered = `${estimated.split('/')[1]}/${estimated.split('/')[0]}/${estimated.split('/')[2]}`;
+                        
+                        estimated = new Date(filtered);
+
+                        const date = new Date();
+                        date.setMinutes(0);
+                        date.setMilliseconds(0);
+                        date.setSeconds(0);
+                        date.setHours(0);
+
+                        if (estimated >= date && estimated <= date.setDate(date.getDate()+7) ) {
+                            return true;
+                        }
+
+
+                    }
+                });
+
+
+            } else if (filter === "new") {
+                setPageName("Novas Tarefas");
+
+                const date = new Date();
+                const today = date.toLocaleDateString();
+                
+                var newTaskList = taskList.filter(task=>{
+                    
+                    let created = task.created_at;
+                    created = created.split(" ")[0];
+                    created = `${created.split("-")[1]}/${created.split("-")[2]}/${created.split("-")[0]}`;
+                    created = new Date(created);
+
+                    const date = new Date();
+                    if (created.toLocaleDateString() == date.toLocaleDateString()) {
+                        return true;
+                    }
+                    
+                });
+
+
+            } else if (filter === "all") {
+                setPageName("Tarefas");
+                var newTaskList = [...taskList];
+            } else if (filter === "no-members") {
+                setPageName("Tarefas sem membros");
+                const arr = [];
+                var newTaskList = taskList.filter(task=>task.members.length == 0);
+            } else { 
+                var newTaskList = [...taskList];
+            }
+
+            setFilteredTaskList(newTaskList);
+
+            dispatch({
+                type:"FILTER_TASKS",
+                payload: false
+            });
+
+        }
+
+    }, [shuldFilterTasks]);
+
     async function loadTasks(){
 
         const response = await httpRequest("GET", '/task/list');
@@ -58,12 +177,17 @@ const Tasks = () => {
         }
 
         data.sort((a,b) => b.id_task - a.id_task);
-
+        
         setTaskList(data);
+        setFilteredTaskList(data);
 
     }
 
     function handleShowTaskDetail(e){
+
+        if(e.target.dataset.action){
+            return;
+        }
 
         const { id: task_id } = e.currentTarget;
         history.replace(`?task=${task_id}`);
@@ -74,23 +198,33 @@ const Tasks = () => {
         })
     }
 
+    function showActionButon(task){
+        const alreadyAssigned = task.members.find(member=>member.id_user == authenticatedUser.id_user);
+        
+        if (!alreadyAssigned) {
+            return <ActionButton task={task} action="assign" />
+        } else if (task.id_situation == 1) {
+            return <ActionButton task={task} action="play" />
+        } else if (task.id_situation == 2) {
+            return <ActionButton task={task} action="pause" />
+        }
+    }
+
     return(
         <Content
-            sidebarFiltersComponent={()=>(
-                <h1>Side</h1>
-            )}
+            sidebarFiltersComponent={Sidebar}
         >
             <div className="task-list-content">
                 <header>
-                    <h1>Titulo Pagina Tarefa</h1>
+                    <h1>{pageName ?? "Tarefas"}</h1>
                 </header>
                 <div className="task-list">
                     <ul>
-                        {taskList.map(task=>(
+                        {filteredTaskList.map(task=>(
                             <li key={task.id_task} >
                                 <div className="task-box" id={task.id_task} onClick={handleShowTaskDetail}>
                                     <div className="action-icon">
-                                        <Icon iconName="FaArrowCircleDown" />
+                                        {showActionButon(task)}
                                     </div>
                                     <div className="principal-informations">
                                         <div className="principal-header-informations">
