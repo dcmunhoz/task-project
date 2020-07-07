@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
-import Input from './../../../components/Input';
+import Input from '../Input';
 
 import './index.css';
 
 const Sidebar = () => {
+    const sidebar = useSelector(state => state.sidebar);
+
     const [filters, setFilters] = useState("");
 
     const history = useHistory();
@@ -46,15 +48,19 @@ const Sidebar = () => {
                 <h1>Minhas Tarefas</h1>
                 <ul>
                     <li>
-                        <a data-filter="mine" onClick={()=>setFilters("filter:mine")} > Todas <span className="filter-item-task-counter">10</span> </a>
+                        <a data-filter="mine" onClick={()=>setFilters("filter:mine")} > Todas <span className="filter-item-task-counter">{sidebar.qttAllMine}</span> </a>
                     </li>
 
                     <li>
-                        <a data-filter="today" onClick={()=>setFilters("filter:today")} > Para hoje <span className="filter-item-task-counter">3</span> </a>
+                        <a data-filter="today" onClick={()=>setFilters("filter:today")} > Para hoje <span className="filter-item-task-counter">{sidebar.qttToday}</span> </a>
                     </li>
 
                     <li>
-                        <a data-fiters="nexts" onClick={()=>setFilters("filter:nexts")} > Para os próximos 7 dias <span className="filter-item-task-counter">7</span> </a>
+                        <a data-fiters="nexts" onClick={()=>setFilters("filter:nexts")} > Para os próximos 7 dias <span className="filter-item-task-counter">{sidebar.qttNextSeven}</span> </a>
+                    </li>
+
+                    <li>
+                        <a data-fiters="late" onClick={()=>setFilters("filter:late")} > Atrasadas <span className="filter-item-task-counter">{sidebar.qttLate}</span> </a>
                     </li>
                 </ul>
             </section>
@@ -64,15 +70,15 @@ const Sidebar = () => {
             <section className="user-tasks-filters">
                 <ul>
                     <li>
-                        <a onClick={()=>setFilters("filter:new")}> Novas tarefas <span className="filter-item-task-counter">5</span> </a>
+                        <a onClick={()=>setFilters("filter:new")}> Novas tarefas <span className="filter-item-task-counter">{sidebar.qttAllTasks}</span> </a>
                     </li>
 
                     <li>
-                        <a onClick={()=>setFilters("filter:all")}> Todas tarefas <span className="filter-item-task-counter">89</span> </a>
+                        <a onClick={()=>setFilters("filter:all")}> Todas tarefas <span className="filter-item-task-counter">{sidebar.qttNewTasks}</span> </a>
                     </li>
 
                     <li>
-                        <a onClick={()=>setFilters("filter:no-members")}> Sem integrantes <span className="filter-item-task-counter">10</span> </a>
+                        <a onClick={()=>setFilters("filter:no-members")}> Sem integrantes <span className="filter-item-task-counter">{sidebar.qttNoMember}</span> </a>
                     </li>
                 </ul>
             </section>

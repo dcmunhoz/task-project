@@ -6,7 +6,7 @@ import Content from './../../components/Content';
 import useHttp from './../../services/useHttp';
 import Icon from './../../components/Icon';
 import ActionButton from './../../components/ActionButton';
-import Sidebar from './Sidebar';
+import Sidebar from './../../components/Sidebar';
 
 import './style.css';
 
@@ -144,7 +144,38 @@ const Tasks = () => {
                 setPageName("Tarefas sem membros");
                 const arr = [];
                 var newTaskList = taskList.filter(task=>task.members.length == 0);
-            } else { 
+            } else if (filter === "late") {
+                setPageName("Atrasadas");
+
+                var newTaskList = taskList.filter(task => {
+                    const userIsMember = task.members.find(member=>{
+                        return (member.id_user == authenticatedUser.id_user) ? true : false;
+                    });
+    
+                    return (userIsMember) ? true : false;
+                }).filter(task=>{
+                    if (task.estimated_start) {
+                        let estimated = task.estimated_start;
+                        const filtered = `${estimated.split('/')[1]}/${estimated.split('/')[0]}/${estimated.split('/')[2]}`;
+                        
+                        estimated = new Date(filtered);
+
+                        const date = new Date();
+                        date.setMinutes(0);
+                        date.setMilliseconds(0);
+                        date.setSeconds(0);
+                        date.setHours(0);
+
+                        if (estimated < date ) {
+                            return true;
+                        }
+
+
+                    }
+                });
+
+
+            }else { 
                 var newTaskList = [...taskList];
             }
 
@@ -158,6 +189,12 @@ const Tasks = () => {
         }
 
     }, [shuldFilterTasks]);
+
+    useEffect(()=>{
+
+
+
+    }, [shuldLoadTasks]);
 
     async function loadTasks(){
 
@@ -180,6 +217,25 @@ const Tasks = () => {
         
         setTaskList(data);
         setFilteredTaskList(data);
+
+        const allMine = data.filter(task => {
+            const userIsMember = task.members.find(member=>{
+                console.log(authenticatedUser)
+                return (member.id_user == authenticatedUser.id_user) ? true : false;
+            });
+            return (userIsMember) ? true : false;
+        });
+
+        const sidebarFilterQtt = {
+            qttAllMine: allMine.length,
+        }
+
+        dispatch({
+            type: "SET_FILTERS_QTT",
+            payload: {...sidebarFilterQtt}
+        });
+
+
 
     }
 
