@@ -55,7 +55,7 @@ const Sidebar = () => {
                     </li>
 
                     <li>
-                        <a data-fiters="nexts" onClick={()=>setFilters("filter:nexts")} > Para os próximos 7 dias <span className="filter-item-task-counter">{sidebar.qttNextSeven}</span> </a>
+                        <a data-fiters="nexts" onClick={()=>setFilters("filter:nexts")} > Próximos 7 dias <span className="filter-item-task-counter">{sidebar.qttNextSeven}</span> </a>
                     </li>
 
                     <li>

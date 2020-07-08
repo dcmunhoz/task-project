@@ -36,13 +36,14 @@
     display: flex;
     justify-content: space-between ;
     color: var(--text-dark);
-    padding: 5px 0;
-    transition: 1s;
+    padding: 5px 5px;
+    transition: 300ms;
     cursor: pointer;
+    border-radius: 5px;
 }
 
 .sidebar-filters-inner .user-tasks-filters ul li a:hover{
-    text-decoration: underline;
+    background-color: #eeeeee;
 }
 
 .sidebar-filters-inner .user-tasks-filters .tags-filter li a{

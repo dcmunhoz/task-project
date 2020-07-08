@@ -25,7 +25,7 @@ const Tasks = () => {
 
     useEffect(()=>{
         loadTasks();
-    }, []);
+    }, [authenticatedUser]);
 
     useEffect(()=>{
         
@@ -55,6 +55,30 @@ const Tasks = () => {
             const params = new URLSearchParams(location.search);
 
             const filter = params.get("filters").split(":")[1];
+
+            switch (filter){
+                case 'mine':
+                    setPageName("Minhas Tarefas");
+                break;
+                case 'today':
+                    setPageName("Tarefas para Hoje");
+                break;
+                case 'nexts':
+                    setPageName("Tarefas para os próximos 7 dias");
+                break;
+                case 'late':
+                    setPageName("Tarefas atrasadas");
+                break;
+                case 'all':
+                    setPageName("Todas Tarefas");
+                break;
+                case 'new':
+                    setPageName("Tarefas abertas hoje");
+                break;
+                case 'no-members':
+                    setPageName("Tarefas sem membros");
+                break;
+            }
 
             const newTaskList = getFilteredTaskList(filter, taskList);
 
@@ -93,9 +117,8 @@ const Tasks = () => {
 
         const allMine = getFilteredTaskList('mine', data);
         const today = getFilteredTaskList('today', data);
-        const nexts = getFilteredTaskList('next', data);
+        const nexts = getFilteredTaskList('nexts', data);
         const late = getFilteredTaskList('late', data);
-
         const newTasks = getFilteredTaskList('new', data);
         const all = getFilteredTaskList('all', data);
         const noMembers = getFilteredTaskList('no-members', data);
@@ -108,8 +131,6 @@ const Tasks = () => {
             qttNewTasks: newTasks.length,
             qttAllTasks: all.length,
             qttNoMember: noMembers.length
-
-
         }
 
         dispatch({
@@ -150,7 +171,6 @@ const Tasks = () => {
 
     function getFilteredTaskList(filter, tasks){
         if (filter === "mine") {
-            setPageName("Minhas Tarefas")
 
             var newTaskList = tasks.filter(task => {
                 const userIsMember = task.members.find(member=>{
@@ -160,8 +180,6 @@ const Tasks = () => {
                 return (userIsMember) ? true : false;
             });
         } else if (filter === "today") {
-
-            setPageName("Tarefas para Hoje");
 
             const date = new Date();
             const today = date.toLocaleDateString();
@@ -178,8 +196,6 @@ const Tasks = () => {
 
 
         } else if (filter === "nexts") {
-
-            setPageName("Próximos 7 dias");
           
             var newTaskList = tasks.filter(task => {
                 const userIsMember = task.members.find(member=>{
@@ -210,8 +226,6 @@ const Tasks = () => {
 
 
         } else if (filter === "new") {
-            setPageName("Novas Tarefas");
-
             const date = new Date();
             const today = date.toLocaleDateString();
             
@@ -231,15 +245,11 @@ const Tasks = () => {
 
 
         } else if (filter === "all") {
-            setPageName("Tarefas");
             var newTaskList = [...tasks];
         } else if (filter === "no-members") {
-            setPageName("Tarefas sem membros");
             const arr = [];
             var newTaskList = tasks.filter(task=>task.members.length == 0);
         } else if (filter === "late") {
-            setPageName("Atrasadas");
-
             var newTaskList = tasks.filter(task => {
                 const userIsMember = task.members.find(member=>{
                     return (member.id_user == authenticatedUser.id_user) ? true : false;
