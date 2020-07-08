@@ -16,8 +16,7 @@ const Sidebar = () => {
     const location = useLocation();
     const dispatch = useDispatch();
 
-    useEffect(()=>{
-        
+    useEffect(()=>{        
         if (filters != "") {
             
             history.replace(location.pathname + "?filters=" + filters);
@@ -70,11 +69,11 @@ const Sidebar = () => {
             <section className="user-tasks-filters">
                 <ul>
                     <li>
-                        <a onClick={()=>setFilters("filter:new")}> Novas tarefas <span className="filter-item-task-counter">{sidebar.qttAllTasks}</span> </a>
+                        <a onClick={()=>setFilters("filter:new")}> Novas tarefas <span className="filter-item-task-counter">{sidebar.qttNewTasks}</span> </a>
                     </li>
 
                     <li>
-                        <a onClick={()=>setFilters("filter:all")}> Todas tarefas <span className="filter-item-task-counter">{sidebar.qttNewTasks}</span> </a>
+                        <a onClick={()=>setFilters("filter:all")}> Todas tarefas <span className="filter-item-task-counter">{sidebar.qttAllTasks}</span> </a>
                     </li>
 
                     <li>

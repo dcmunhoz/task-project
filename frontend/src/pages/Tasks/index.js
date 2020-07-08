@@ -56,128 +56,7 @@ const Tasks = () => {
 
             const filter = params.get("filters").split(":")[1];
 
-            if (filter === "mine") {
-                setPageName("Minhas Tarefas")
-
-                var newTaskList = taskList.filter(task => {
-                    const userIsMember = task.members.find(member=>{
-                        return (member.id_user == authenticatedUser.id_user) ? true : false;
-                    });
-    
-                    return (userIsMember) ? true : false;
-                });
-            } else if (filter === "today") {
-
-                setPageName("Tarefas para Hoje");
-
-                const date = new Date();
-                const today = date.toLocaleDateString();
-                
-                var newTaskList = taskList.filter(task => {
-                    const userIsMember = task.members.find(member=>{
-                        return (member.id_user == authenticatedUser.id_user) ? true : false;
-                    });
-    
-                    return (userIsMember) ? true : false;
-                }).filter(task=>task.estimated_start == today);
-
-                
-
-
-            } else if (filter === "nexts") {
-
-                setPageName("Próximos 7 dias");
-              
-                var newTaskList = taskList.filter(task => {
-                    const userIsMember = task.members.find(member=>{
-                        return (member.id_user == authenticatedUser.id_user) ? true : false;
-                    });
-    
-                    return (userIsMember) ? true : false;
-                }).filter(task=>{
-                    if (task.estimated_start) {
-                        let estimated = task.estimated_start;
-                        const filtered = `${estimated.split('/')[1]}/${estimated.split('/')[0]}/${estimated.split('/')[2]}`;
-                        
-                        estimated = new Date(filtered);
-
-                        const date = new Date();
-                        date.setMinutes(0);
-                        date.setMilliseconds(0);
-                        date.setSeconds(0);
-                        date.setHours(0);
-
-                        if (estimated >= date && estimated <= date.setDate(date.getDate()+7) ) {
-                            return true;
-                        }
-
-
-                    }
-                });
-
-
-            } else if (filter === "new") {
-                setPageName("Novas Tarefas");
-
-                const date = new Date();
-                const today = date.toLocaleDateString();
-                
-                var newTaskList = taskList.filter(task=>{
-                    
-                    let created = task.created_at;
-                    created = created.split(" ")[0];
-                    created = `${created.split("-")[1]}/${created.split("-")[2]}/${created.split("-")[0]}`;
-                    created = new Date(created);
-
-                    const date = new Date();
-                    if (created.toLocaleDateString() == date.toLocaleDateString()) {
-                        return true;
-                    }
-                    
-                });
-
-
-            } else if (filter === "all") {
-                setPageName("Tarefas");
-                var newTaskList = [...taskList];
-            } else if (filter === "no-members") {
-                setPageName("Tarefas sem membros");
-                const arr = [];
-                var newTaskList = taskList.filter(task=>task.members.length == 0);
-            } else if (filter === "late") {
-                setPageName("Atrasadas");
-
-                var newTaskList = taskList.filter(task => {
-                    const userIsMember = task.members.find(member=>{
-                        return (member.id_user == authenticatedUser.id_user) ? true : false;
-                    });
-    
-                    return (userIsMember) ? true : false;
-                }).filter(task=>{
-                    if (task.estimated_start) {
-                        let estimated = task.estimated_start;
-                        const filtered = `${estimated.split('/')[1]}/${estimated.split('/')[0]}/${estimated.split('/')[2]}`;
-                        
-                        estimated = new Date(filtered);
-
-                        const date = new Date();
-                        date.setMinutes(0);
-                        date.setMilliseconds(0);
-                        date.setSeconds(0);
-                        date.setHours(0);
-
-                        if (estimated < date ) {
-                            return true;
-                        }
-
-
-                    }
-                });
-
-
-            }else { 
-                var newTaskList = [...taskList];
-            }
+            const newTaskList = getFilteredTaskList(filter, taskList);
 
             setFilteredTaskList(newTaskList);
 
@@ -189,12 +68,6 @@ const Tasks = () => {
         }
 
     }, [shuldFilterTasks]);
-
-    useEffect(()=>{
-
-
-
-    }, [shuldLoadTasks]);
 
     async function loadTasks(){
 
@@ -218,16 +91,25 @@ const Tasks = () => {
         setTaskList(data);
         setFilteredTaskList(data);
 
-        const allMine = data.filter(task => {
-            const userIsMember = task.members.find(member=>{
-                console.log(authenticatedUser)
-                return (member.id_user == authenticatedUser.id_user) ? true : false;
-            });
-            return (userIsMember) ? true : false;
-        });
+        const allMine = getFilteredTaskList('mine', data);
+        const today = getFilteredTaskList('today', data);
+        const nexts = getFilteredTaskList('next', data);
+        const late = getFilteredTaskList('late', data);
+
+        const newTasks = getFilteredTaskList('new', data);
+        const all = getFilteredTaskList('all', data);
+        const noMembers = getFilteredTaskList('no-members', data);
 
         const sidebarFilterQtt = {
             qttAllMine: allMine.length,
+            qttToday: today.length,
+            qttNextSeven: nexts.length,
+            qttLate: late.length,
+            qttNewTasks: newTasks.length,
+            qttAllTasks: all.length,
+            qttNoMember: noMembers.length
+
+
         }
 
         dispatch({
@@ -264,6 +146,133 @@ const Tasks = () => {
         } else if (task.id_situation == 2) {
             return <ActionButton task={task} action="pause" />
         }
+    }
+
+    function getFilteredTaskList(filter, tasks){
+        if (filter === "mine") {
+            setPageName("Minhas Tarefas")
+
+            var newTaskList = tasks.filter(task => {
+                const userIsMember = task.members.find(member=>{
+                    return (member.id_user == authenticatedUser.id_user) ? true : false;
+                });
+
+                return (userIsMember) ? true : false;
+            });
+        } else if (filter === "today") {
+
+            setPageName("Tarefas para Hoje");
+
+            const date = new Date();
+            const today = date.toLocaleDateString();
+            
+            var newTaskList = tasks.filter(task => {
+                const userIsMember = task.members.find(member=>{
+                    return (member.id_user == authenticatedUser.id_user) ? true : false;
+                });
+
+                return (userIsMember) ? true : false;
+            }).filter(task=>task.estimated_start == today);
+
+            
+
+
+        } else if (filter === "nexts") {
+
+            setPageName("Próximos 7 dias");
+          
+            var newTaskList = tasks.filter(task => {
+                const userIsMember = task.members.find(member=>{
+                    return (member.id_user == authenticatedUser.id_user) ? true : false;
+                });
+
+                return (userIsMember) ? true : false;
+            }).filter(task=>{
+                if (task.estimated_start) {
+                    let estimated = task.estimated_start;
+                    const filtered = `${estimated.split('/')[1]}/${estimated.split('/')[0]}/${estimated.split('/')[2]}`;
+                    
+                    estimated = new Date(filtered);
+
+                    const date = new Date();
+                    date.setMinutes(0);
+                    date.setMilliseconds(0);
+                    date.setSeconds(0);
+                    date.setHours(0);
+
+                    if (estimated >= date && estimated <= date.setDate(date.getDate()+7) ) {
+                        return true;
+                    }
+
+
+                }
+            });
+
+
+        } else if (filter === "new") {
+            setPageName("Novas Tarefas");
+
+            const date = new Date();
+            const today = date.toLocaleDateString();
+            
+            var newTaskList = tasks.filter(task=>{
+                
+                let created = task.created_at;
+                created = created.split(" ")[0];
+                created = `${created.split("-")[1]}/${created.split("-")[2]}/${created.split("-")[0]}`;
+                created = new Date(created);
+
+                const date = new Date();
+                if (created.toLocaleDateString() == date.toLocaleDateString()) {
+                    return true;
+                }
+                
+            });
+
+
+        } else if (filter === "all") {
+            setPageName("Tarefas");
+            var newTaskList = [...tasks];
+        } else if (filter === "no-members") {
+            setPageName("Tarefas sem membros");
+            const arr = [];
+            var newTaskList = tasks.filter(task=>task.members.length == 0);
+        } else if (filter === "late") {
+            setPageName("Atrasadas");
+
+            var newTaskList = tasks.filter(task => {
+                const userIsMember = task.members.find(member=>{
+                    return (member.id_user == authenticatedUser.id_user) ? true : false;
+                });
+
+                return (userIsMember) ? true : false;
+            }).filter(task=>{
+                if (task.estimated_start) {
+                    let estimated = task.estimated_start;
+                    const filtered = `${estimated.split('/')[1]}/${estimated.split('/')[0]}/${estimated.split('/')[2]}`;
+                    
+                    estimated = new Date(filtered);
+
+                    const date = new Date();
+                    date.setMinutes(0);
+                    date.setMilliseconds(0);
+                    date.setSeconds(0);
+                    date.setHours(0);
+
+                    if (estimated < date ) {
+                        return true;
+                    }
+
+
+                }
+            });
+
+
+        }else { 
+            var newTaskList = [...tasks];
+        }
+
+        return newTaskList;
     }
 
     return(
