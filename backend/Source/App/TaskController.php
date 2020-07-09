@@ -412,13 +412,17 @@ class TaskController {
         $task->description = $body['description'];
         $task->id_requester = $body['requester']['id'];
 
-        $date = new \DateTime();
-        $year = (Int) explode("/", $body['estimated'])[2];
-        $month = (Int) explode("/", $body['estimated'])[1];
-        $day = (Int) explode("/", $body['estimated'])[0];
-        $date->setDate($year, $month, $day);
+        if ($body['estimated'] !== null) {
+            $date = new \DateTime();
+            $year = (Int) explode("/", $body['estimated'])[2];
+            $month = (Int) explode("/", $body['estimated'])[1];
+            $day = (Int) explode("/", $body['estimated'])[0];
+            $date->setDate($year, $month, $day);
+            $task->estimated_start = $date->format("Y-m-d");
+        } else {
+            $task->estimated_start = null;
+        }
 
-        $task->estimated_start = $date->format("Y-m-d");
 
         if (!$task->save()){
         
