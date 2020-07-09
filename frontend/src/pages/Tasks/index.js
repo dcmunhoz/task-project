@@ -17,6 +17,7 @@ const Tasks = () => {
     const [taskList, setTaskList] = useState([]);
     const [filteredTaskList, setFilteredTaskList] = useState([]);
     const [pageName, setPageName] = useState(null);
+    const [searchInput, setSearchInput] = useState("");
 
     const httpRequest = useHttp();
     const dispatch = useDispatch();
@@ -54,7 +55,7 @@ const Tasks = () => {
 
             const params = new URLSearchParams(location.search);
 
-            const filter = params.get("filters").split(":")[1];
+            const filter = params.get("filters");
 
             switch (filter){
                 case 'mine':
@@ -285,9 +286,35 @@ const Tasks = () => {
         return newTaskList;
     }
 
+    function handleChangeSidebarSearch(e){
+        const input = e.target.value;
+        setSearchInput(input);
+
+        if (input.length > 0) {
+            setPageName("Pesquisando Tarefa");
+            const newTaskList = taskList.filter(task=>{
+                if (task.id_task.includes(input) || task.title.includes(input)) {
+                    return true;
+                }else{
+                    return false;
+                }
+            });
+
+            setFilteredTaskList(newTaskList);
+        } else {
+            setPageName("Tarefas");
+            setFilteredTaskList(taskList);
+        }
+
+        history.replace(location.pathname);
+
+    }
+
     return(
         <Content
             sidebarFiltersComponent={Sidebar}
+            sidebarValue={searchInput}
+            sidebarOnChange={handleChangeSidebarSearch}
         >
             <div className="task-list-content">
                 <header>
