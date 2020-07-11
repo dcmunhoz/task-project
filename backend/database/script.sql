@@ -1,6 +1,6 @@
 CREATE DATABASE project_pandora DEFAULT CHARACTER SET = "utf8";
 
-set foreign_key_checks = 1;
+set foreign_key_checks = 0;
 
 CREATE TABLE roles(
 	id_role INT NOT NULL AUTO_INCREMENT,
@@ -19,6 +19,7 @@ CREATE TABLE users (
 	birthday TIMESTAMP,
 	email VARCHAR(65) NOT NULL,
 	id_role INT NOT NULL, 
+	status BOOL NOT NULL DEFAULT TRUE, 
 	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
 	CONSTRAINT pk_user PRIMARY KEY (id_user),

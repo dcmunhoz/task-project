@@ -37,7 +37,7 @@ class UserController {
 
         $user = new User();
 
-        $results = $user->find(null, null, 'id_user')->fetch(true);
+        $result = $user->find()->fetch(true);
 
         if (!$results){
             if ($user->fail) {
@@ -45,20 +45,18 @@ class UserController {
             }
         }
 
-        $dataset = [];
-
-        foreach ($results as $field) {
+        $dataset = \array_map(function($user){
             
-            $user = new User();
-            $user->findById((Int) $field->id_user);
-
-            $dataset[] = [
+            return $dataset[] = [
                 "id" => $user->id_user,
-                "name" => $user->getShortName()
+                "name" => $user->first_name . " " . $user->last_name,
+                "email" => $user->email,
+                "avatar" => $user->avatar,
+                "username" => $user->username,
+                "status" => $user->status
             ];
 
-        }
-
+        }, $result);
 
         $res->getBody()->write(\json_encode($dataset));
         return $res->withHeader("Content-Type", "application/json");
