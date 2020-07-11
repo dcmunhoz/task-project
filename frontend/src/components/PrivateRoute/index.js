@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Redirect } from 'react-router-dom'; 
 
 import auth from './../../services/auth';
 
-function PrivateRoute({component: Component, ...rest }) {
+function PrivateRoute({component: Component, screens, ...rest }) {
   return (
     <Route
       {...rest}
@@ -16,7 +16,7 @@ function PrivateRoute({component: Component, ...rest }) {
             }}
           />
         ) : (
-          <Component {...props} />
+          <Component {...props} screens={screens} />
         )
       }
     />

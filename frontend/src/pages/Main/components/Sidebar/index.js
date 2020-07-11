@@ -6,36 +6,12 @@ import Icon from './../../../../components/Icon';
 
 import './style.css'
 
-const Sidebar = ({screens}) => {
+const Sidebar = ({screens, activeScreen, setActiveScreen}) => {
     const { fullname } = useSelector(store => store.user.authenticatedUser);
 
     const [closed, setClosed] = useState(true);
     const [userName, setUserName] = useState("");
     const [toggleIcon, setToggle] = useState('FaAngleDoubleLeft');
-    const [activeScreen, setActiveScreen] = useState('');
-    
-    const history = useHistory();
-    const location = useLocation();
-
-    useEffect(()=>{
-        screens.forEach((screen)=>{
-            
-            if (screen.default) {
-                setActiveScreen(screen.title)
-                history.push(screen.path);
-            }
-        });
-    }, [])
-
-    useEffect(()=>{
-        if (location.pathname !== "/") {
-            const reloadScreen = screens.find(search=>search.path === location.pathname);
-            if (reloadScreen){
-                setActiveScreen(reloadScreen.title);
-                history.push(location.pathname)
-            }
-        }
-    },[]);
 
     useEffect(()=>{
 
@@ -83,26 +59,39 @@ const Sidebar = ({screens}) => {
                 <nav>
                     <ul>
                         { screens.map((screen, i)=>{
-                            return(
-                                <li key={i}>
-                                    <Link 
-                                        to={screen.path} 
-                                        onClick={()=>{setActiveScreen(screen.title)}}
-                                        className={(activeScreen === screen.title) ? 'active' : ''}
-                                    > 
-                                        <Icon iconName={screen.icon} /> <span className="screen-title">{screen.title}</span>
-                                    </Link>
-                                </li>
-                            )
+                            if (!screen.footer){
+                                return(
+                                    <li key={i}>
+                                        <Link 
+                                            to={screen.path} 
+                                            onClick={()=>{setActiveScreen(screen.title)}}
+                                            className={(activeScreen === screen.title) ? 'active' : ''}
+                                        > 
+                                            <Icon iconName={screen.icon} /> <span className="screen-title">{screen.title}</span>
+                                        </Link>
+                                    </li>
+                                )
+                            }
                         })}
                     </ul>
                 </nav>                    
             </div>  
 
             <footer className="sidebar-footer">
-                <a href="/">
-                    <Icon iconName="FaCog" /> <span className="footer-title">Configurações</span>                                 
-                </a>
+                {screens.map((screen, i)=>{
+                    if (screen.footer) {
+                        return(
+                            <Link 
+                                key={i}
+                                to={screen.path}
+                                onClick={()=>setActiveScreen(screen.title)}
+                                className={(activeScreen === screen.title) ? 'active' : ''}
+                            >
+                                <Icon iconName="FaCog" /> <span className="footer-title">Configurações</span>                                 
+                            </Link>
+                        )
+                    }
+                })}
             </footer>
 
         </aside>
