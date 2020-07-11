@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import MaintenceContainer from './../../components/MaintenceContainer';
 import Button from './../../components/Button';
@@ -13,8 +14,11 @@ const UsersMaintence = () => {
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [showDisabledUsers, setShowDisabledUsers] = useState(false);
     const [searchUser, setSearchUser] = useState("");
+    const [redirect, setRedirect] = useState(false);
 
     const httpRequest = useHttp();
+    const history = useHistory();
+    const location = useLocation();
 
     useEffect(()=>{
         loadUsersList();
@@ -57,62 +61,74 @@ const UsersMaintence = () => {
         if (!response) return false;
 
         const { data } = response;
+
+        data.sort((a, b) => {
+            if (a.name < b.name) {
+                return -1;
+            }
+
+            if (a.name > b.name) {
+                return 1;
+            }
+
+            return 0;
+        });
+
         setUsers(data)
     }
 
+    function handleShowNewUserPage(){
+        
+        history.push('/settings/users/new');
+    }
+   
+
     return(
-        <MaintenceContainer>
-            <header className="maintence-header">
-                <h1>
-                    Manutenção de Usuários
-                </h1>
-                <span>
-                    {users.length} usuários no total
-                </span>
+        <MaintenceContainer
+            title="Manutenção de usuários"
+            subTitle="Mudar titulo aqui"
+        >
+            
+            <header className="users-header">
+                <Button 
+                    icon="FaPlus"
+                    size="sm"
+                    color="green"
+                    onClick={handleShowNewUserPage}
+                > Novo Usuário </Button>
+                
+                <div>
+                    <div className="disabled-box">
+                        <input type="checkbox" name="disabled" id="disabled" defaultChecked={setShowDisabledUsers} onChange={()=>setShowDisabledUsers((showDisabledUsers) ? false : true)} />
+                        <label htmlFor="disabled">Exibir cancelados</label>
+                    </div>
+                    <Input 
+                        icon="FaSearch"
+                        placeholder="Pesquise por nome ou usuário"
+                        value={searchUser}
+                        onChange={(e)=>setSearchUser(e.target.value)}
+                    />
+                </div>
             </header>
 
-            <section className="maintence-section">
-                <header className="users-header">
-                    <Button 
-                        icon="FaPlus"
-                        size="sm"
-                        color="green"
-                    > Novo Usuário </Button>
-                    
-                    <div>
-                        <div className="disabled-box">
-                            <input type="checkbox" name="disabled" id="disabled" defaultChecked={setShowDisabledUsers} onChange={()=>setShowDisabledUsers((showDisabledUsers) ? false : true)} />
-                            <label htmlFor="disabled">Exibir cancelados</label>
+            <div className="users-list">
+
+                {filteredUsers.map(user=>(
+                    <div key={user.id} className="user-card">
+                        <div>
+                            <img src={user.avatar} alt="Avatar"/>
                         </div>
-                        <Input 
-                            icon="FaSearch"
-                            placeholder="Pesquise por nome ou usuário"
-                            value={searchUser}
-                            onChange={(e)=>setSearchUser(e.target.value)}
-                        />
+    
+                        <div>
+                            <h4>{user.name}</h4>
+                            <span>@{user.username} </span>
+                            <span>Status: {(user.status == "1") ? 'Ativo' : 'Cancelado'}</span>
+                            <span>{user.email}</span>
+                        </div>
                     </div>
-                </header>
-
-                <div className="users-list">
-
-                    {filteredUsers.map(user=>(
-                        <div key={user.id} className="user-card">
-                            <div>
-                                <img src={user.avatar} alt="Avatar"/>
-                            </div>
-        
-                            <div>
-                                <h4>{user.name}</h4>
-                                <span>@{user.username} </span>
-                                <span>Status: {(user.status == "1") ? 'Ativo' : 'Cancelado'}</span>
-                                <span>{user.email}</span>
-                            </div>
-                        </div>
-                    ))}
-                    
-                </div>
-
-            </section>
+                ))}
+                
+            </div>
         </MaintenceContainer>
     );
 }

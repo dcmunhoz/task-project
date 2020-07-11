@@ -1,0 +1,12 @@
+.new-user-container{
+    width: 50%;
+}
+
+.maintence-container form .double-input-row{
+    display: flex;
+    flex-direction: row;
+}
+
+.maintence-container form .double-input-row .detail-box{   
+    width: 50%;
+}

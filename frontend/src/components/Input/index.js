@@ -4,7 +4,7 @@ import Icon from './../Icon';
 import "./style.css"
 
 
-const Input = ({placeholder, icon, value, onChange}) =>{
+const Input = ({placeholder, icon, value, onChange, type}) =>{
     return(
         <div className="inputContainer ">
             {(icon) ? 
@@ -14,7 +14,7 @@ const Input = ({placeholder, icon, value, onChange}) =>{
             : null}
 
             <input 
-                type="text" 
+                type={type ?? "text"} 
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
