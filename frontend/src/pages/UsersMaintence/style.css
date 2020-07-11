@@ -1,0 +1,71 @@
+.maintence-header{
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.maintence-section{
+    overflow: none;
+    max-height: calc(100% - 90px);
+}
+
+.maintence-section .users-header{
+    margin-bottom: 10px;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.maintence-section .users-header .inputContainer {
+    width: 300px !important;
+}
+
+.users-list{
+    display: flex;
+    max-height: calc(100% - 40px);
+    flex-wrap: wrap;
+    overflow: auto;
+    justify-content: center;
+    padding: 5px 0;
+}
+
+
+.maintence-section .user-card{
+    background-color: #f3f3f3;
+    display: flex;
+    width: 100%;
+    max-width: 350px;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    transition: 150ms;
+}
+
+.maintence-section .user-card:hover{
+    cursor: pointer;
+    box-shadow: 0px 0px 5px rgba(39, 39, 39, 0.212);
+}
+
+.maintence-section .user-card div:nth-child(1){
+    margin-right: 10px;
+}
+
+.maintence-section .user-card div{
+    display: flex;
+    flex-direction: column;
+}
+
+.maintence-section .user-card div img{
+    width: 60px;
+    border-radius: 100px;
+    box-sizing: border-box;
+}
+
+.maintence-section .user-card div span{
+    font-size: 14px;
+    color: #7a7a7a;
+}

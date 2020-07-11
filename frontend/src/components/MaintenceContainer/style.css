@@ -1,0 +1,8 @@
+.maintence-container{
+    
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 40px 60px;
+}
