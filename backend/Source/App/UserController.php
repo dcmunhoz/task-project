@@ -11,6 +11,44 @@ use Source\Models\Task;
 
 class UserController {
 
+    public function save(Request $req, Response $res){
+        $body = $req->getParsedBody();
+        $user = new User();
+        $user->id_user = $body['id_user'] ?? null;
+        $user->first_name = $body['first_name'];
+        $user->last_name = $body['second_name'];
+        $user->username = $body['username'];
+        $user->password = $body['password'];
+        $user->email = $body['email'];
+        $user->id_role = $body['id_role'];
+        $user->status = $body['status'];
+        $user->avatar = "http://localhost/public/assets/avatars/example_avatar.jpg";
+
+        if (!$user->save()) {
+            
+            if ($user->fail) {
+                $res->getBody()->write(\json_encode([
+                    "error" => $user->fail,
+                    "type" => "sys"
+                ]));
+                return $res->withStatus(200);
+            }
+
+            $res->getBody()->write(\json_encode([
+                "error" => "Não foi possivel cadastrar o usuário"
+            ]));
+
+            return $res->withStatus(200);
+
+        }
+
+        $res->getBody()->write(\json_encode($user->getData()));
+        return $res->withHeader("Content-Type", "application/json");
+
+
+        
+    }
+
     public function authenticatedUser(Request $req, Response $res){
 
         $headers = $req->getHeaders();

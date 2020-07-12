@@ -4,6 +4,7 @@ use Source\App\TaskController as TaskController;
 use Source\App\UserController as UserController;
 use Source\App\SituationController as SituationController;
 use Source\App\TagController as TagController;
+use Source\App\RoleController as RoleController;
 
 $app->group("/api", function($group){
     $group->post("/task", TaskController::class . ":create");
@@ -25,4 +26,6 @@ $app->group("/api", function($group){
     $group->post("/message/new", TaskController::class . ":addNewMessage");
     $group->put("/message/update", TaskController::class . ":updateMessage");
     $group->delete("/message/{id_message}/delete", TaskController::class . ":deleteMessage");
+    $group->get("/roles", RoleController::class . ":list");
+    $group->post("/user/new", UserController::class . ":save");
 });
