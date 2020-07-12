@@ -15,13 +15,13 @@ class UserController {
         $body = $req->getParsedBody();
         $user = new User();
         $user->id_user = $body['id_user'] ?? null;
-        $user->first_name = $body['first_name'];
-        $user->last_name = $body['second_name'];
-        $user->username = $body['username'];
-        $user->password = $body['password'];
-        $user->email = $body['email'];
-        $user->id_role = $body['id_role'];
-        $user->status = $body['status'];
+        $user->first_name = $body['first_name'] || null;
+        $user->last_name = $body['second_name'] || null;
+        $user->username = $body['username'] || null;
+        $user->password = $body['password'] || null;
+        $user->email = $body['email'] || null;
+        $user->id_role = $body['id_role'] || null;
+        $user->status = $body['status'] || null;
         $user->avatar = "http://localhost/public/assets/avatars/example_avatar.jpg";
 
         if (!$user->save()) {

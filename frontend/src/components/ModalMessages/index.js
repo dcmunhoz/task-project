@@ -39,7 +39,7 @@ export default function ModalMessages(){
 
                 </header>
                 <section className="modal-message">   
-
+                
                     { message }
                 </section>
             </section>

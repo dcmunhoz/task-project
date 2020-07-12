@@ -19,11 +19,11 @@
 .modal-container .modal{
     z-index: 2;
     background-color: #FFF;
-    width: 300px;
+    width: 500px;
     border-radius: 5px;
     box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.151);
     box-sizing: border-box;
-    padding: 10px;
+    padding: 20px 10px;
     position: relative;
     top: -50px;
     transform: scale3d(1, 1, 1);
@@ -37,7 +37,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 
 .modal-close{
@@ -54,8 +54,9 @@
 }
 
 .modal .modal-message{
-    text-align: center;
+    text-align: justify;
     padding: 10px 0;
+    font-size: 14px;
 }
 
 @keyframes showModal{

@@ -1,12 +1,14 @@
 .select-list {
-    -webkit-appearance: none;
+    /* -webkit-appearance: none;
     -moz-appearance: none;
-    appearance: none;
+    appearance: none; */
     display: block;
     border: none;
-    background-color: #E0E0E0;
+    background-color: #EEEEEE;
     font-size: 14px;
     width: 203px;
-    font-weight: bold;
-    padding: 6px 20px;
+    font-weight: normal;
+    border-radius: 5px;
+    padding: 0px 10px !important;
+    height: 33px;
 }
