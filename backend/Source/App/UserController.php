@@ -11,6 +11,44 @@ use Source\Models\Task;
 
 class UserController {
 
+    public function save(Request $req, Response $res){
+        $body = $req->getParsedBody();
+        $user = new User();
+        $user->id_user = $body['id_user'] ?? null;
+        $user->first_name = $body['first_name'];
+        $user->last_name = $body['second_name'];
+        $user->username = $body['username'];
+        $user->password = $body['password'];
+        $user->email = $body['email'];
+        $user->id_role = $body['id_role'];
+        $user->status = $body['status'];
+        $user->avatar = "http://localhost/public/assets/avatars/example_avatar.jpg";
+
+        if (!$user->save()) {
+            
+            if ($user->fail) {
+                $res->getBody()->write(\json_encode([
+                    "error" => $user->fail,
+                    "type" => "sys"
+                ]));
+                return $res->withStatus(200);
+            }
+
+            $res->getBody()->write(\json_encode([
+                "error" => "Não foi possivel cadastrar o usuário"
+            ]));
+
+            return $res->withStatus(200);
+
+        }
+
+        $res->getBody()->write(\json_encode($user->getData()));
+        return $res->withHeader("Content-Type", "application/json");
+
+
+        
+    }
+
     public function authenticatedUser(Request $req, Response $res){
 
         $headers = $req->getHeaders();
@@ -37,7 +75,7 @@ class UserController {
 
         $user = new User();
 
-        $results = $user->find(null, null, 'id_user')->fetch(true);
+        $result = $user->find()->fetch(true);
 
         if (!$results){
             if ($user->fail) {
@@ -45,20 +83,18 @@ class UserController {
             }
         }
 
-        $dataset = [];
-
-        foreach ($results as $field) {
+        $dataset = \array_map(function($user){
             
-            $user = new User();
-            $user->findById((Int) $field->id_user);
-
-            $dataset[] = [
+            return $dataset[] = [
                 "id" => $user->id_user,
-                "name" => $user->getShortName()
+                "name" => $user->first_name . " " . $user->last_name,
+                "email" => $user->email,
+                "avatar" => $user->avatar,
+                "username" => $user->username,
+                "status" => $user->status
             ];
 
-        }
-
+        }, $result);
 
         $res->getBody()->write(\json_encode($dataset));
         return $res->withHeader("Content-Type", "application/json");
@@ -117,6 +153,12 @@ class UserController {
             "id" => $user->id_user,
             "name" => $user->getShortName(),
             "avatar" => $user->avatar,
+            "first_name" => $user->first_name,
+            "last_name" => $user->last_name,
+            "email" => $user->email,
+            "username" => $user->username,
+            "role" => $user->id_role,
+            "status" => $user->status
 
         ];
 

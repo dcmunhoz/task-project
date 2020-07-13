@@ -5,13 +5,20 @@
     overflow: hidden;
     box-sizing: border-box;
     width: 100%;
+    border: 2px solid #EEE;
+}
+
+.inputContainer.required,
+.inputContainer.required input{
+    border-color: var(--text-red);
+    background-color: #fce0e0;
 }
 
 .inputContainer .iconContainer{
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    padding-left: 10px;
     margin: 0px !important;
 }
 
@@ -22,14 +29,16 @@
 .inputContainer input{
     position: relative;
     display: inline-block;
-    flex-grow: 1;
     border: none;
     font-size: 14px;
-    max-width: calc(100% - 50px);
+    width: 100%;
+    /* max-width: calc(100% - 50px); */
+    padding: 8px;
 }
 
 .inputContainer,
 .inputContainer input{
     background-color: #EEEEEE;
+    transition: 150ms;
     
 }

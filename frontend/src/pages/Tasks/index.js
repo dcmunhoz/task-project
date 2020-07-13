@@ -6,7 +6,7 @@ import Content from './../../components/Content';
 import useHttp from './../../services/useHttp';
 import Icon from './../../components/Icon';
 import ActionButton from './../../components/ActionButton';
-import Sidebar from './Sidebar';
+import Sidebar from './../../components/Sidebar';
 
 import './style.css';
 
@@ -17,6 +17,7 @@ const Tasks = () => {
     const [taskList, setTaskList] = useState([]);
     const [filteredTaskList, setFilteredTaskList] = useState([]);
     const [pageName, setPageName] = useState(null);
+    const [searchInput, setSearchInput] = useState("");
 
     const httpRequest = useHttp();
     const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const Tasks = () => {
 
     useEffect(()=>{
         loadTasks();
-    }, []);
+    }, [authenticatedUser]);
 
     useEffect(()=>{
         
@@ -54,99 +55,33 @@ const Tasks = () => {
 
             const params = new URLSearchParams(location.search);
 
-            const filter = params.get("filters").split(":")[1];
+            const filter = params.get("filters");
 
-            if (filter === "mine") {
-                setPageName("Minhas Tarefas")
-
-                var newTaskList = taskList.filter(task => {
-                    const userIsMember = task.members.find(member=>{
-                        return (member.id_user == authenticatedUser.id_user) ? true : false;
-                    });
-    
-                    return (userIsMember) ? true : false;
-                });
-            } else if (filter === "today") {
-
-                setPageName("Tarefas para Hoje");
-
-                const date = new Date();
-                const today = date.toLocaleDateString();
-                
-                var newTaskList = taskList.filter(task => {
-                    const userIsMember = task.members.find(member=>{
-                        return (member.id_user == authenticatedUser.id_user) ? true : false;
-                    });
-    
-                    return (userIsMember) ? true : false;
-                }).filter(task=>task.estimated_start == today);
-
-                
-
-
-            } else if (filter === "nexts") {
-
-                setPageName("Próximos 7 dias");
-              
-                var newTaskList = taskList.filter(task => {
-                    const userIsMember = task.members.find(member=>{
-                        return (member.id_user == authenticatedUser.id_user) ? true : false;
-                    });
-    
-                    return (userIsMember) ? true : false;
-                }).filter(task=>{
-                    if (task.estimated_start) {
-                        let estimated = task.estimated_start;
-                        const filtered = `${estimated.split('/')[1]}/${estimated.split('/')[0]}/${estimated.split('/')[2]}`;
-                        
-                        estimated = new Date(filtered);
-
-                        const date = new Date();
-                        date.setMinutes(0);
-                        date.setMilliseconds(0);
-                        date.setSeconds(0);
-                        date.setHours(0);
-
-                        if (estimated >= date && estimated <= date.setDate(date.getDate()+7) ) {
-                            return true;
-                        }
-
-
-                    }
-                });
-
-
-            } else if (filter === "new") {
-                setPageName("Novas Tarefas");
-
-                const date = new Date();
-                const today = date.toLocaleDateString();
-                
-                var newTaskList = taskList.filter(task=>{
-                    
-                    let created = task.created_at;
-                    created = created.split(" ")[0];
-                    created = `${created.split("-")[1]}/${created.split("-")[2]}/${created.split("-")[0]}`;
-                    created = new Date(created);
-
-                    const date = new Date();
-                    if (created.toLocaleDateString() == date.toLocaleDateString()) {
-                        return true;
-                    }
-                    
-                });
-
-
-            } else if (filter === "all") {
-                setPageName("Tarefas");
-                var newTaskList = [...taskList];
-            } else if (filter === "no-members") {
-                setPageName("Tarefas sem membros");
-                const arr = [];
-                var newTaskList = taskList.filter(task=>task.members.length == 0);
-            } else { 
-                var newTaskList = [...taskList];
+            switch (filter){
+                case 'mine':
+                    setPageName("Minhas Tarefas");
+                break;
+                case 'today':
+                    setPageName("Tarefas para Hoje");
+                break;
+                case 'nexts':
+                    setPageName("Tarefas para os próximos 7 dias");
+                break;
+                case 'late':
+                    setPageName("Tarefas atrasadas");
+                break;
+                case 'all':
+                    setPageName("Todas Tarefas");
+                break;
+                case 'new':
+                    setPageName("Tarefas abertas hoje");
+                break;
+                case 'no-members':
+                    setPageName("Tarefas sem membros");
+                break;
             }
+
+            const newTaskList = getFilteredTaskList(filter, taskList);
 
             setFilteredTaskList(newTaskList);
 
@@ -181,6 +116,31 @@ const Tasks = () => {
         setTaskList(data);
         setFilteredTaskList(data);
 
+        const allMine = getFilteredTaskList('mine', data);
+        const today = getFilteredTaskList('today', data);
+        const nexts = getFilteredTaskList('nexts', data);
+        const late = getFilteredTaskList('late', data);
+        const newTasks = getFilteredTaskList('new', data);
+        const all = getFilteredTaskList('all', data);
+        const noMembers = getFilteredTaskList('no-members', data);
+
+        const sidebarFilterQtt = {
+            qttAllMine: allMine.length,
+            qttToday: today.length,
+            qttNextSeven: nexts.length,
+            qttLate: late.length,
+            qttNewTasks: newTasks.length,
+            qttAllTasks: all.length,
+            qttNoMember: noMembers.length
+        }
+
+        dispatch({
+            type: "SET_FILTERS_QTT",
+            payload: {...sidebarFilterQtt}
+        });
+
+
+
     }
 
     function handleShowTaskDetail(e){
@@ -210,9 +170,151 @@ const Tasks = () => {
         }
     }
 
+    function getFilteredTaskList(filter, tasks){
+        if (filter === "mine") {
+
+            var newTaskList = tasks.filter(task => {
+                const userIsMember = task.members.find(member=>{
+                    return (member.id_user == authenticatedUser.id_user) ? true : false;
+                });
+
+                return (userIsMember) ? true : false;
+            });
+        } else if (filter === "today") {
+
+            const date = new Date();
+            const today = date.toLocaleDateString();
+            
+            var newTaskList = tasks.filter(task => {
+                const userIsMember = task.members.find(member=>{
+                    return (member.id_user == authenticatedUser.id_user) ? true : false;
+                });
+
+                return (userIsMember) ? true : false;
+            }).filter(task=>task.estimated_start == today);
+
+            
+
+
+        } else if (filter === "nexts") {
+          
+            var newTaskList = tasks.filter(task => {
+                const userIsMember = task.members.find(member=>{
+                    return (member.id_user == authenticatedUser.id_user) ? true : false;
+                });
+
+                return (userIsMember) ? true : false;
+            }).filter(task=>{
+                if (task.estimated_start) {
+                    let estimated = task.estimated_start;
+                    const filtered = `${estimated.split('/')[1]}/${estimated.split('/')[0]}/${estimated.split('/')[2]}`;
+                    
+                    estimated = new Date(filtered);
+
+                    const date = new Date();
+                    date.setMinutes(0);
+                    date.setMilliseconds(0);
+                    date.setSeconds(0);
+                    date.setHours(0);
+
+                    if (estimated >= date && estimated <= date.setDate(date.getDate()+7) ) {
+                        return true;
+                    }
+
+
+                }
+            });
+
+
+        } else if (filter === "new") {
+            const date = new Date();
+            const today = date.toLocaleDateString();
+            
+            var newTaskList = tasks.filter(task=>{
+                
+                let created = task.created_at;
+                created = created.split(" ")[0];
+                created = `${created.split("-")[1]}/${created.split("-")[2]}/${created.split("-")[0]}`;
+                created = new Date(created);
+
+                const date = new Date();
+                if (created.toLocaleDateString() == date.toLocaleDateString()) {
+                    return true;
+                }
+                
+            });
+
+
+        } else if (filter === "all") {
+            var newTaskList = [...tasks];
+        } else if (filter === "no-members") {
+            const arr = [];
+            var newTaskList = tasks.filter(task=>task.members.length == 0);
+        } else if (filter === "late") {
+            var newTaskList = tasks.filter(task => {
+                const userIsMember = task.members.find(member=>{
+                    return (member.id_user == authenticatedUser.id_user) ? true : false;
+                });
+
+                return (userIsMember) ? true : false;
+            }).filter(task=>{
+                if (task.estimated_start) {
+                    let estimated = task.estimated_start;
+                    const filtered = `${estimated.split('/')[1]}/${estimated.split('/')[0]}/${estimated.split('/')[2]}`;
+                    
+                    estimated = new Date(filtered);
+
+                    const date = new Date();
+                    date.setMinutes(0);
+                    date.setMilliseconds(0);
+                    date.setSeconds(0);
+                    date.setHours(0);
+
+                    if (estimated < date ) {
+                        return true;
+                    }
+
+
+                }
+            });
+
+
+        }else { 
+            var newTaskList = [...tasks];
+        }
+
+        return newTaskList;
+    }
+
+    function handleChangeSidebarSearch(e){
+        const input = e.target.value;
+        setSearchInput(input);
+
+        if (input.length > 0) {
+            setPageName("Pesquisando Tarefa");
+            const newTaskList = taskList.filter(task=>{
+                if (task.id_task.includes(input) || task.title.includes(input)) {
+                    return true;
+                }else{
+                    return false;
+                }
+            });
+
+            setFilteredTaskList(newTaskList);
+        } else {
+            setPageName("Tarefas");
+            setFilteredTaskList(taskList);
+        }
+
+        history.replace(location.pathname);
+
+    }
+
     return(
         <Content
             sidebarFiltersComponent={Sidebar}
+            sidebarValue={searchInput}
+            sidebarOnChange={handleChangeSidebarSearch}
         >
             <div className="task-list-content">
                 <header>

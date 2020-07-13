@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { BrowserRouter as Router, Switch, useHistory  } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, useHistory, useLocation  } from 'react-router-dom';
 
 import PrivateRoute from './../../components/PrivateRoute';
-
 import Container from './../../components/Container';
 import Icon from './../../components/Icon';
 import Button from './../../components/Button';
 import NewTicket from './components/NewTicket';
 import Sidebar from './components/Sidebar';
-import Screens from './screens';
+import screens from './screens';
 import TaskDetails from './components/TaskDetails';
 
 import useHttp from './../../services/useHttp';
@@ -18,12 +17,37 @@ import auth from './../../services/auth';
 import './style.css';
 
 export default function Main(){
-    const [showNewTicketModal, setModal] = useState(false);
-    const [showTaskDetails, setTaskDetail] = useState(false);
     const { show_modal } = useSelector(state => state.task);
+    
+    const [showTaskDetails, setTaskDetail] = useState(false);
+    const [showNewTicketModal, setModal] = useState(false);
+    const [activeScreen, setActiveScreen] = useState('');
+
     const dispatch = useDispatch();
     const httpRequest = useHttp();
     const history = useHistory();
+    const location = useLocation();
+
+    useEffect(()=>{
+        screens.forEach((screen)=>{
+            if (screen.default) {
+                setActiveScreen(screen.title)
+                history.push(screen.path);
+            }
+        });
+    }, [])
+
+    useEffect(()=>{
+        
+        if (location.pathname !== "/") {
+            const reloadScreen = verifyReloadScreen(screens, location.pathname);
+            
+            if (reloadScreen){
+                setActiveScreen(reloadScreen.title);
+                history.push(location.pathname)
+            }
+        }
+    },[]);
 
     useEffect(()=>{
         async function getUserdata() {
@@ -117,51 +141,70 @@ export default function Main(){
         history.push("/login");
     }
 
+    function verifyReloadScreen(screens2, path){
+        let reloadScreen = {} ;
+
+        screens2.forEach(screen=>{
+            if (screen.path == path) {
+
+                reloadScreen = screen;
+
+
+                if (screen.screens) {
+                    reloadScreen = verifyReloadScreen(screen.screens, path);
+                    
+                }
+            }
+        });        
+        return reloadScreen;
+
+    }
+
     return(
         <Container> 
-            <Router>
-                <NewTicket 
-                    showModal={showNewTicketModal} 
-                    setModal={setModal}
-                />
-                
-                {(showTaskDetails) ? (<TaskDetails />) : null}
+            <NewTicket 
+                showModal={showNewTicketModal} 
+                setModal={setModal}
+            />
+            
+            {(showTaskDetails) ? (<TaskDetails />) : null}
 
-                <Sidebar
-                    screens={Screens}
-                />
+            <Sidebar
+                screens={screens}
+                activeScreen={activeScreen}
+                setActiveScreen={setActiveScreen}
+            />
 
-                <section className="main-container">
-                    <header className="page-header">
-                        <Button
-                            color="green"
-                            icon="FaPlus"
-                            size="md"
-                            className="new-task"
-                            onClick={handleShowNewTicketModal}
-                        >
-                            Nova Tarefa
-                        </Button>
+            <section className="main-container">
+                <header className="page-header">
+                    <Button
+                        color="green"
+                        icon="FaPlus"
+                        size="md"
+                        className="new-task"
+                        onClick={handleShowNewTicketModal}
+                    >
+                        Nova Tarefa
+                    </Button>
 
-                        <a 
-                            className="signout"
-                            onClick={signout}
-                        >
-                            <Icon
-                                iconName="FaSignOutAlt"
-                            />
-                        </a>
-                    </header>
+                    <a 
+                        className="signout"
+                        onClick={signout}
+                    >
+                        <Icon
+                            iconName="FaSignOutAlt"
+                        />
+                    </a>
+                </header>
 
-                    <div className="inner-container">
-                        <Switch>
-                            {Screens.map((screen, i)=>(
-                                <PrivateRoute key={i} admin path={screen.path} component={screen.component} />
-                            ))}
-                        </Switch>    
-                    </div>
-                </section>
-            </Router>
+                <div className="inner-container">
+                    <Switch>
+                        {screens.map((screen, i)=>(
+                            <PrivateRoute key={i} admin path={screen.path} component={screen.component} screens={screen.screens} />
+                        ))}
+                    </Switch>    
+                </div>
+            </section>
         </Container>
        
 

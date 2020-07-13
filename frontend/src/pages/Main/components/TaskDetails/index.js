@@ -176,9 +176,13 @@ const TaskDetails = () => {
 
         const newTask = {
             ...task,
-            estimated: e.toLocaleDateString()
+            estimated: (e) ? e.toLocaleDateString() : null
         }
 
+        setTask({
+            ...task,
+            estimated: null
+        });
         sendUpdateTask(newTask);
         
     }
@@ -477,8 +481,6 @@ const TaskDetails = () => {
             type: "LOAD_TASKS",
             payload: true
         });
-
-        // setTask(newTask);
         
     }
 

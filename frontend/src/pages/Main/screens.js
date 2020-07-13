@@ -1,8 +1,10 @@
 import Dashboard from './../Dashboard';
 import Tasks from './../Tasks';
 import Cards from './../Cards';
+import Settings from './../Settings';
+import UsersMaintence from './../UsersMaintence';
 
-const Screens = [
+const screens = [
     {
         title: 'Dashboard',
         icon: "FaChartArea",
@@ -19,7 +21,26 @@ const Screens = [
         icon: "FaTable",
         path: '/cards',
         component: Cards
-    },
+    },{
+        title: 'Configurações',
+        icon: "FaTable",
+        path: '/settings',
+        component: Settings,
+        footer:true,
+        screens: [
+            {
+                title: 'Usuários',
+                icon: "FaUsers",
+                path: "/settings/users",
+                component: UsersMaintence
+            }, {
+                title: 'Tipos Usuários',
+                icon: "FaUsersCog",
+                path: "/settings/roles",
+                component: UsersMaintence
+            }, 
+        ]
+    }
 ];
 
-export default Screens;
+export default screens;

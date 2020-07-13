@@ -16,6 +16,8 @@ const DateInput = ({value, onChange}) => {
             const date = new Date(dateFormated);
             setStartDate(date);
 
+        } else {
+            setStartDate(null);
         }
     },[value]);
 

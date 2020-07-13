@@ -1,0 +1,19 @@
+.maintence-container{
+    
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 40px 60px;
+}
+
+.maintence-header{
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.maintence-section{
+    overflow: none;
+    max-height: calc(100% - 90px);
+}

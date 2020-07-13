@@ -5,6 +5,7 @@ import LoadingReducer from './reducers/LoadingReducer';
 import UserReducer from './reducers/UserReducer';
 import TaskDetailReducer from './reducers/TaskDetailReducer';
 import GlobalReducer from './reducers/GlobalReducer';
+import SidebarFilterReducer from './reducers/SidebarFilterReducer';
 
 export function store(){
     return createStore(combineReducers({
@@ -12,6 +13,7 @@ export function store(){
         loading: LoadingReducer,
         user: UserReducer,
         task: TaskDetailReducer,
-        global: GlobalReducer
+        global: GlobalReducer,
+        sidebar: SidebarFilterReducer
     }));
 }

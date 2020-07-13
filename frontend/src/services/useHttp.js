@@ -50,8 +50,8 @@ const useHttp = () => {
             dispatch({
                 type: "SHOW_MODAL_MESSAGE",
                 payload: {
-                    title: "Erro Interno",
-                    message: "Oppps...\n \n Parece que houve um erro interno, contate um administrador para verificar o problema."
+                    title: "Ooooops... ",
+                    message: "Parece que houve um erro interno, contate um administrador para verificar o problema."
                 }
             });;
             

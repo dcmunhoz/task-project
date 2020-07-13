@@ -20,7 +20,9 @@ const Login = () => {
     let httpRequest = useHttp();
 
 
-    async function handleLogin(){
+    async function handleLogin(e){
+
+        e.preventDefault();
 
         dispatch({
             type: "SHOW_LOADING_SCREEN"
@@ -69,31 +71,33 @@ const Login = () => {
                     <header>
                         <img src={logo} alt=""/>
                     </header>
-                    <section className="input-box">
-                        <Input 
-                            placeholder="Entre com seu usuário."
-                            icon="FaUser"
-                            value={username}
-                            onChange={(e)=> {setUser(e.target.value)}}
-                        />
-                        <Input 
-                            placeholder="Agora com sua senha."
-                            icon="FaKey"
-                            value={password}
-                            onChange={(e) => {setPassword(e.target.value)}}
-                        />
-                        <p>Esqueceu sua senha? <a href="">Clique Aqui !</a></p>
-                    </section>
+                    <form onSubmit={handleLogin}>
+                        <section className="input-box">
+                            <Input 
+                                placeholder="Entre com seu usuário."
+                                icon="FaUser"
+                                value={username}
+                                onChange={(e)=> {setUser(e.target.value)}}
+                            />
+                            <Input 
+                                placeholder="Agora com sua senha."
+                                type="password"
+                                icon="FaKey"
+                                value={password}
+                                onChange={(e) => {setPassword(e.target.value)}}
+                            />
+                            <p>Esqueceu sua senha? <a href="">Clique Aqui !</a></p>
+                        </section>
 
-                    <section className="buttons-box">
-                        <Button
-                            color="green"
-                            icon="FaSignInAlt"
-                            onClick={handleLogin}
-                        >
-                            Entrar
-                        </Button>
-                    </section>
+                        <section className="buttons-box">
+                            <Button
+                                color="green"
+                                icon="FaSignInAlt"
+                            >
+                                Entrar
+                            </Button>
+                        </section>
+                    </form>
                 </div>
 
             </div>

@@ -1,12 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import Icon from './../Icon';
 
 import "./style.css"
 
 
-const Input = ({placeholder, icon, value, onChange}) =>{
+const Input = ({placeholder, icon, value, onChange, type, required}) =>{
+    const [requiredField, setRequiredField] = useState(false);
+
+    function handleValidateRequiredField(){
+        if (required) {
+            console.log("iriri")
+
+            if (!value) {
+                setRequiredField(true);
+            } else {
+                setRequiredField(false);
+            }
+
+        }
+    }
+
     return(
-        <div className="inputContainer ">
+        <div className={`inputContainer ${(requiredField) ? 'required' : ''} `}>
             {(icon) ? 
                 <div className="iconContainer">
                     <Icon iconName={icon} />
@@ -14,10 +29,11 @@ const Input = ({placeholder, icon, value, onChange}) =>{
             : null}
 
             <input 
-                type="text" 
+                type={type ?? "text"} 
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
+                onBlur={handleValidateRequiredField}
             />
         </div>
     );
