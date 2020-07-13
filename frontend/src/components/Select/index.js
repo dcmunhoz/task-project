@@ -6,8 +6,6 @@ const Select = ({data, value, onChange, style = {}}) => {
     return (
         <select 
             className="select-list" 
-            name="" 
-            id="" 
             value={value} 
             onChange={onChange}
             style={style}

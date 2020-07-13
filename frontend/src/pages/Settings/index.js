@@ -30,6 +30,7 @@ const Settings = ({screens}) => {
                     <PrivateRoute key={i} admin exact path={screen.path} component={screen.component} />
                 ))}
                 <PrivateRoute admin path="/settings/users/new" component={NewUser} />
+                <PrivateRoute admin path="/settings/users/:id_user" component={NewUser} />
                 
             </Switch>
         </Container>

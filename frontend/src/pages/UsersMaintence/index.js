@@ -82,6 +82,9 @@ const UsersMaintence = () => {
         history.push('/settings/users/new');
     }
    
+    function handleShowUserPage(e){
+        history.push(`/settings/users/${e.currentTarget.dataset.iduser}`);
+    }
 
     return(
         <MaintenceContainer
@@ -114,7 +117,7 @@ const UsersMaintence = () => {
             <div className="users-list">
 
                 {filteredUsers.map(user=>(
-                    <div key={user.id} className="user-card">
+                    <div key={user.id} data-iduser={user.id} className="user-card" onClick={handleShowUserPage}>
                         <div>
                             <img src={user.avatar} alt="Avatar"/>
                         </div>
