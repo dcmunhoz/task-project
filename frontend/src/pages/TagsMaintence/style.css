@@ -1,0 +1,42 @@
+
+.maintence-section .tags-header{
+    margin-bottom: 10px;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.tags-header div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.maintence-section .tags-header .inputContainer {
+    width: 300px !important;
+}
+
+.tags-list{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.tags-list .tag-container{
+    padding: 10px 20px;
+    margin: 0px 5px 5px 0px;
+    border-radius: 5px;
+    min-width: 100px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 14px;
+    transition: 150ms;
+}
+
+.tags-list .tag-container:hover{
+    cursor: pointer;
+    box-shadow: 0px 0px 5px hsla(0, 0%, 0%, 0.144);
+}

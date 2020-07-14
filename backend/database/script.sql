@@ -67,6 +67,7 @@ CREATE TABLE taskxmembers(
     CONSTRAINT fk_user_taskxmember FOREIGN KEY (id_user) REFERENCES users(id_user) ,
     UNIQUE idx_taskxmember (id_task, id_user)
 ) CHARACTER SET utf8;
+
 CREATE TABLE taskxtags(
 	id_taskxtags INT NOT NULL AUTO_INCREMENT,
     id_task INT NOT NULL,
@@ -75,6 +76,14 @@ CREATE TABLE taskxtags(
     FOREIGN KEY (id_task) REFERENCES tasks(id_task),
     FOREIGN KEY (id_tag) REFERENCES tags(id_tag)
 ) CHARACTER SET utf8;
+
+ALTER TABLE taskxtags
+	ADD FOREIGN KEY (id_task) REFERENCES tasks(id_task)
+	ON DELETE CASCADE;
+
+ALTER TABLE taskxtags
+	ADD FOREIGN KEY (id_tag) REFERENCES tags(id_tag)
+	ON DELETE CASCADE;
 
 CREATE TABLE messages(
 	id_message INT NOT NULL AUTO_INCREMENT,

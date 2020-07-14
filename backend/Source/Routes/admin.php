@@ -30,4 +30,6 @@ $app->group("/api", function($group){
     $group->post("/user/new", UserController::class . ":save");
     $group->post("/role/new", RoleController::class . ":save");
     $group->get("/role/{id_role}", RoleController::class . ":show");
+    $group->post("/tag/new", TagController::class . ":save");
+    $group->delete("/tag/{id_tag}", TagController::class . ":delete");
 });

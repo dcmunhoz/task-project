@@ -8,6 +8,69 @@ use Source\Models\Tag;
 
 class TagController {
 
+    public function save(Request $request, Response $response){
+
+        $body = $request->getParsedBody();
+
+        $tag = new Tag();
+        $tag->id_tag = $body['id_tag'] ?? null;
+        $tag->title = $body['tag'];
+        $tag->background_color = $body['backgroundColor'];
+        $tag->foreground_color = $body['foregroundColor'];
+
+        if (!$tag->save()) {
+            if ($tag->fail) {
+
+                $response->getBody()->write(\json_encode([
+                    "error" => $tag->fail,
+                    "type" => "sys"
+                ]));
+
+                return $response;
+
+            }
+
+            $response->getBody()->write(\json_encode([
+                "error" => "Não foi possivel salvar a etiqueta."
+            ]));
+
+            return $response;
+        }
+        
+        
+
+        $response->getBody()->write(\json_encode($tag->getData()));
+        return $response;
+
+    }
+
+    public function delete(Request $request, Response $response, $args){
+        
+        $tag = new Tag();
+        $tag->id_tag = $args['id_tag'];
+
+        if (!$tag->destroy()){
+            if ($tag->fail) {
+                $response->getBody()->write(\json_encode([
+                    "error" => $tag->fail,
+                    "type" => "sys"
+                ]));
+                return $response->withHeader("Content-Type", "application/json");
+            }
+
+            $response->getBody()->write(\json_encode([
+                "error" => "Não foi possivel apagar a Etiqueta"
+            ]));
+            return $response->withHeader("Content-Type", "application/json");
+        }
+
+        $response->getBody()->write(\json_encode([
+            "ok" => true
+        ]));
+        return $response->withHeader("Content-Type", "application/json");
+
+    }
+
     public function list(Request $request, Response $response){
 
         $tag = new Tag();
@@ -26,7 +89,10 @@ class TagController {
         $tag->findById((Int) $idTag);
 
         if ($tag->fail) {
-
+            $response->getBody()->write(\json_encode([
+                "error" => "Não foi possivel localizar a etiqueta."
+            ]));
+            return $response->withHeader("Content-Type", "application/json");
         }
 
         $data = $tag->getData();

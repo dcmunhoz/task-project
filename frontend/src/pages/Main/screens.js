@@ -4,6 +4,7 @@ import Cards from './../Cards';
 import Settings from './../Settings';
 import UsersMaintence from './../UsersMaintence';
 import RolesMaintence from './../RolesMaintence';
+import TagsMaintence from './../TagsMaintence';
 
 const screens = [
     {
@@ -39,7 +40,12 @@ const screens = [
                 icon: "FaUsersCog",
                 path: "/settings/roles",
                 component: RolesMaintence
-            }, 
+            }, {
+                title: "Etiquetas",
+                icon: "FaTags",
+                path: "/settings/tags",
+                component: TagsMaintence
+            }
         ]
     }
 ];
