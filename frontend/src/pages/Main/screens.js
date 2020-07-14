@@ -3,6 +3,7 @@ import Tasks from './../Tasks';
 import Cards from './../Cards';
 import Settings from './../Settings';
 import UsersMaintence from './../UsersMaintence';
+import RolesMaintence from './../RolesMaintence';
 
 const screens = [
     {
@@ -37,7 +38,7 @@ const screens = [
                 title: 'Tipos Usuários',
                 icon: "FaUsersCog",
                 path: "/settings/roles",
-                component: UsersMaintence
+                component: RolesMaintence
             }, 
         ]
     }

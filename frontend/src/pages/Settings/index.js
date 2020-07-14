@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import { BrowserRouter as Router, Switch, Link  } from 'react-router-dom';
 
 import NewUser from './../UsersMaintence/pages/NewUser';
+import NewRole from './../RolesMaintence/pages/NewRole';
 
 import Icon from './../../components/Icon';
 import PrivateRoute from './../../components/PrivateRoute';
@@ -31,6 +32,9 @@ const Settings = ({screens}) => {
                 ))}
                 <PrivateRoute admin path="/settings/users/new" component={NewUser} />
                 <PrivateRoute admin path="/settings/users/:id_user" component={NewUser} />
+
+                <PrivateRoute admin path="/settings/roles/new" component={NewRole} />
+                <PrivateRoute admin path="/settings/roles/:id_role" component={NewRole} />
                 
             </Switch>
         </Container>

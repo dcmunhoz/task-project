@@ -9,7 +9,6 @@ const Input = ({placeholder, icon, value, onChange, type, required}) =>{
 
     function handleValidateRequiredField(){
         if (required) {
-            console.log("iriri")
 
             if (!value) {
                 setRequiredField(true);

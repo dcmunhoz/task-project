@@ -28,4 +28,6 @@ $app->group("/api", function($group){
     $group->delete("/message/{id_message}/delete", TaskController::class . ":deleteMessage");
     $group->get("/roles", RoleController::class . ":list");
     $group->post("/user/new", UserController::class . ":save");
+    $group->post("/role/new", RoleController::class . ":save");
+    $group->get("/role/{id_role}", RoleController::class . ":show");
 });
