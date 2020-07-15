@@ -123,7 +123,13 @@ const NewTag = () =>{
     }
 
     async function handleDeleteTag(e){
+
         e.preventDefault();
+
+        if (!window.confirm("Deseja apagar a etiqueta?")) {
+            return;
+        }
+
 
         const response = await httpRequest("DELETE", `/tag/${idTag}`);
 

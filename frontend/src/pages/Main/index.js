@@ -17,7 +17,7 @@ import auth from './../../services/auth';
 import './style.css';
 
 export default function Main(){
-    const { show_modal } = useSelector(state => state.task);
+    const { show_modal, show_new_modal } = useSelector(state => state.task);
     
     const [showTaskDetails, setTaskDetail] = useState(false);
     const [showNewTicketModal, setModal] = useState(false);
@@ -131,8 +131,15 @@ export default function Main(){
         setTaskDetail(show_modal);
     }, [show_modal]);
 
+    useEffect(()=>{
+        setModal(show_new_modal);
+    }, [show_new_modal]);
+
     function handleShowNewTicketModal(){
-        setModal(true);
+        dispatch({
+            type: "SHOW_NEW_TASK_MODAL",
+            payload: true
+        });
     }
 
     function signout(e){
@@ -162,11 +169,13 @@ export default function Main(){
 
     return(
         <Container> 
-            <NewTicket 
+            {/* <NewTicket 
                 showModal={showNewTicketModal} 
                 setModal={setModal}
-            />
-            
+            /> */}
+
+
+            {(showNewTicketModal) ? <NewTicket /> : null}
             {(showTaskDetails) ? (<TaskDetails />) : null}
 
             <Sidebar

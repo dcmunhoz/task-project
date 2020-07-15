@@ -80,6 +80,14 @@ const Sidebar = ({value, onChange}) => {
                     <li>
                         <a data-filter="no-members" onClick={handleSetFilter}> Sem integrantes <span className="filter-item-task-counter">{sidebar.qttNoMember}</span> </a>
                     </li>
+
+                    <li>
+                        <a data-filter="deleted" onClick={handleSetFilter}> Canceladas <span className="filter-item-task-counter">{sidebar.qttDeleted}</span> </a>
+                    </li>
+
+                    <li>
+                        <a data-filter="concluded" onClick={handleSetFilter}> Concluidas <span className="filter-item-task-counter">{sidebar.qttConcluded}</span> </a>
+                    </li>
                 </ul>
             </section>
 

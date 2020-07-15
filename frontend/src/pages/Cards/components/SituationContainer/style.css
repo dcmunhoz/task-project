@@ -1,5 +1,5 @@
 .situation-container{
-    background-color: #EDEDED;
+    background-color: #f7f7f7;
     margin-right: 30px ;
     width: 289px;
     min-width: 300px;
@@ -31,11 +31,11 @@
     box-sizing: border-box;
     padding: 10px 10px;
     border-radius: 5px;
-    transition: 150ms;
+    transition: 300ms;
 }
 
 .situation-container .cards-list .card-box:hover{
-    background-color: #fafafa;
+    background-color: #eee;
 }
 
 .situation-container .cards-list .card-box .card-header{

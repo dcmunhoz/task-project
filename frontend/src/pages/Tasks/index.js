@@ -79,6 +79,12 @@ const Tasks = () => {
                 case 'no-members':
                     setPageName("Tarefas sem membros");
                 break;
+                case 'deleted':
+                    setPageName("Tarefas canceladas");
+                break;
+                case 'concluded':
+                    setPageName("Tarefas concluidas");
+                break;
             }
 
             const newTaskList = getFilteredTaskList(filter, taskList);
@@ -279,7 +285,11 @@ const Tasks = () => {
             });
 
 
-        }else { 
+        } else if (filter === "deleted") {
+            
+        } else if (filter === "concluded") {
+
+        } else { 
             var newTaskList = [...tasks];
         }
 
