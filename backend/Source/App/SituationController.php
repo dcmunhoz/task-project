@@ -20,6 +20,8 @@ class SituationController {
             $newArr->id = $arr->id_situation;
             $newArr->label = $arr->situation;
             $newArr->conclusion = $arr->concluded;
+            $newArr->default = $arr->default;
+            $newArr->excluded = $arr->excluded;
             return $newArr;
 
         }, $result);

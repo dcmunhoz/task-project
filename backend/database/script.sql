@@ -31,6 +31,7 @@ CREATE TABLE situations(
 	situation VARCHAR(60) NOT NULL,
 	`default` BOOL DEFAULT FALSE,
 	concluded BOOL DEFAULT FALSE,
+    excluded BOOL DEFAULT FALSE,
 	CONSTRAINT pk_situation PRIMARY KEY (id_situation) 
 )CHARACTER SET utf8;
 
