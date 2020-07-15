@@ -35,6 +35,12 @@ CREATE TABLE situations(
 	CONSTRAINT pk_situation PRIMARY KEY (id_situation) 
 )CHARACTER SET utf8;
 
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('a fazer', true, false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('em execução', false, false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('aguardando', false, false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('concluido', false, true, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('cancelada', false, false, true);
+
 CREATE TABLE tasks(
 	id_task INT NOT NULL AUTO_INCREMENT,
 	id_situation INT NOT NULL,

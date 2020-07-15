@@ -301,7 +301,7 @@ const Tasks = () => {
             var newTaskList = [...tasks];
         }
 
-
+        
         if (filter !== "deleted" && filter !== "concluded") {
 
             const concludedSituation = situations.find(sit=>sit.conclusion == true);
