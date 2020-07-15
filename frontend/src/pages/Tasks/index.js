@@ -129,7 +129,9 @@ const Tasks = () => {
             payload: {...sidebarFilterQtt}
         });
 
-    }, [taskList]);
+        setFilteredTaskList(all);
+
+    }, [taskList, situations]);
 
     async function loadTasks(){
 
@@ -151,7 +153,6 @@ const Tasks = () => {
         data.sort((a,b) => b.id_task - a.id_task);
 
         setTaskList(data);
-        setFilteredTaskList(data);
     }
 
     function handleShowTaskDetail(e){
@@ -298,6 +299,22 @@ const Tasks = () => {
             if (concludedSituation) var newTaskList = tasks.filter(task=>task.id_situation == concludedSituation.id);
         } else { 
             var newTaskList = [...tasks];
+        }
+
+
+        if (filter !== "deleted" && filter !== "concluded") {
+
+            const concludedSituation = situations.find(sit=>sit.conclusion == true);
+            const excludedSituation = situations.find(sit=>sit.excluded == true);
+            
+            if (concludedSituation && newTaskList && excludedSituation) {
+                newTaskList = newTaskList.filter(task=>{
+                    if (task.id_situation !== concludedSituation.id && task.id_situation !== excludedSituation.id) {
+                        return true;
+                    }
+                });
+            }
+
         }
 
         return newTaskList;
