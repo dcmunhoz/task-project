@@ -6,7 +6,7 @@ import Content from './../../components/Content';
 import useHttp from './../../services/useHttp';
 import Icon from './../../components/Icon';
 import ActionButton from './../../components/ActionButton';
-import Sidebar from './../../components/Sidebar';
+import Sidebar from './components/Sidebar';
 
 import './style.css';
 

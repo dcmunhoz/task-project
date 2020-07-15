@@ -21,7 +21,7 @@
 }
 
 .sidebar-filters-inner .user-tasks-filters h1{
-    font-weight: 400;
+    font-weight: bold !important;
     text-align: center;
     margin: 5px 0;
     font-size: 16px;

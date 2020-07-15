@@ -69,7 +69,7 @@ const Sidebar = ({value, onChange}) => {
 
     return(
         <div className="sidebar-filters-inner">
-            <header className="sidebar-header">
+            {/* <header className="sidebar-header">
                 <Input 
                     icon="FaSearch"
                     value={value}
@@ -79,7 +79,7 @@ const Sidebar = ({value, onChange}) => {
                 <span>
                     Digite para pesquisar por um ID ou titulo de tarefa.
                 </span>
-            </header>
+            </header> */}
 
             <div className="sidebar-separator"></div>
 
@@ -97,7 +97,7 @@ const Sidebar = ({value, onChange}) => {
                 </ul>
             </section>
 
-            <div className="sidebar-separator"></div>
+            {/* <div className="sidebar-separator"></div> */}
 
             <section className="user-tasks-filters">
                 <ul>
@@ -105,7 +105,7 @@ const Sidebar = ({value, onChange}) => {
                 </ul>
             </section>
 
-            <div className="sidebar-separator"></div>
+            {/* <div className="sidebar-separator"></div> */}
 
             <section className="user-tasks-filters">
                 <ul className="tags-filter">
