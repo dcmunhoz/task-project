@@ -9,7 +9,6 @@ const Input = ({placeholder, icon, value, onChange, type, required}) =>{
 
     function handleValidateRequiredField(){
         if (required) {
-            console.log("iriri")
 
             if (!value) {
                 setRequiredField(true);
@@ -21,7 +20,7 @@ const Input = ({placeholder, icon, value, onChange, type, required}) =>{
     }
 
     return(
-        <div className={`inputContainer ${(requiredField) ? 'required' : ''} `}>
+        <div className={`inputContainer ${(requiredField) ? 'required' : ''} ${(type=="color") ? 'color' : ''} `}>
             {(icon) ? 
                 <div className="iconContainer">
                     <Icon iconName={icon} />

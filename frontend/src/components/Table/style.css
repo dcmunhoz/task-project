@@ -1,0 +1,7 @@
+.table-container tbody tr:hover{
+    background-color: #eee;
+}
+
+.table-container{
+    border-collapse: collapse;
+}

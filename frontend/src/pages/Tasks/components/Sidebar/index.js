@@ -3,14 +3,12 @@ import { useHistory, useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
 
-import Input from '../Input';
+import Input from '../../../../components/Input';
 
 import './index.css';
 
 const Sidebar = ({value, onChange}) => {
     const sidebar = useSelector(state => state.sidebar);
-
-    const [filters, setFilters] = useState("");
 
     const history = useHistory();
     const location = useLocation();
@@ -80,6 +78,14 @@ const Sidebar = ({value, onChange}) => {
                     <li>
                         <a data-filter="no-members" onClick={handleSetFilter}> Sem integrantes <span className="filter-item-task-counter">{sidebar.qttNoMember}</span> </a>
                     </li>
+
+                    <li>
+                        <a data-filter="deleted" onClick={handleSetFilter}> Canceladas <span className="filter-item-task-counter">{sidebar.qttDeleted}</span> </a>
+                    </li>
+
+                    <li>
+                        <a data-filter="concluded" onClick={handleSetFilter}> Concluidas <span className="filter-item-task-counter">{sidebar.qttConcluded}</span> </a>
+                    </li>
                 </ul>
             </section>
 
@@ -87,13 +93,13 @@ const Sidebar = ({value, onChange}) => {
 
             <section className="user-tasks-filters">
                 <ul className="tags-filter">
-                    <li>
+                    {/* <li>
                         <a href=""> <span style={{backgroundColor: "red"}} className="tag-information"></span>  MK-Saúde </a>
                     </li>
 
                     <li>
                         <a href=""> <span className="tag-information"></span> Hardware </a>
-                    </li>
+                    </li> */}
 
                 </ul>
             </section>

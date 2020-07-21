@@ -1,6 +1,7 @@
 const INITIAL_STATE = {
     shuldLoadTasks: true,
     shuldFilterTasks: false,
+    shuldFilterCards: false,
     situations: [],
 }
 
@@ -12,6 +13,8 @@ export default function GlobalReducer(state = INITIAL_STATE, action){
             return state = { ...state, situations: [ ...action.payload ] }
         case "FILTER_TASKS":
             return state = { ...state, shuldFilterTasks:  action.payload }
+        case "FILTER_CARDS":
+            return state = { ...state, shuldFilterCards:  action.payload }
         default:
             return state;
     }

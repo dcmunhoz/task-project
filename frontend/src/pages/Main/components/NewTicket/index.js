@@ -12,7 +12,7 @@ import useHttp from './../../../../services/useHttp';
 
 import './style.css';
 
-const NewTicket = ({showModal, setModal}) =>{
+const NewTicket = () =>{
     const { id_user: idUserCreation } = useSelector(state => state.user.authenticatedUser);
     const usersList = useSelector(state => state.user.usersList);
     
@@ -73,7 +73,13 @@ const NewTicket = ({showModal, setModal}) =>{
 
     function handleCloseNTModal(e){
         if (e.target == e.currentTarget){
-            setModal(false);
+            // setModal(false);
+
+            dispatch({
+                type:"SHOW_NEW_TASK_MODAL",
+                payload: false
+            })
+
         }
     }
 
@@ -169,9 +175,13 @@ const NewTicket = ({showModal, setModal}) =>{
         setRequester(0);
         setTaskTitle("");
         setTaskDescription("");
-        setModal(false);
         setSelectedMembers([]);
         setSelectedTags([]);
+
+        dispatch({
+            type:"SHOW_NEW_TASK_MODAL",
+            payload: false
+        })
 
         dispatch({
             type: 'LOAD_TASKS',
@@ -182,7 +192,7 @@ const NewTicket = ({showModal, setModal}) =>{
 
     return(
         <div 
-            className={`new-ticket-container ${(showModal) ? 'show' : ''}`}
+            className={`new-ticket-container show`}
             onClick={handleCloseNTModal}
         >
             <section className="new-ticket-modal">
@@ -196,7 +206,7 @@ const NewTicket = ({showModal, setModal}) =>{
                     </div>                    
                     <div>
                         <div className="modal-close"
-                            onClick={()=>{setModal(false)}}
+                            onClick={handleCloseNTModal}
                         >
                             <Icon 
                                 iconName="FaWindowClose"

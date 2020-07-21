@@ -268,18 +268,26 @@ abstract class Model{
     public function destroy(): bool
     {
         
-        $data = (Array) $this->data;
+        try {
+            $data = (Array) $this->data;
 
-        if (isset($data[$this->key]) && !empty($data[$this->key])) {
+            if (isset($data[$this->key]) && !empty($data[$this->key])) {
 
-            $stmt = Connect::getInstance()->prepare("DELETE FROM {$this->entity} WHERE {$this->key} = :{$this->key}");
-            $stmt->execute([":{$this->key}" => $data[$this->key]]);
-            
-            if ($stmt->rowCount() >= 0) {
+                $stmt = Connect::getInstance()->prepare("DELETE FROM {$this->entity} WHERE {$this->key} = :{$this->key}");
+                $stmt->execute([":{$this->key}" => $data[$this->key]]);
+                
+                if ($stmt->rowCount() >= 0) {
 
-                return true;
+                    return true;
 
+                }
             }
+            
+        }catch(\PDOException $e){
+
+            $this->fail = $e->getMessage();
+            return false;
+
         }
 
     }

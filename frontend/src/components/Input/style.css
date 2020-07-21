@@ -4,8 +4,12 @@
     border-radius: 5px;
     overflow: hidden;
     box-sizing: border-box;
-    width: 100%;
     border: 2px solid #EEE;
+}
+
+.inputContainer.color,
+.inputContainer.color input{
+    width: 50px;
 }
 
 .inputContainer.required,
@@ -31,7 +35,6 @@
     display: inline-block;
     border: none;
     font-size: 14px;
-    width: 100%;
     /* max-width: calc(100% - 50px); */
     padding: 8px;
 }
@@ -40,5 +43,10 @@
 .inputContainer input{
     background-color: #EEEEEE;
     transition: 150ms;
+    width: 100%;
     
+}
+
+.inputContainer input[type="color"]{
+    padding: 0;
 }

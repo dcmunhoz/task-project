@@ -1,0 +1,19 @@
+.new-tag-container{
+    display: flex;
+    width: 300px;
+}
+
+.new-tag-container form{
+    width: 100%;
+}
+
+.new-tag-container form{
+    width: 100%;
+}
+
+.new-tag-container form .form-row{
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

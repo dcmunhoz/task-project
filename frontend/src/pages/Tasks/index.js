@@ -6,12 +6,12 @@ import Content from './../../components/Content';
 import useHttp from './../../services/useHttp';
 import Icon from './../../components/Icon';
 import ActionButton from './../../components/ActionButton';
-import Sidebar from './../../components/Sidebar';
+import Sidebar from './components/Sidebar';
 
 import './style.css';
 
 const Tasks = () => {
-    const { shuldLoadTasks, shuldFilterTasks } = useSelector(store => store.global);
+    const { shuldLoadTasks, shuldFilterTasks, situations } = useSelector(store => store.global);
     const { authenticatedUser } = useSelector(store => store.user);
 
     const [taskList, setTaskList] = useState([]);
@@ -79,6 +79,12 @@ const Tasks = () => {
                 case 'no-members':
                     setPageName("Tarefas sem membros");
                 break;
+                case 'deleted':
+                    setPageName("Tarefas canceladas");
+                break;
+                case 'concluded':
+                    setPageName("Tarefas concluidas");
+                break;
             }
 
             const newTaskList = getFilteredTaskList(filter, taskList);
@@ -93,6 +99,39 @@ const Tasks = () => {
         }
 
     }, [shuldFilterTasks]);
+
+    useEffect(()=>{
+
+        const allMine = getFilteredTaskList('mine', taskList);
+        const today = getFilteredTaskList('today', taskList);
+        const nexts = getFilteredTaskList('nexts', taskList);
+        const late = getFilteredTaskList('late', taskList);
+        const newTasks = getFilteredTaskList('new', taskList);
+        const all = getFilteredTaskList('all', taskList);
+        const noMembers = getFilteredTaskList('no-members', taskList);
+        const concluded = getFilteredTaskList('concluded', taskList);
+        const excluded = getFilteredTaskList('deleted', taskList);
+
+        const sidebarFilterQtt = {
+            qttAllMine: allMine.length,
+            qttToday: today.length,
+            qttNextSeven: nexts.length,
+            qttLate: late.length,
+            qttNewTasks: newTasks.length,
+            qttAllTasks: all.length,
+            qttNoMember: noMembers.length,
+            qttConcluded: (concluded) ? concluded.length : 0,
+            qttDeleted: (excluded) ? excluded.length : 0
+        }
+
+        dispatch({
+            type: "SET_FILTERS_QTT",
+            payload: {...sidebarFilterQtt}
+        });
+
+        setFilteredTaskList(all);
+
+    }, [taskList, situations]);
 
     async function loadTasks(){
 
@@ -112,35 +151,8 @@ const Tasks = () => {
         }
 
         data.sort((a,b) => b.id_task - a.id_task);
-        
+
         setTaskList(data);
-        setFilteredTaskList(data);
-
-        const allMine = getFilteredTaskList('mine', data);
-        const today = getFilteredTaskList('today', data);
-        const nexts = getFilteredTaskList('nexts', data);
-        const late = getFilteredTaskList('late', data);
-        const newTasks = getFilteredTaskList('new', data);
-        const all = getFilteredTaskList('all', data);
-        const noMembers = getFilteredTaskList('no-members', data);
-
-        const sidebarFilterQtt = {
-            qttAllMine: allMine.length,
-            qttToday: today.length,
-            qttNextSeven: nexts.length,
-            qttLate: late.length,
-            qttNewTasks: newTasks.length,
-            qttAllTasks: all.length,
-            qttNoMember: noMembers.length
-        }
-
-        dispatch({
-            type: "SET_FILTERS_QTT",
-            payload: {...sidebarFilterQtt}
-        });
-
-
-
     }
 
     function handleShowTaskDetail(e){
@@ -279,8 +291,30 @@ const Tasks = () => {
             });
 
 
-        }else { 
+        } else if (filter === "deleted") {
+            const excludedSituation = situations.find(situation=>situation.excluded == true);
+            if (excludedSituation) var newTaskList = tasks.filter(task=>task.id_situation == excludedSituation.id);
+        } else if (filter === "concluded") {
+            const concludedSituation = situations.find(situation=>situation.conclusion == true);
+            if (concludedSituation) var newTaskList = tasks.filter(task=>task.id_situation == concludedSituation.id);
+        } else { 
             var newTaskList = [...tasks];
+        }
+
+        
+        if (filter !== "deleted" && filter !== "concluded") {
+
+            const concludedSituation = situations.find(sit=>sit.conclusion == true);
+            const excludedSituation = situations.find(sit=>sit.excluded == true);
+            
+            if (concludedSituation && newTaskList && excludedSituation) {
+                newTaskList = newTaskList.filter(task=>{
+                    if (task.id_situation !== concludedSituation.id && task.id_situation !== excludedSituation.id) {
+                        return true;
+                    }
+                });
+            }
+
         }
 
         return newTaskList;
@@ -322,7 +356,7 @@ const Tasks = () => {
                 </header>
                 <div className="task-list">
                     <ul>
-                        {filteredTaskList.map(task=>(
+                        {(filteredTaskList) ? filteredTaskList.map(task=>(
                             <li key={task.id_task} >
                                 <div className="task-box" id={task.id_task} onClick={handleShowTaskDetail}>
                                     <div className="action-icon">
@@ -378,7 +412,7 @@ const Tasks = () => {
                                     </div>
                                 </div>
                             </li>
-                        ))}
+                        )) : null}
                     </ul>
 
                 </div>

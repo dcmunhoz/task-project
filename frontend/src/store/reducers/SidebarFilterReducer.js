@@ -6,6 +6,8 @@ const INITIAL_STATE = {
     qttNewTasks: 0,
     qttAllTasks: 0,
     qttNoMember: 0,
+    qttDeleted: 0,
+    qttConcluded: 0
 }
 
 export default function SidebarFilterReducer(state = INITIAL_STATE, action){

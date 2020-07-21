@@ -58,6 +58,16 @@
     border: 1px solid var(--btn-yellow-h);
 }
 
+.btn.btn_orange {
+    background-color: var(--btn-orange );
+    border: 1px solid var(--btn-orange );
+}
+
+.btn.btn_orange:hover{
+    background-color: var(--btn-orange-h);
+    border: 1px solid var(--btn-orange-h);
+}
+
 .btn.btn_sm{
     font-size: 12px;
 }

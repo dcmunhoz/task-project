@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 
 
 import useHttp from './../../../../services/useHttp';
@@ -9,12 +10,14 @@ import ActionButton from './../../../../components/ActionButton';
 import './style.css';
 
 const SituationContainer = ({ id, title, showDetail }) => {
-    const { shuldLoadTasks } = useSelector(state => state.global);
+    const { shuldLoadTasks, shuldFilterCards } = useSelector(state => state.global);
     const authUser = useSelector(store => store.user.authenticatedUser)
 
     const http = useHttp();
     const [cards, setCards] = useState([]);
+    const [filteredCards, setFilteredCards] = useState([]);
     const dispatch = useDispatch();
+    const location = useLocation();
 
     useEffect(()=>{
         loadSituationCards();
@@ -41,6 +44,40 @@ const SituationContainer = ({ id, title, showDetail }) => {
 
         
     }, [shuldLoadTasks]);
+    
+    useEffect(()=>{
+        if (shuldFilterCards) {
+
+            const { search } = location;
+
+            if (search) {
+                
+                const paramsArray = search.split('=')[1].split(",");
+                if (cards.length > 0) {
+
+                    const newCards = cards.filter(card=>{
+                        const memb = card.members.filter(member=>{
+                            if (paramsArray.includes(member.id_user)) {
+                                return true;
+                            }
+                        })
+
+                        if (memb.length > 0) return true;
+                    });
+
+                    setFilteredCards(newCards);
+                }
+            }else {
+                setFilteredCards(cards)
+            }
+
+            dispatch({
+                type: "FILTER_CARDS",
+                payload: false
+            });
+
+        }
+    }, [shuldFilterCards]);
 
     async function loadSituationCards(){
 
@@ -57,7 +94,7 @@ const SituationContainer = ({ id, title, showDetail }) => {
         data.sort((a, b) => b.id_task - a.id_task);
 
         setCards(data);
-        
+        setFilteredCards(data);
     }
 
     function showCardActions(card){
@@ -83,7 +120,7 @@ const SituationContainer = ({ id, title, showDetail }) => {
 
             <div className="cards-list">
                 <ul>
-                    {cards.map((card)=>(
+                    {filteredCards.map((card)=>(
                         <li key={card.id_task}>
                             <div className="card-box" id={card.id_task} onClick={showDetail}>
                                 <div className="card-header">

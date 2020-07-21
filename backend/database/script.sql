@@ -31,8 +31,15 @@ CREATE TABLE situations(
 	situation VARCHAR(60) NOT NULL,
 	`default` BOOL DEFAULT FALSE,
 	concluded BOOL DEFAULT FALSE,
+    excluded BOOL DEFAULT FALSE,
 	CONSTRAINT pk_situation PRIMARY KEY (id_situation) 
 )CHARACTER SET utf8;
+
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('a fazer', true, false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('em execução', false, false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('aguardando', false, false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('concluido', false, true, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('cancelada', false, false, true);
 
 CREATE TABLE tasks(
 	id_task INT NOT NULL AUTO_INCREMENT,
@@ -67,6 +74,7 @@ CREATE TABLE taskxmembers(
     CONSTRAINT fk_user_taskxmember FOREIGN KEY (id_user) REFERENCES users(id_user) ,
     UNIQUE idx_taskxmember (id_task, id_user)
 ) CHARACTER SET utf8;
+
 CREATE TABLE taskxtags(
 	id_taskxtags INT NOT NULL AUTO_INCREMENT,
     id_task INT NOT NULL,
@@ -75,6 +83,14 @@ CREATE TABLE taskxtags(
     FOREIGN KEY (id_task) REFERENCES tasks(id_task),
     FOREIGN KEY (id_tag) REFERENCES tags(id_tag)
 ) CHARACTER SET utf8;
+
+ALTER TABLE taskxtags
+	ADD FOREIGN KEY (id_task) REFERENCES tasks(id_task)
+	ON DELETE CASCADE;
+
+ALTER TABLE taskxtags
+	ADD FOREIGN KEY (id_tag) REFERENCES tags(id_tag)
+	ON DELETE CASCADE;
 
 CREATE TABLE messages(
 	id_message INT NOT NULL AUTO_INCREMENT,

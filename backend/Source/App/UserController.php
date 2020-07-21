@@ -77,7 +77,7 @@ class UserController {
 
         $result = $user->find()->fetch(true);
 
-        if (!$results){
+        if (!$result){
             if ($user->fail) {
                 // Tratar erros
             }

@@ -1,0 +1,16 @@
+.new-role-container{
+    display: flex;
+    width: 300px;
+}
+
+.new-role-container form{
+    width: 100%;
+}
+
+.new-role-container form{
+    width: 100%;
+}
+
+.new-role-container form .form-row{
+    margin-bottom: 10px;
+}

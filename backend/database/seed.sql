@@ -13,11 +13,11 @@ INSERT INTO users(username, password, email, avatar, first_name, last_name, id_r
 INSERT INTO users(username, password, email, avatar, first_name, last_name, id_role) values('maike.brito', '123456', 'maike@pandora.com', "http://localhost/public/assets/avatars/example_avatar.jpg", "Maike", "Brito", 3); 
 
 # Situations
-INSERT INTO SITUATIONS(situation, `default`, concluded) VALUES('a fazer', true, false);
-INSERT INTO SITUATIONS(situation, `default`, concluded) VALUES('em execução', false, false);
-INSERT INTO SITUATIONS(situation, `default`, concluded) VALUES('aguardando', false, false);
-INSERT INTO SITUATIONS(situation, `default`, concluded) VALUES('concluido', false, true);
-INSERT INTO SITUATIONS(situation, `default`, concluded) VALUES('cancelada', false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('a fazer', true, false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('em execução', false, false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('aguardando', false, false, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('concluido', false, true, false);
+INSERT INTO SITUATIONS(situation, `default`, concluded, excluded) VALUES('cancelada', false, false, true);
 
 # Tags
 INSERT INTO tags (title, background_color, foreground_color) VALUES ('sistema', '#d0d932', "#FFFFFF");

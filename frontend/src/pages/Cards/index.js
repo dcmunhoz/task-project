@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import SituationContainer from './components/SituationContainer';
@@ -10,8 +10,8 @@ import useHttp from './../../services/useHttp';
 import './style.css';
 
 const Cards = () => {
-    const { shuldLoadTasks } = useSelector(store => store.global);
     const http = useHttp();
+
     const [situations, setSituations] = useState([]);
     const history = useHistory();
     const dispatch = useDispatch();
