@@ -11,12 +11,12 @@ const screens = [
         title: 'Dashboard',
         icon: "FaChartArea",
         path: '/dashboard',
+        default: true,
         component: Dashboard
     },{
         title: 'Tarefas',
         icon: "FaList",
         path: '/tasks',
-        default: true,
         component: Tasks
     },{
         title: 'Cartões',

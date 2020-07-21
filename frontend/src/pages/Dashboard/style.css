@@ -1,0 +1,13 @@
+.dashboard-container{
+    flex: 1;
+    padding: 50px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.dashboard-container section{
+    width: 48%;
+    box-sizing: border-box;
+}
