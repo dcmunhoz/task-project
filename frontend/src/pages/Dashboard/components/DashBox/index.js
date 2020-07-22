@@ -12,7 +12,9 @@ const DashBox = ({children, title}) => {
                     </h1>
                 </header>
             ) : null}
-            <section>
+            <section
+                className="dashboard-box-content"
+            >
                 {children}
             </section>
  
