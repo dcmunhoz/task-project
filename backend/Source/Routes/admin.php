@@ -35,4 +35,5 @@ $app->group("/api", function($group){
     $group->delete("/tag/{id_tag}", TagController::class . ":delete");
 
     $group->get("/dashboard/user-tasks", DashController::class . ":userTasks");
+    $group->get("/dashboard/daily-tasks", DashController::class . ":dailyTasks");
 });

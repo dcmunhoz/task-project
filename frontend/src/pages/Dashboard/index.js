@@ -1,4 +1,5 @@
 import React, { useEffect, useState  } from 'react';
+import { useSelector } from 'react-redux';
 
 import Container from './../../components/Container';
 import DashBox from './components/DashBox';
@@ -8,14 +9,49 @@ import useHttp from './../../services/useHttp';
 import './style.css';
 
 const Dashboard = () => {
+    const { authenticatedUser } = useSelector(store=>store.user);
+
+    const [userName, setUserName] = useState(" ");
+    const [userTaskQtt, setUserTaskQtt] = useState(0);
+    const [dailyCount, setDailyCount] = useState({});
 
     const httpRequest = useHttp();
 
     useEffect(()=>{
 
-        
+        loadUserTaskQtt();
+        loadTodayDetails();
 
     }, []);
+
+    useEffect(()=>{
+        
+        const nameArr = authenticatedUser.fullname.split(' ');    
+
+        setUserName(nameArr[0] + ' ' + nameArr[1]);
+
+    }, [authenticatedUser]);
+
+    async function loadUserTaskQtt(){
+
+        const response = await httpRequest("GET", '/dashboard/user-tasks');
+
+        if (!response) return false;
+
+        const { data } = response;
+
+        setUserTaskQtt(data.tasks_count)
+
+    }
+
+    async function loadTodayDetails(){
+        const response = await httpRequest("GET", "/dashboard/daily-tasks");
+
+        if (!response) return false;
+        
+        const { data } = response;
+        setDailyCount(data)
+    }
 
     return(
         <Container>
@@ -24,11 +60,11 @@ const Dashboard = () => {
                     <div className="dash-row">
                         <DashBox>
                             <h1 className="welcome-message">
-                                Bem vindo de volta Daniel =D
+                                Bem vindo de volta {userName} =D
                             </h1>
 
                             <p className="welcome-submessage">
-                                Você tem um total de <strong>5</strong> tarefas para finalizar hoje  
+                                Você tem um total de <strong> {userTaskQtt} </strong> tarefas para finalizar hoje  
                             </p>
 
                         </DashBox>
@@ -45,7 +81,7 @@ const Dashboard = () => {
                                         className="dashboard-open-arrow"
                                     />
 
-                                    5 Tarefas Abertas
+                                    {dailyCount.oppened || 0} Tarefas Abertas
                                 </div>
 
                                 <div>
@@ -53,7 +89,7 @@ const Dashboard = () => {
                                         iconName="FaRegArrowAltCircleDown"
                                         className="dashboard-closed-arrow"
                                     />
-                                    10 Tarefas Finalizadas
+                                    {dailyCount.closed || 0} Tarefas Finalizadas
                                 </div>
 
                             </DashBox>

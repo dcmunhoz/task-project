@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Source\Core\Authentication;
 use Source\Models\User;
 use Source\Models\Task;
+use Source\Models\Situation;
 
 class DashController {
 
@@ -26,13 +27,8 @@ class DashController {
             ":id_user"=> $idUser
         ]);
 
-        if (!$result) {
-
-            var_dump("não possui tarefas");
-            die;
-        }
-
         $dataset = [];
+        $dataset["tasks_count"] = 0;
         foreach ($result as $taskmember) {
             
             $task = new Task();
@@ -42,14 +38,49 @@ class DashController {
             $formatedDate = $date->format('Y-m-d');
             
             if ($task->estimated_start == $formatedDate) {
-                \var_dump($task);
+                
+                $dataset['tasks_count'] += 1;
             }
 
         }
-        die;
 
-        $res->getBody()->write(\json_encode($result));
-        return $res;
+        $res->getBody()->write(\json_encode($dataset));
+        return $res->withHeader("Content-Type", "application/json");
+
+    }
+
+    public function dailyTasks(Request $req, Response $res){
+
+
+        $task = new Task();
+        $situation = new Situation();
+
+        
+        $date = new \DateTime;
+        $startDate = $date->format("Y-m-d 00:00:00");
+        $endDate = $date->format("Y-m-d 23:59:59");
+
+        $concluded = $situation->find("concluded = :concluded", ":concluded=1")->fetch();
+
+        $newTasks = $task->raw("SELECT * FROM tasks WHERE created_at BETWEEN :dtStart and :dtEnd", [
+            ":dtStart" => $startDate,
+            ":dtEnd" => $endDate
+        ]);
+
+        $closedToday = $task->raw("SELECT * FROM tasks WHERE id_situation = :id_situation and updated_at BETWEEN :dtStart and :dtEnd", [
+            ":id_situation" => $concluded->id_situation,
+            ":dtStart" => $startDate,
+            ":dtEnd" => $endDate
+        ]);
+
+        $dataset = [
+            "oppened" => count($newTasks),
+            "closed" => count($closedToday)
+        ];
+
+
+        $res->getBody()->write(\json_encode($dataset));
+        return $res->withHeader("Content-Type", "application/json");
 
     }
 
