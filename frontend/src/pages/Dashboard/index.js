@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState  } from 'react';
 
 import Container from './../../components/Container';
 import DashBox from './components/DashBox';
 import Icon from './../../components/Icon';
+import useHttp from './../../services/useHttp';
 
 import './style.css';
 
 const Dashboard = () => {
+
+    const httpRequest = useHttp();
+
+    useEffect(()=>{
+
+        
+
+    }, []);
+
     return(
         <Container>
             <div className="dashboard-container">
