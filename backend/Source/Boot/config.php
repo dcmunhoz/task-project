@@ -15,3 +15,7 @@ define("DB_PASSWORD", getenv("DB_PASSWORD"));
 // TOKEN
 define("TOKEN_SECRET_KEY", getenv("TOKEN_SECRET_KEY"));
 
+function dd($var){
+    var_dump($var);
+    die;
+}

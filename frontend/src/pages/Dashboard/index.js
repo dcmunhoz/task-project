@@ -1,5 +1,6 @@
 import React, { useEffect, useState  } from 'react';
 import { useSelector } from 'react-redux';
+import { Chart, Dataset } from 'react-rainbow-components';
 
 import Container from './../../components/Container';
 import DashBox from './components/DashBox';
@@ -15,12 +16,17 @@ const Dashboard = () => {
     const [userTaskQtt, setUserTaskQtt] = useState(0);
     const [dailyCount, setDailyCount] = useState({});
 
+    //Pie Chart
+    const [pieLabels, setPieLabels] = useState([]);
+    const [pieData, setPieData] = useState([]);
+
     const httpRequest = useHttp();
 
     useEffect(()=>{
 
         loadUserTaskQtt();
         loadTodayDetails();
+        loadSituationsDashboard();
 
     }, []);
 
@@ -51,6 +57,22 @@ const Dashboard = () => {
         
         const { data } = response;
         setDailyCount(data)
+    }
+
+    async function loadSituationsDashboard(){
+
+        const response = await httpRequest("GET", "/dashboard/situations");
+        if (!response) return false;
+        const { data } = response;
+
+        const labels = [];
+        const count = [];
+        data.map(row=>{
+            labels.push(row.situation.toUpperCase());
+            count.push(row.count);
+        });
+        setPieLabels(labels);
+        setPieData(count);
     }
 
     return(
@@ -96,13 +118,48 @@ const Dashboard = () => {
                         </div>
 
                         <div className="inner-row-container">
-                            {/* <DashBox
-                                title="Alguma coisa"
+                            <DashBox
+                                title="Situações"
                             >
-                                
-                            </DashBox> */}
+                                <Chart
+                                labels={pieLabels}
+                                type="pie"
+                                >
+                                    <Dataset
+                                        title="Dataset 1"
+                                        values={pieData}
+                                        backgroundColor={["#00ADB5", "#e99920", "#e9d520", "#005792", "#FF1E56"]}
+                                        borderColor={["#00ADB5", "#e99920", "#e9d520", "#005792", "#FF1E56"]}
+                                    />
+                                </Chart>
+                            </DashBox>
                         </div>
                     </div>
+
+                    <div className="dash-row">
+                        <DashBox 
+                            title="Histórico de Tarefas"
+                        >
+                            <Chart
+                                labels={['A', 'B', 'C', 'D']}
+                                type="line"
+                            >
+                                <Dataset
+                                    title="Dataset 1"
+                                    values={[23, 45, 123, 56]}
+                                    backgroundColor="#1de9b6"
+                                    borderColor="#1de9b6"
+                                />
+                                <Dataset
+                                    title="Dataset 2"
+                                    values={[66, 100, 30, 156]}
+                                    backgroundColor="#01b6f5"
+                                    borderColor="#01b6f5"
+                                />
+                            </Chart>
+                        </DashBox>
+                    </div>
+                    
                 </section>
 
                 <section className="right-dash">
@@ -110,15 +167,51 @@ const Dashboard = () => {
                         <DashBox 
                             title="Sua performance "
                         >
-
+                            <Chart
+                                labels={['A', 'B', 'C', 'D']}
+                                type="line"
+                            >
+                                <Dataset
+                                    title="Dataset 1"
+                                    values={[23, 45, 123, 56]}
+                                    backgroundColor="#1de9b6"
+                                    borderColor="#1de9b6"
+                                    fill={true}
+                                />
+                                <Dataset
+                                    title="Dataset 2"
+                                    values={[66, 100, 30, 156]}
+                                    backgroundColor="#01b6f5"
+                                    borderColor="#01b6f5"
+                                    fill={true}
+                                />
+                            </Chart>
                         </DashBox>
                     </div>
 
                     <div className="dash-row">
                         <DashBox 
-                            title="Histórico de Tarefas"
+                            title="Performace geral"
                         >
-
+                            <Chart
+                                labels={['A', 'B', 'C', 'D']}
+                                type="line"
+                            >
+                                <Dataset
+                                    title="Dataset 1"
+                                    values={[23, 45, 123, 56]}
+                                    backgroundColor="#1de9b6"
+                                    borderColor="#1de9b6"
+                                    fill={true}
+                                />
+                                <Dataset
+                                    title="Dataset 2"
+                                    values={[66, 100, 30, 156]}
+                                    backgroundColor="#01b6f5"
+                                    borderColor="#01b6f5"
+                                    fill={true}
+                                />
+                            </Chart>
                         </DashBox>
                     </div>
                 </section>

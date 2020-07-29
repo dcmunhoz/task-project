@@ -84,4 +84,29 @@ class DashController {
 
     }
 
+    public function situations(Request $req, Response $res){
+
+        $situation = new Situation;
+        $task = new Task;
+
+        $situations = $situation->find()->fetch(true);
+
+        
+        $dataset = [];
+        foreach ($situations as $row) {
+            
+            $tasks = $task->find("id_situation = :id_situation", ":id_situation={$row->id_situation}", "count(*) as count")->fetch();
+
+            $dataset[] = [
+                "situation" => $row->situation,
+                "count" => $tasks->count
+            ];
+
+        }
+
+        $res->getBody()->write(\json_encode($dataset));
+        return $res->withHeader("Content-Type", "application/json");
+
+    }
+
 }
