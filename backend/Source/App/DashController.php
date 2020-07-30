@@ -109,4 +109,39 @@ class DashController {
 
     }
 
+    public function taskHistory(Request $req, Response $res){
+
+        $task = new Task();
+
+        $dataset = [];
+        for ($i = 3; $i >= 0; $i--){
+            $date = new \DateTime;
+            $interval =  new \DateInterval("P{$i}M");
+            
+            $date = $date->sub($interval);
+
+            $firstDate = $date->format("Y-m-01 00:00:00");
+            $lastDate = $date->format("Y-m-31 23:59:59");
+
+            $result = $task->raw("SELECT COUNT(*) AS count FROM TASKS WHERE CREATED_AT BETWEEN :start AND :end ", [
+                ":start" => $firstDate,
+                ":end" => $lastDate
+            ]);
+
+            $period = $date->format("M") . "/" . $date->format("y");
+
+            $dataset[] = [
+                "period" => $period,
+                "count" => $result[0]->count
+            ];
+
+
+
+        }
+                
+
+        $res->getBody()->write(\json_encode($dataset));
+        return $res->withHeader("Content-Type", "application/json");
+
+    }
 }

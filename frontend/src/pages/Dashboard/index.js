@@ -17,8 +17,12 @@ const Dashboard = () => {
     const [dailyCount, setDailyCount] = useState({});
 
     //Pie Chart
-    const [pieLabels, setPieLabels] = useState([]);
-    const [pieData, setPieData] = useState([]);
+    const [pieLabels, setPieLabels] = useState([""]);
+    const [pieData, setPieData] = useState([0]);
+
+    // Task History
+    const [historyLabels, setHistoryLabels] = useState([]);
+    const [historyData, setHistoryData] = useState([]);
 
     const httpRequest = useHttp();
 
@@ -27,6 +31,7 @@ const Dashboard = () => {
         loadUserTaskQtt();
         loadTodayDetails();
         loadSituationsDashboard();
+        loadTaskHistoryDashboars();
 
     }, []);
 
@@ -69,10 +74,28 @@ const Dashboard = () => {
         const count = [];
         data.map(row=>{
             labels.push(row.situation.toUpperCase());
-            count.push(row.count);
+            count.push(parseInt(row.count));
         });
         setPieLabels(labels);
         setPieData(count);
+    }
+
+    async function loadTaskHistoryDashboars(){
+
+        const response = await httpRequest("GET", "/dashboard/task-history");
+        if (!response) return false;
+        const { data } = response;
+        
+        const periods = [];
+        const values = [];
+        data.map(row=>{
+            periods.push(row.period);
+            values.push(parseInt(row.count));
+        });
+
+        setHistoryLabels(periods);
+        setHistoryData(values);
+
     }
 
     return(
@@ -141,20 +164,14 @@ const Dashboard = () => {
                             title="Histórico de Tarefas"
                         >
                             <Chart
-                                labels={['A', 'B', 'C', 'D']}
-                                type="line"
+                                labels={historyLabels}
+                                type="bar"
                             >
                                 <Dataset
-                                    title="Dataset 1"
-                                    values={[23, 45, 123, 56]}
+                                    title="Tarefas Abertas"
+                                    values={historyData}
                                     backgroundColor="#1de9b6"
                                     borderColor="#1de9b6"
-                                />
-                                <Dataset
-                                    title="Dataset 2"
-                                    values={[66, 100, 30, 156]}
-                                    backgroundColor="#01b6f5"
-                                    borderColor="#01b6f5"
                                 />
                             </Chart>
                         </DashBox>
