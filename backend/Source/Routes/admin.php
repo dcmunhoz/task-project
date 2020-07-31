@@ -38,4 +38,5 @@ $app->group("/api", function($group){
     $group->get("/dashboard/daily-tasks", DashController::class . ":dailyTasks");
     $group->get("/dashboard/situations", DashController::class . ":situations");
     $group->get("/dashboard/task-history", DashController::class . ":taskHistory");
+    $group->get("/dashboard/user-performace", DashController::class . ":userPerformace");
 });

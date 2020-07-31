@@ -51,11 +51,14 @@ CREATE TABLE tasks(
 	estimated_start DATE,
 	created_at TIMESTAMP DEFAULT NOW(),
 	updated_at TIMESTAMP DEFAULT NOW() ON UPDATE NOW(),
+	concluded_at TIMESTAMP,
 	CONSTRAINT pk_task PRIMARY KEY (id_task),
 	CONSTRAINT fk_user_tasks1 FOREIGN KEY (id_user_creation) REFERENCES users(id_user),
 	CONSTRAINT fk_user_tasks2 FOREIGN KEY (id_requester) REFERENCES users(id_user),
 	CONSTRAINT fk_situation_task FOREIGN KEY (id_situation) REFERENCES situations(id_situation) 
 ) CHARACTER SET utf8;
+
+
 
 CREATE TABLE tags(
 	id_tag INT NOT NULL AUTO_INCREMENT,

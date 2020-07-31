@@ -144,4 +144,42 @@ class DashController {
         return $res->withHeader("Content-Type", "application/json");
 
     }
+
+    public function userPerformace(Request $req, Response $res){
+
+        $headers = $req->getHeaders();
+        $authorization = $headers['Authorization'][0];
+        $token = Authentication::decode($authorization);
+
+        $user = new User();
+        $user->findById($token->payload->id);
+
+        $task = new Task();
+        $result = $task->raw("SELECT * FROM taskxmembers WHERE id_user = :id_user", [
+            ":id_user" => $user->id_user
+        ]);
+
+
+        $dataset = [];
+        $values = [];
+        foreach ($result as $row) {
+            
+            $task->findById($row->id_task);
+
+            if ($task->concluded_at !== null) {
+
+                var_dump($task->getData());
+            }
+
+        }   
+        
+        die;
+
+
+        dd($result);
+
+        $res->getBody()->write("ok");
+        return $res;
+
+    }
 }
