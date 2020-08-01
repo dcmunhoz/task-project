@@ -1,0 +1,18 @@
+.dashboard-box{
+    box-sizing: border-box;
+    width: 100%;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.158);
+}
+
+.dashboard-box header{
+
+    margin-bottom: 10px;
+
+}
+
+.dashboard-box .dashboard-box-content{
+    width: 100%;
+}

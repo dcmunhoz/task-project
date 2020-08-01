@@ -1,0 +1,50 @@
+.dashboard-container{
+    flex: 1;
+    padding: 50px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    overflow-y: auto;
+}
+
+.dashboard-container section{
+    width: 48%;
+    box-sizing: border-box;
+}
+
+.dashboard-container section .dash-row{
+    position: relative;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.dashboard-container section .dash-row .inner-row-container{
+    position: relative;
+    width: 49%;
+    display: flex;
+}
+
+.dashboard-container section .dash-row .welcome-message{
+    font-weight: bold;
+    font-size: 32px;
+}
+
+.dashboard-container section .dash-row .welcome-submessage{
+    font-size: 24px;
+}
+
+.dashboard-container section .dash-row .icon{
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.dashboard-container section .dash-row .dashboard-open-arrow path{
+    color: var(--btn-green);
+}
+
+.dashboard-container section .dash-row .dashboard-closed-arrow path{
+    color: var(--btn-red);
+}

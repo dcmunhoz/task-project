@@ -5,6 +5,7 @@ use Source\App\UserController as UserController;
 use Source\App\SituationController as SituationController;
 use Source\App\TagController as TagController;
 use Source\App\RoleController as RoleController;
+use Source\App\DashController as DashController;
 
 $app->group("/api", function($group){
     $group->post("/task", TaskController::class . ":create");
@@ -32,4 +33,11 @@ $app->group("/api", function($group){
     $group->get("/role/{id_role}", RoleController::class . ":show");
     $group->post("/tag/new", TagController::class . ":save");
     $group->delete("/tag/{id_tag}", TagController::class . ":delete");
+
+    $group->get("/dashboard/user-tasks", DashController::class . ":userTasks");
+    $group->get("/dashboard/daily-tasks", DashController::class . ":dailyTasks");
+    $group->get("/dashboard/situations", DashController::class . ":situations");
+    $group->get("/dashboard/task-history", DashController::class . ":taskHistory");
+    $group->get("/dashboard/user-performace", DashController::class . ":userPerformace");
+    $group->get("/dashboard/team-performace", DashController::class . ":teamPerformace");
 });

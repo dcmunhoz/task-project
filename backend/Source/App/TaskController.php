@@ -412,6 +412,15 @@ class TaskController {
         $task->description = $body['description'];
         $task->id_requester = $body['requester']['id'];
 
+        $situation = new Situation;
+        $situation->findById((Int) $task->id_situation);
+        if ($situation->concluded) {
+            $date = new \DateTime();
+            $task->concluded_at = $date->format("Y-m-d");
+        } else {
+            $task->concluded_at = null;
+        }
+
         if ($body['estimated'] !== null) {
             $date = new \DateTime();
             $year = (Int) explode("/", $body['estimated'])[2];
