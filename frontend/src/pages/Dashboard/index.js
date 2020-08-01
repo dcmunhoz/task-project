@@ -29,6 +29,13 @@ const Dashboard = () => {
     const [userPerformaceAssigned, setUserPerformaceAssigned] = useState([]);
     const [userPerformaceConcluded, setUserPerformaceConcluded] = useState([]);
 
+    // Team Performace
+    const [teamPerformaceLabels, setTeamPerformaceLabels] = useState([]);
+    const [teamPerformaceOppened, setTeamPerformaceOppened] = useState([]);
+    const [teamPerformaceConcluded, setTeamPerformaceConcluded] = useState([]);
+
+
+
     const httpRequest = useHttp();
 
     useEffect(()=>{
@@ -38,6 +45,7 @@ const Dashboard = () => {
         loadSituationsDashboard();
         loadTaskHistoryDashboars();
         loadUserPerformace();
+        loadTeamPerformace();
 
     }, []);
 
@@ -126,6 +134,28 @@ const Dashboard = () => {
 
     }
 
+    async function loadTeamPerformace(){
+
+        const response = await httpRequest("GET", '/dashboard/team-performace');
+        if (!response) return false;
+        
+        const { data } = response;
+
+        const months = Object.keys(data);
+        const oppened = [];
+        const concluded = [];
+
+        months.forEach(month=>{
+            oppened.push(data[month].oppened);
+            concluded.push(data[month].concluded);
+        })
+
+        setTeamPerformaceLabels(months);
+        setTeamPerformaceOppened(oppened);
+        setTeamPerformaceConcluded(concluded);
+
+    }
+
     return(
         <Container>
             <div className="dashboard-container">
@@ -198,8 +228,8 @@ const Dashboard = () => {
                                 <Dataset
                                     title="Tarefas Abertas"
                                     values={historyData}
-                                    backgroundColor="#1de9b6"
-                                    borderColor="#1de9b6"
+                                    backgroundColor="#00ADB5"
+                                    borderColor="#00ADB5"
                                 />
                             </Chart>
                         </DashBox>
@@ -227,8 +257,8 @@ const Dashboard = () => {
                                 <Dataset
                                     title="Atribuidas"
                                     values={userPerformaceAssigned}
-                                    backgroundColor="#01b8f57e"
-                                    borderColor="#01b6f5"
+                                    backgroundColor="#0677c285"
+                                    borderColor="#005792"
                                     fill={true}
                                 />
                                 
@@ -241,21 +271,22 @@ const Dashboard = () => {
                             title="Performace geral"
                         >
                             <Chart
-                                labels={['A', 'B', 'C', 'D']}
+                                labels={teamPerformaceLabels}
                                 type="line"
                             >
                                 <Dataset
-                                    title="Dataset 1"
-                                    values={[23, 45, 123, 56]}
-                                    backgroundColor="#1de9b6"
-                                    borderColor="#1de9b6"
+                                    title="Concluidas"
+                                    values={teamPerformaceConcluded}
+                                    backgroundColor="#ff1e5680"
+                                    borderColor="#FF1E56"
                                     fill={true}
                                 />
+
                                 <Dataset
-                                    title="Dataset 2"
-                                    values={[66, 100, 30, 156]}
-                                    backgroundColor="#01b6f5"
-                                    borderColor="#01b6f5"
+                                    title="Abertas"
+                                    values={teamPerformaceOppened}
+                                    backgroundColor="#00ADB580"
+                                    borderColor="#00ADB5"
                                     fill={true}
                                 />
                             </Chart>

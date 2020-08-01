@@ -157,7 +157,7 @@ class DashController {
         $months = [];
         $dataset = [];
 
-        for($i = 4; $i >= 0; $i--){
+        for($i = 3; $i >= 0; $i--){
 
             $date = new \DateTime();
             $interval = new \DateInterval("P{$i}M");
@@ -178,6 +178,44 @@ class DashController {
             
             $dataset[$monthName] = [
                 "assigned" => count($assigned),
+                "concluded" => ($result !== false) ? count($result) : 0
+            ];
+
+        }
+
+        $res->getBody()->write(\json_encode($dataset));
+        return $res->withHeader("Content-Type", "application/json");
+
+    }
+
+    public function teamPerformace(Request $req, Response $res){
+
+        $headers = $req->getHeaders();
+
+        $months = [];
+        $dataset = [];
+
+        for($i = 3; $i >= 0; $i--){
+
+            $date = new \DateTime();
+            $interval = new \DateInterval("P{$i}M");
+            $date->sub($interval);
+
+            $startDate = $date->format("Y-m-1");
+            $endDate = $date->format("Y-m-31");
+            $monthName = $date->format("M/y");
+
+            $task = new Task();
+            $oppened = $task->raw("SELECT COUNT(*) AS count FROM TASKS WHERE CREATED_AT BETWEEN :start AND :end ", [
+                ":start" => $startDate,
+                ":end" => $endDate
+            ]);
+
+            $result = $task->find("concluded_at BETWEEN :startDate AND :endDate", ":startDate={$startDate}&:endDate={$endDate}")->fetch(true);
+            
+
+            $dataset[$monthName] = [
+                "oppened" => $oppened[0]->count,
                 "concluded" => ($result !== false) ? count($result) : 0
             ];
 
