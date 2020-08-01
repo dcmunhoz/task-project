@@ -152,34 +152,39 @@ class DashController {
         $token = Authentication::decode($authorization);
 
         $user = new User();
-        $user->findById($token->payload->id);
+        $user->findById( (Int) $token->payload->id);
 
-        $task = new Task();
-        $result = $task->raw("SELECT * FROM taskxmembers WHERE id_user = :id_user", [
-            ":id_user" => $user->id_user
-        ]);
-
-
+        $months = [];
         $dataset = [];
-        $values = [];
-        foreach ($result as $row) {
+
+        for($i = 4; $i >= 0; $i--){
+
+            $date = new \DateTime();
+            $interval = new \DateInterval("P{$i}M");
+            $date->sub($interval);
+
+            $startDate = $date->format("Y-m-1");
+            $endDate = $date->format("Y-m-31");
+            $monthName = $date->format("M/y");
+
+            $task = new Task();
+            $assigned = $task->raw("SELECT * FROM taskxmembers WHERE id_user = :id_user AND created_at BETWEEN :startDate and :endDate  ", [
+                ":id_user" => $user->id_user,
+                ":startDate" => $startDate,
+                ":endDate" => $endDate
+            ]);
+
+            $result = $task->find("tasks.concluded_at BETWEEN :startDate AND :endDate and taskxmembers.id_user = :idUser", ":startDate={$startDate}&:endDate={$endDate}&:idUser={$user->id_user}")->join("taskxmembers", "taskxmembers.id_task = tasks.id_task")->fetch(true);
             
-            $task->findById($row->id_task);
+            $dataset[$monthName] = [
+                "assigned" => count($assigned),
+                "concluded" => ($result !== false) ? count($result) : 0
+            ];
 
-            if ($task->concluded_at !== null) {
+        }
 
-                var_dump($task->getData());
-            }
-
-        }   
-        
-        die;
-
-
-        dd($result);
-
-        $res->getBody()->write("ok");
-        return $res;
+        $res->getBody()->write(\json_encode($dataset));
+        return $res->withHeader("Content-Type", "application/json");
 
     }
 }

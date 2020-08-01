@@ -24,6 +24,11 @@ const Dashboard = () => {
     const [historyLabels, setHistoryLabels] = useState([]);
     const [historyData, setHistoryData] = useState([]);
 
+    // User Performace
+    const [userPerformaceLabels, setUserPerformaceLabels] = useState([]);
+    const [userPerformaceAssigned, setUserPerformaceAssigned] = useState([]);
+    const [userPerformaceConcluded, setUserPerformaceConcluded] = useState([]);
+
     const httpRequest = useHttp();
 
     useEffect(()=>{
@@ -32,6 +37,7 @@ const Dashboard = () => {
         loadTodayDetails();
         loadSituationsDashboard();
         loadTaskHistoryDashboars();
+        loadUserPerformace();
 
     }, []);
 
@@ -95,6 +101,28 @@ const Dashboard = () => {
 
         setHistoryLabels(periods);
         setHistoryData(values);
+
+    }
+
+    async function loadUserPerformace(){
+
+        const response = await httpRequest("GET", '/dashboard/user-performace');
+        if (!response) return false;
+        
+        const { data } = response;
+
+        const months = Object.keys(data);
+        const assigned = [];
+        const concluded = [];
+
+        months.forEach(month=>{
+            assigned.push(data[month].assigned);
+            concluded.push(data[month].concluded);
+        })
+
+        setUserPerformaceLabels(months);
+        setUserPerformaceAssigned(assigned);
+        setUserPerformaceConcluded(concluded);
 
     }
 
@@ -185,23 +213,25 @@ const Dashboard = () => {
                             title="Sua performance "
                         >
                             <Chart
-                                labels={['A', 'B', 'C', 'D']}
+                                labels={userPerformaceLabels}
                                 type="line"
                             >
                                 <Dataset
-                                    title="Dataset 1"
-                                    values={[23, 45, 123, 56]}
-                                    backgroundColor="#1de9b6"
-                                    borderColor="#1de9b6"
+                                    title="Concluidas"
+                                    values={userPerformaceConcluded}
+                                    backgroundColor="#ff1e5680"
+                                    borderColor="#FF1E56"
                                     fill={true}
                                 />
+
                                 <Dataset
-                                    title="Dataset 2"
-                                    values={[66, 100, 30, 156]}
-                                    backgroundColor="#01b6f5"
+                                    title="Atribuidas"
+                                    values={userPerformaceAssigned}
+                                    backgroundColor="#01b8f57e"
                                     borderColor="#01b6f5"
                                     fill={true}
                                 />
+                                
                             </Chart>
                         </DashBox>
                     </div>
